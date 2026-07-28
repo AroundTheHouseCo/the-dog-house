@@ -23,7 +23,7 @@
 // but an edit to an *existing* file's content does. The two versions are
 // independent on purpose: a Tier 1 content change shouldn't force every
 // installed client to re-download 80MB of Tier 2, and vice versa.
-const TIER1_VERSION = "2026-07-27.1";
+const TIER1_VERSION = "2026-07-28.1";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -63,7 +63,13 @@ const TIER1_URLS = [
   "index.html",
   "manifest.webmanifest",
   "css/styles.css",
+  // Leaflet is vendored rather than pulled from a CDN so the map library
+  // itself works offline and precaches here; only the tile imagery needs
+  // a live connection (see js/reference-map.js).
+  "vendor/leaflet.css",
+  "vendor/leaflet.js",
   "js/icons.js",
+  "js/reference-map.js",
   "js/registry.js",
   "js/data-sunesta.js",
   "js/data-eclipse.js",

@@ -60,6 +60,7 @@ function renderTabs(){
 function resetSlideState(){
   modelSpec=null; modelCompare=false; cmpCats={warranty:true,size:true,eng:true}; docViewer=null;
   galleryOpen=false; compareOpen=false; openHotspot=null; lightboxIndex=null; triNodeOpen=null;
+  if(typeof refmapReset==="function") refmapReset();
 }
 
 function renderDots(){
@@ -121,7 +122,8 @@ function addNavZones(area){
 // otherwise still see touches meant for scrolling/interacting with them.
 function isSlideOverlayOpen(){
   return !!(docViewer || galleryOpen || compareOpen || modelSpec !== null ||
-    modelCompare || triNodeOpen !== null || openHotspot !== null || lightboxIndex !== null);
+    modelCompare || triNodeOpen !== null || openHotspot !== null || lightboxIndex !== null ||
+    (typeof refmapIsOpen === "function" && refmapIsOpen()));
 }
 
 // Attached once at boot to the stable #slideArea node (renderSlide() only
@@ -549,10 +551,25 @@ function renderSlide(){
     addNavZones(area);
   }
 
-  if(s.type==="splitphoto" || s.type==="splittext"){
+  // Reference Map — town list -> focused town map (js/reference-map.js).
+  // Falls back to the original "asset pending" placeholder whenever the
+  // dataset hasn't been built, so the slide never looks finished early.
+  // Only takes over once a dataset has actually been built. Without one it
+  // deliberately falls through to the splitphoto branch below, so the slide
+  // renders the exact same "asset pending" placeholder it always has —
+  // no half-built map, and nothing internal shown to a customer.
+  if(s.type==="refmap" && refmapHasData()){
+    renderReferenceMap(area, s);
+    // nav zones only in the list view — inside a town map the whole panel
+    // is interactive (pan/zoom/tap pins) and must not advance the deck
+    if(!refmapIsOpen()) addNavZones(area);
+    return;
+  }
+
+  if(s.type==="splitphoto" || s.type==="splittext" || s.type==="refmap"){
     const panel = document.createElement("div");
     panel.className="split-panel";
-    const textHTML = s.type==="splitphoto"
+    const textHTML = (s.type==="splitphoto" || s.type==="refmap")
       ? `<h2>${s.title}</h2>${s.subtext?`<div class="split-subtext">${s.subtext}</div>`:""}`
       : `<h2>${s.title}</h2><ul class="split-bullets">${s.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>${s.cert?`<img class="split-cert" src="${s.cert}">`:""}`;
     // optional mini video-scrubber in the photo box (frame-swap, Apple-style)

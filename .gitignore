@@ -19,3 +19,6 @@ Desktop.ini
 
 # Logs / scratch
 *.log
+
+# geocode cache for tools/build-reference-map.mjs (local, regenerable)
+tools/.geocode-cache.json

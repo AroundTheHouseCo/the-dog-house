@@ -1968,3 +1968,88 @@
   .lightbox-close .icon,
   .spec-close .icon,
   .doc-viewer-close .icon{width:1.05em;height:1.05em;vertical-align:-0.18em;}
+
+  /* ===== Reference Map (js/reference-map.js) =====
+     Town list -> focused town map. Panel sits above the nav zones (z-index 6,
+     same as every other interactive slide panel) so taps reach the list and
+     the map instead of advancing the deck. */
+  /* No z-index on the panel itself: it sits BELOW the nav zones so tapping
+     empty space still advances the deck, exactly like .products-panel. Only
+     the genuinely interactive children are lifted above (z-index 6). */
+  .refmap-panel{
+    position:absolute;inset:0;
+    background:#f2f1ec;
+    display:flex;flex-direction:column;
+    padding:12px 26px 0;
+  }
+  .refmap-panel.placeholder{padding:12px 26px 20px;gap:14px;align-items:center;justify-content:center;}
+  .refmap-pending{
+    font-size:13.5px;color:#7a6a3a;background:#fdf6e3;border:1px solid #e8dfc4;
+    border-radius:10px;padding:12px 16px;max-width:620px;text-align:center;line-height:1.5;
+  }
+  .refmap-pending code{font-size:12.5px;background:#fff;padding:1px 5px;border-radius:4px;}
+  .refmap-pending .icon{vertical-align:-0.15em;margin-right:6px;color:#b8860b;}
+
+  .refmap-head{flex:0 0 auto;padding-top:30px;margin-bottom:12px;}
+  .refmap-head h2{font-size:30px;margin:0 0 5px;color:var(--charcoal);line-height:1.15;}
+  .refmap-sub{font-size:16px;color:#555;line-height:1.4;}
+
+  .refmap-towns{
+    flex:1;min-height:0;overflow-y:auto;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    align-content:start;padding-bottom:12px;
+  }
+  .refmap-town{
+    position:relative;z-index:6;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:#fff;border:1px solid #e7e4da;border-radius:10px;
+    padding:13px 15px;cursor:pointer;text-align:left;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .refmap-town:hover{border-color:var(--green);box-shadow:0 3px 12px rgba(0,0,0,.10);}
+  .refmap-town-name{font-size:15.5px;font-weight:800;color:var(--charcoal);line-height:1.2;}
+  .refmap-town-count{
+    flex:0 0 auto;font-size:13px;font-weight:800;color:#fff;
+    background:var(--green-dark);border-radius:999px;padding:3px 10px;min-width:34px;text-align:center;
+  }
+
+  /* ---- focused town map ---- */
+  .refmap-mapbar{
+    position:relative;z-index:6;
+    flex:0 0 auto;display:flex;align-items:center;gap:14px;
+    padding-top:30px;padding-bottom:10px;
+  }
+  .refmap-back{
+    border:1px solid #ddd;background:#fff;padding:8px 16px;border-radius:999px;
+    font-size:13px;font-weight:700;color:var(--green-dark);cursor:pointer;
+  }
+  .refmap-back:hover{border-color:var(--green);background:#f4faf5;}
+  .refmap-mapbar-title{font-size:20px;font-weight:800;color:var(--charcoal);}
+  .refmap-mapbar-title span{font-weight:600;color:#777;font-size:15px;}
+
+  .refmap-mapwrap{position:relative;z-index:6;flex:1;min-height:0;margin-bottom:14px;}
+  .refmap-canvas{
+    position:absolute;inset:0;
+    border-radius:12px;overflow:hidden;
+    border:1px solid #e7e4da;background:#e9e6df;
+  }
+  /* never a blank grey box — if tiles can't load, say so on-brand */
+  .refmap-offline{
+    position:absolute;inset:0;z-index:500;
+    background:var(--cream);border:1px solid var(--cream-border);border-radius:12px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:30px;gap:6px;
+  }
+  /* display:flex above out-specifies the UA's [hidden]{display:none}, so the
+     panel would otherwise cover the map permanently. Must restate it. */
+  .refmap-offline[hidden]{display:none;}
+  .refmap-offline .icon{font-size:40px;color:var(--green-dark);margin-bottom:4px;}
+  .refmap-offline h3{margin:0;font-size:19px;color:var(--charcoal);}
+  .refmap-offline p{margin:0;font-size:13.5px;color:#777;max-width:420px;line-height:1.5;}
+  .refmap-approx{
+    position:absolute;left:12px;bottom:10px;z-index:450;
+    background:rgba(255,255,255,.92);border:1px solid #e7e4da;border-radius:999px;
+    padding:4px 12px;font-size:11.5px;font-weight:700;color:#666;
+    pointer-events:none;
+  }
+  .refmap-pop{font-size:14.5px;font-weight:800;color:var(--charcoal);padding:1px 2px;}

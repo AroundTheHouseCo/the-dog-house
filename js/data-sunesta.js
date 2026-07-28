@@ -103,12 +103,12 @@ const DECK = {
       coach:"Moved early per the finalized script — working-with-us before the product. If they had a bad contractor experience before, this is where you address it: the industry is notorious for communication complaints; we're the opposite."
     },
     {
-      id:"refmap", type:"splitphoto", image: IMAGES.refMapPlaceholder,
+      id:"refmap", type:"refmap", image: IMAGES.refMapPlaceholder,
       title:"We've Worked in Your Neighborhood",
       subtext:"Projects completed all over the greater Colorado Springs area.",
       script:"\"A lot of folks ask us if we've done work in the area. And we have — we've completed projects all over the greater Colorado Springs area.\" (Show reference map.)\n\nThat's the whole beat — one line, point at the map, keep moving.",
       talkingPoints:["One line — say it, point at the map, move on","If they ask about their specific neighborhood, name nearby projects (the Photo Library in the Coach can back you up)"],
-      coach:"🕳 ASSET GAP — the reference map graphic doesn't exist yet; this panel shows a clearly-labeled placeholder until the real map is produced. The script line is final."
+      coach:"Interactive reference map — tap a town to see nearby completed projects, tap a pin for the customer name. Pin locations are deliberately approximate (shown to the block, not the address). Map imagery needs a connection; the town list works offline. NOTE: still showing the placeholder until the dataset is built — see tools/build-reference-map.mjs."
     },
     {
       id:"tenreasons", type:"reasonsgrid",
