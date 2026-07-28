@@ -86,4 +86,10 @@ const IMAGES = {
   pcTier4: "images/pricecond/tier4-midtier.jpg",
   pcTier5: "images/pricecond/tier5-highend.jpg",
   pcTier6: "images/pricecond/tier6-pergola.jpg",
+  // Reference Map region tiles. CC-BY stock landscapes (attribution in
+  // js/reference-map.js next to REGION_PHOTO) — generic regional scenery,
+  // not ATH project photos.
+  regionPikesPeak: "images/regions/pikes-peak.jpg",
+  regionSouthernCo: "images/regions/southern-colorado.jpg",
+  regionDenverMetro: "images/regions/denver-metro.jpg",
 };

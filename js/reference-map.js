@@ -28,6 +28,24 @@
 // Cañon City) resolved by hand — see the 2026-07-28 report for the full
 // distance table and reasoning.
 const REFMAP_REGIONS = ["Pikes Peak Region", "Southern Colorado", "Denver Metro"];
+
+// Background photo per region tile. Generic regional scenery (not ATH project
+// photos), so CC-licensed stock is the right call — all three are CC BY,
+// deliberately avoiding CC BY-SA so no ShareAlike obligation attaches to a
+// commercial sales tool. Attribution is required by the licence and is kept
+// here next to the usage:
+//
+//   Pikes Peak Region — "Pikes Peak from the Garden of the Gods"
+//     mark gallagher · CC BY 2.0 · commons.wikimedia.org/w/index.php?curid=2961747
+//   Southern Colorado — "Royal Gorge Bridge 2020"
+//     Jeffrey Beall · CC BY 4.0 · commons.wikimedia.org/w/index.php?curid=… (Openverse bc1cef9e)
+//   Denver Metro — "Denver, Colorado skyline"
+//     Quintin Soloviev · CC BY 4.0 · commons.wikimedia.org/w/index.php?curid=190001217
+const REGION_PHOTO = {
+  "Pikes Peak Region": IMAGES.regionPikesPeak,
+  "Southern Colorado": IMAGES.regionSouthernCo,
+  "Denver Metro":      IMAGES.regionDenverMetro,
+};
 const REGION_BY_CITY = {
   "Colorado Springs": "Pikes Peak Region",
   "Monument":          "Pikes Peak Region",
@@ -127,9 +145,10 @@ function refmapListHTML(s, regions){
     </div>
     <div class="refmap-regions">
       ${regions.map((r, i) => `
-        <button class="refmap-town region" data-i="${i}">
-          <span class="refmap-town-name">${r.name}</span>
-          <span class="refmap-town-count">${r.count}</span>
+        <button class="region-tile" data-i="${i}">
+          <img class="region-tile-photo" src="${REGION_PHOTO[r.name] || ""}" alt="">
+          <span class="region-tile-fade"></span>
+          <span class="region-tile-name">${r.name}</span>
         </button>`).join("")}
     </div>`;
 }
@@ -161,7 +180,7 @@ function renderReferenceMap(area, s){
   if (refmapRegion === null) {
     panel.innerHTML = refmapListHTML(s, regions) + footerBannerHTML(s.title);
     area.appendChild(panel);
-    panel.querySelectorAll(".refmap-town").forEach((b) => {
+    panel.querySelectorAll(".region-tile").forEach((b) => {
       b.onclick = (e) => { e.stopPropagation(); refmapRegion = +b.dataset.i; refmapPin = null; renderSlide(); };
     });
     return;

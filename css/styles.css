@@ -1999,11 +1999,51 @@
     display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
     align-content:start;padding-bottom:12px;
   }
-  /* three region tiles instead of ~20 town tiles: fewer, bigger, one row */
+  /* Three big photo tiles filling the panel — not a list. `align-content` is
+     deliberately NOT `start` here (unlike the town grid) so the single row
+     stretches to the full available height. */
   .refmap-regions{
-    flex:1;min-height:0;overflow-y:auto;
-    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
-    align-content:start;padding-bottom:12px;
+    flex:1;min-height:0;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+    padding-bottom:16px;
+  }
+  /* The tile is itself the clickable element, so a stacking context here is
+     safe — but it MUST keep z-index 6 to stay above the z-index-5 nav zones
+     (see the stacking-context trap in README). Hover uses box-shadow rather
+     than transform for the same reason. */
+  .region-tile{
+    position:relative;z-index:6;
+    display:block;width:100%;height:100%;
+    padding:0;border:none;border-radius:16px;
+    overflow:hidden;cursor:pointer;
+    background:#0d2e1f;
+    box-shadow:0 4px 16px rgba(0,0,0,.16);
+    transition:box-shadow .18s;
+  }
+  .region-tile:hover{box-shadow:0 8px 28px rgba(0,0,0,.30);}
+  .region-tile-photo{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;display:block;
+  }
+  /* Same fade treatment as .hero-fade on herosplit slides — identical base
+     colour (#0d2e1f), just running bottom-up for a portrait card. Opaque
+     behind the name, fully clear by the halfway mark: a longer ramp muddied
+     the middle of each photo and buried the Royal Gorge bridge entirely. */
+  .region-tile-fade{
+    position:absolute;left:0;right:0;bottom:0;top:0;
+    background:linear-gradient(to top,
+      rgba(13,46,31,.97) 0%,
+      rgba(13,46,31,.90) 13%,
+      rgba(13,46,31,.45) 30%,
+      rgba(13,46,31,0)   50%);
+  }
+  .region-tile-name{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:0 22px 26px;
+    font-size:25px;font-weight:800;line-height:1.15;
+    color:#fff;text-align:left;
+    text-shadow:0 1px 3px rgba(0,0,0,.45);
   }
   .refmap-town{
     position:relative;z-index:6;
