@@ -1999,6 +1999,12 @@
     display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
     align-content:start;padding-bottom:12px;
   }
+  /* three region tiles instead of ~20 town tiles: fewer, bigger, one row */
+  .refmap-regions{
+    flex:1;min-height:0;overflow-y:auto;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+    align-content:start;padding-bottom:12px;
+  }
   .refmap-town{
     position:relative;z-index:6;
     display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -2006,6 +2012,9 @@
     padding:13px 15px;cursor:pointer;text-align:left;
     transition:border-color .15s, box-shadow .15s;
   }
+  .refmap-town.region{padding:22px 24px;border-radius:14px;}
+  .refmap-town.region .refmap-town-name{font-size:19px;}
+  .refmap-town.region .refmap-town-count{font-size:15px;padding:5px 14px;min-width:42px;}
   .refmap-town:hover{border-color:var(--green);box-shadow:0 3px 12px rgba(0,0,0,.10);}
   .refmap-town-name{font-size:15.5px;font-weight:800;color:var(--charcoal);line-height:1.2;}
   .refmap-town-count{
