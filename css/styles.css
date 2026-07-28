@@ -342,20 +342,20 @@
   .spec-close:hover{color:var(--charcoal);border-color:#aaa;}
   .spec-body{flex:1;overflow-y:auto;padding:14px 22px 20px;}
   .warranty-tiles{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
-    margin-bottom:14px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    margin-bottom:16px;
   }
   .wt{
     background:#f4f7f4;border:1px solid #e2e8e2;border-radius:10px;
-    padding:10px 8px;text-align:center;
+    padding:14px 10px;text-align:center;
   }
   .wt.hero{background:linear-gradient(120deg,#1b5e3f,#2e7d4f);border-color:#1b5e3f;}
-  .wt-num{font-size:17px;font-weight:900;color:var(--green-dark);}
+  .wt-num{font-size:24px;font-weight:900;color:var(--green-dark);line-height:1.1;}
   .wt.hero .wt-num{color:#fff;}
-  .wt-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-top:2px;}
-  .wt.hero .wt-label{color:#cfe6d6;}
-  .wt-sub{font-size:9.5px;color:#999;margin-top:3px;line-height:1.3;}
-  .wt.hero .wt-sub{color:#cfe6d6;}
+  .wt-label{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#5e6b62;margin-top:4px;}
+  .wt.hero .wt-label{color:#dff0e6;}
+  .wt-sub{font-size:12.5px;color:#5f6660;margin-top:5px;line-height:1.35;}
+  .wt.hero .wt-sub{color:#e4f2e9;}
   .warranty-tiles.five{grid-template-columns:repeat(5,1fr);}
   .spec-rows{border:1px solid #eee;border-radius:10px;overflow:hidden;}
   .spec-row{
@@ -1463,11 +1463,11 @@
   /* padding-top clears the top-left #N slide badge (top:14px, ~24px tall) */
   .products-head{flex:0 0 auto;margin-bottom:10px;padding-top:30px;}
   .products-eyebrow{
-    font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--green);margin-bottom:4px;
+    font-size:12.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--green);margin-bottom:5px;
   }
-  .products-head h2{font-size:25px;margin:0 0 4px;color:var(--charcoal);line-height:1.15;}
-  .products-head p{font-size:12.5px;line-height:1.45;color:#666;margin:0;max-width:780px;}
+  .products-head h2{font-size:30px;margin:0 0 6px;color:var(--charcoal);line-height:1.15;}
+  .products-head p{font-size:16px;line-height:1.45;color:#555;margin:0;max-width:900px;}
   .products-cards{
     flex:1;min-height:0;
     display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
@@ -1494,15 +1494,15 @@
     display:flex;align-items:center;justify-content:center;
   }
   .pcard-icon img{width:38px;height:38px;display:block;}
-  .pcard-body{flex:0 0 auto;padding:11px 14px 13px;}
-  .pcard-name{font-size:15px;font-weight:800;color:var(--charcoal);line-height:1.2;}
-  .pcard-sub{font-size:12px;color:#777;margin-top:3px;line-height:1.3;}
+  .pcard-body{flex:0 0 auto;padding:14px 16px 16px;}
+  .pcard-name{font-size:18px;font-weight:800;color:var(--charcoal);line-height:1.2;}
+  .pcard-sub{font-size:14.5px;color:#5c5c5c;margin-top:5px;line-height:1.35;}
   .pcard-foot{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
     margin-top:10px;
   }
   .pcard-logo{height:22px;width:auto;max-width:120px;object-fit:contain;display:block;}
-  .pcard-more{font-size:11px;font-weight:700;color:var(--green);white-space:nowrap;}
+  .pcard-more{font-size:13px;font-weight:800;color:var(--green);white-space:nowrap;}
   .pcard-num{
     position:absolute;top:10px;left:10px;
     width:30px;height:30px;border-radius:50%;
@@ -1555,7 +1555,7 @@
   .home-card-icon{
     width:54px;height:54px;border-radius:50%;
     background:var(--green-dark);color:#fff;
-    font-size:20px;display:flex;align-items:center;justify-content:center;
+    font-size:26px;display:flex;align-items:center;justify-content:center;
     margin:0 auto 14px;
   }
   .home-card.secondary .home-card-icon{background:var(--orange);}
@@ -1587,7 +1587,7 @@
   .center-card:hover{border-color:var(--green);box-shadow:0 4px 14px rgba(0,0,0,.08);}
   .center-card-icon{
     width:46px;height:46px;border-radius:12px;flex-shrink:0;
-    background:#eef6ee;font-size:20px;
+    background:#eef6ee;color:var(--green-dark);font-size:24px;
     display:flex;align-items:center;justify-content:center;
   }
   .center-card-name{font-size:15.5px;font-weight:800;color:var(--charcoal);}
@@ -1651,7 +1651,7 @@
     transition:border-color .15s;
   }
   .doc-row:hover{border-color:var(--green);}
-  .doc-icon{font-size:18px;}
+  .doc-icon{font-size:19px;color:var(--green-dark);display:flex;align-items:center;}
   .doc-name{flex:1;font-size:14.5px;font-weight:800;color:var(--charcoal);}
   .doc-open{font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;}
 
@@ -1684,12 +1684,12 @@
     position:absolute;inset:0;
     background:#fff;
     display:flex;flex-direction:column;
-    padding:12px 22px 16px;
+    padding:12px 28px 20px;
   }
   .wr-head{flex:0 0 auto;padding-top:28px;margin-bottom:8px;} /* clears the #N badge */
-  .wr-head h2{font-size:22px;margin:0 0 2px;color:var(--charcoal);}
-  .wr-sub{font-size:12px;color:#666;}
-  .wr-body{flex:1;min-height:0;display:flex;gap:16px;margin-top:12px;}
+  .wr-head h2{font-size:30px;margin:0 0 4px;color:var(--charcoal);line-height:1.15;}
+  .wr-sub{font-size:16px;color:#555;line-height:1.4;}
+  .wr-body{flex:1;min-height:0;display:flex;gap:20px;margin-top:16px;}
   .wr-tri{
     flex:1.25;position:relative;
     background:#fbfaf6;border:1px solid #eee;border-radius:12px;
@@ -1697,27 +1697,27 @@
   }
   .wr-tri-bg{position:absolute;inset:0;width:100%;height:100%;}
   .wr-tri-label{
-    position:absolute;left:0;right:0;bottom:7px;
-    text-align:center;font-size:10.5px;font-weight:700;color:#999;
+    position:absolute;left:0;right:0;bottom:10px;
+    text-align:center;font-size:13px;font-weight:700;color:#777;
     pointer-events:none;
   }
-  .wr-tri .tri-node{width:104px;min-height:56px;padding:8px;}
-  .wr-tri .tri-node img{max-width:88px;}
-  .wr-tri .tri-node.text-only .gibraltar-logotype{font-size:16px;}
+  .wr-tri .tri-node{width:132px;min-height:66px;padding:10px;}
+  .wr-tri .tri-node img{max-width:112px;}
+  .wr-tri .tri-node.text-only .gibraltar-logotype{font-size:20px;}
   .wr-node{z-index:6;}
   .wr-service{
-    flex:1;display:flex;gap:14px;align-items:center;
+    flex:1;display:flex;gap:20px;align-items:center;
     background:#f4f7f4;border:1px solid #e2e8e2;border-radius:12px;
-    padding:14px 16px;
+    padding:20px 24px;
   }
-  .wr-service img{width:84px;height:auto;flex-shrink:0;}
-  .wr-service-title{font-size:15px;font-weight:800;color:var(--green-dark);}
-  .wr-service-items{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+  .wr-service img{width:110px;height:auto;flex-shrink:0;}
+  .wr-service-title{font-size:21px;font-weight:800;color:var(--green-dark);line-height:1.2;}
+  .wr-service-items{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
   .wr-service-items span{
-    font-size:10.5px;font-weight:700;color:var(--green-dark);
-    background:#fff;border:1px solid #d8e4da;border-radius:999px;padding:3px 9px;
+    font-size:13.5px;font-weight:700;color:var(--green-dark);
+    background:#fff;border:1px solid #d8e4da;border-radius:999px;padding:6px 13px;
   }
-  .wr-service-foot{font-size:10.5px;color:#888;margin-top:8px;}
+  .wr-service-foot{font-size:13px;color:#667;margin-top:12px;line-height:1.4;}
 
   /* Our Proven Process — horizontal 5-step timeline with icon medallions.
      No clickable children; containers avoid transform/opacity/filter/clip-path. */
@@ -1773,7 +1773,7 @@
     min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;gap:8px;padding:20px;
   }
-  .qb-status-icon{font-size:40px;margin-bottom:6px;}
+  .qb-status-icon{font-size:40px;margin-bottom:6px;color:var(--green-dark);}
   .qb-status h2{margin:0;font-size:19px;color:var(--charcoal);max-width:440px;}
   .qb-status p{margin:0;font-size:13px;color:#777;max-width:420px;line-height:1.5;}
 
@@ -1865,3 +1865,106 @@
     color:#999;
     text-align:center;
   }
+
+  /* ============================================================
+     FULL-BLEED DECK LAYOUT
+     ------------------------------------------------------------
+     On a real iPad in landscape the deck should fill the screen —
+     no centered card, no letterboxing, tab bar flush to the bottom
+     edge. Everything here is gated on body.deck-full, which app.js
+     sets only for the two deck views (present / training-deck).
+     Home, the product pickers and the Quote Builder keep the
+     centered max-width card they were designed against.
+     Because the gate is appView-based, not product-based, this
+     covers the Eclipse deck as well as Sunesta.
+     ============================================================ */
+  body.deck-full{
+    padding:0;
+    height:100vh;
+    height:100dvh;   /* dvh so iOS toolbars don't cause a scroll gutter */
+    overflow:hidden;
+  }
+  body.deck-full .app{
+    max-width:none;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  /* branding bar is home/picker chrome — in-deck it's just lost pixels */
+  body.deck-full .topbar,
+  body.deck-full .note{display:none;}
+
+  body.deck-full .stage{
+    flex:1 1 auto;
+    min-height:0;        /* let the flex child actually shrink */
+    border-radius:0;
+    box-shadow:none;
+  }
+  /* the fixed 560px heights are what pin the non-full-bleed layout;
+     in full-bleed the slide and rehearsal panel share whatever
+     height is left after the two chrome rows. */
+  body.deck-full .slide-area{
+    height:auto;
+    flex:1 1 auto;
+    min-height:0;
+  }
+  body.deck-full .rehearsal-panel{
+    height:auto;
+    min-height:0;
+  }
+
+  /* tall enough that the 34px exit control has real clearance above and
+     below — at the default 37px row it optically touches the slide edge */
+  body.deck-full .slidebar{flex:0 0 auto;min-height:50px;}
+  body.deck-full .tabbar{
+    flex:0 0 auto;
+    border-radius:0;
+    /* sit flush on the bezel, but clear the iPad home indicator */
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Exit / back control, rehomed out of the deleted top bar.
+     Absolutely positioned so the dots stay optically centred in the
+     row regardless of how wide the button's label is. It lives in
+     the chrome row rather than over the slide deliberately — nothing
+     overlays slide content, so hotspot hit-testing is untouched. */
+  .slidebar{position:relative;}
+  .slidebar-lead{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .slidebar-lead:empty{display:none;}
+
+  /* ===== icon set (js/icons.js) =====
+     1em square so each container's font-size drives the size, and
+     currentColor so an icon always matches the text it sits beside. */
+  .icon{
+    width:1em;height:1em;
+    display:inline-block;
+    vertical-align:-0.14em;
+    flex:0 0 auto;
+    /* clicks land on the button, not the <path> inside it — several
+       overlays close via `e.target === backdrop` identity checks, and
+       hit-testing a control should return the control */
+    pointer-events:none;
+  }
+  /* headings and notes that lead with an icon get optical spacing */
+  .tref-h3 .icon{vertical-align:-0.16em;margin-right:6px;}
+  .coach-note .icon,
+  .pt-label .icon,
+  .doc-open-badge .icon,
+  .qb-error .icon,
+  .qb-warnings .icon{margin-right:6px;}
+  .tref-h3.good .icon{color:var(--green-bright);}
+  .tref-h3.bad  .icon{color:#c0392b;}
+  /* close buttons were sized for a ✕ glyph; the icon needs a touch more room */
+  .exit-btn .icon,
+  .popover-close .icon,
+  .lightbox-close .icon,
+  .spec-close .icon,
+  .doc-viewer-close .icon{width:1.05em;height:1.05em;vertical-align:-0.18em;}

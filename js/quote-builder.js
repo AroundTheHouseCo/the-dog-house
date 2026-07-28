@@ -221,7 +221,7 @@ function qbLoadingHTML(){
 }
 function qbNeedsSyncHTML(){
   return `<div class="qb-status">
-    <div class="qb-status-icon">📡</div>
+    <div class="qb-status-icon">${ICON.signal}</div>
     <h2>Quote Builder needs to sync once before it can work offline</h2>
     <p>Connect to WiFi or cellular data, then try again to pull live pricing from Cockpit. After the first sync it keeps working offline.</p>
     <button class="qb-btn-primary" id="qbRetrySync">Try again</button>
@@ -229,7 +229,7 @@ function qbNeedsSyncHTML(){
 }
 function qbErrorHTML(){
   return `<div class="qb-status">
-    <div class="qb-status-icon">⚠</div>
+    <div class="qb-status-icon">${ICON.warn}</div>
     <h2>Couldn't reach Cockpit</h2>
     <p>${QB.errorMessage || "Pricing data could not be loaded."}</p>
     <button class="qb-btn-primary" id="qbRetrySync">Try again</button>
@@ -249,14 +249,14 @@ function qbRenderPicker(el){
     <div class="center-cards">
       ${awnings.map((p) => `
         <div class="center-card product" data-kind="awning" data-id="${p.id}">
-          <div class="center-card-icon">⛱️</div>
+          <div class="center-card-icon">${PRODUCT_ICON.sunesta}</div>
           <div>
             <div class="center-card-name">${p.product}</div>
             <div class="center-card-sub">Retractable awning</div>
           </div>
         </div>`).join("")}
       <div class="center-card product" data-kind="screens">
-        <div class="center-card-icon">🪟</div>
+        <div class="center-card-icon">${PRODUCT_ICON.eclipse}</div>
         <div>
           <div class="center-card-name">Eclipse EZIP Screens</div>
           <div class="center-card-sub">${screens.length} products · multi-unit quotes</div>
@@ -466,7 +466,7 @@ function qbRenderAwningForm(el){
 // ── Result rendering (single-unit) ────────────────────────────────────
 function qbResultHTML(r){
   if (!r) return "";
-  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">⚠ ${r.error}</div></div>`;
+  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${ICON.warn} ${r.error}</div></div>`;
   const proposal = r.proposal || { lines: [], retail: null };
   return `
   <div class="qb-result">
@@ -476,7 +476,7 @@ function qbResultHTML(r){
         ${proposal.lines.map((l) => `<div class="qb-proposal-line"><span>${l.label}</span><span>${l.value}</span></div>`).join("")}
       </div>
     </div>
-    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) 🔒</button>
+    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${ICON.lock}</button>
     ${qbRepView ? qbBreakdownHTML(r) : ""}
   </div>`;
 }
@@ -505,7 +505,7 @@ function qbBreakdownHTML(r){
       <div class="qb-total-retail"><span>Retail</span><span>${qbMoney(r.retail)}</span></div>
       <div><span>Effective margin</span><span>${r.effectiveMargin != null ? Math.round(r.effectiveMargin * 100) + "%" : "—"}</span></div>
     </div>
-    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>⚠ ${w}</div>`).join("")}</div>` : ""}
+    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${ICON.warn} ${w}</div>`).join("")}</div>` : ""}
   </div>`;
 }
 
@@ -648,12 +648,12 @@ function qbRenderScreenBuilder(el){
 
 function qbResultHTMLMulti(r){
   if (!r) return "";
-  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">⚠ ${r.error}</div></div>`;
+  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${ICON.warn} ${r.error}</div></div>`;
   const blocked = r.blocked;
   return `
   <div class="qb-result">
     ${blocked ? `<div class="qb-restriction-banner">
-        ${r.restrictedUnits.map((u) => `<div>⚠ Unit ${u.unit}: ${(u.notes || []).join(" ")}</div>`).join("")}
+        ${r.restrictedUnits.map((u) => `<div>${ICON.warn} Unit ${u.unit}: ${(u.notes || []).join(" ")}</div>`).join("")}
         <div>Go back into the restricted unit(s) and confirm the size to unlock pricing.</div>
       </div>` : ""}
     <div class="qb-proposal-card">
@@ -664,7 +664,7 @@ function qbResultHTMLMulti(r){
           ${u.lines.map((l) => `<div class="qb-proposal-line"><span>${l.label}</span><span>${l.value}</span></div>`).join("")}
         </div>`).join("")}
     </div>
-    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) 🔒</button>
+    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${ICON.lock}</button>
     ${qbRepView ? qbBreakdownHTMLMulti(r) : ""}
   </div>`;
 }
@@ -691,7 +691,7 @@ function qbBreakdownHTMLMulti(r){
       <div class="qb-total-retail"><span>Retail</span><span>${qbMoney(r.retail)}</span></div>
       <div><span>Effective margin</span><span>${r.effectiveMargin != null ? Math.round(r.effectiveMargin * 100) + "%" : "—"}</span></div>
     </div>
-    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>⚠ ${w}</div>`).join("")}</div>` : ""}
+    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${ICON.warn} ${w}</div>`).join("")}</div>` : ""}
   </div>`;
 }
 
@@ -818,13 +818,13 @@ function qbRenderUnitForm(el){
 
     ${preview.ok && preview.isRestricted ? `
       <div class="qb-restriction-banner">
-        ${preview.restrictedNotes.map((n) => `<div>⚠ ${n}</div>`).join("")}
+        ${preview.restrictedNotes.map((n) => `<div>${ICON.warn} ${n}</div>`).join("")}
         <label class="qb-ack-row">
           <input type="checkbox" id="qbAck" ${unit.acknowledgedRestriction ? "checked" : ""}>
           I called the office and confirmed this size
         </label>
       </div>` : ""}
-    ${(preview.ok === false) ? `<div class="qb-error">⚠ ${preview.error}</div>` : ""}
+    ${(preview.ok === false) ? `<div class="qb-error">${ICON.warn} ${preview.error}</div>` : ""}
 
     <div class="qb-actions">
       <button class="qb-btn-secondary" id="qbUnitCancel">Cancel</button>

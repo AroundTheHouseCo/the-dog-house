@@ -9,10 +9,10 @@ const PRODUCT_DATA = {};
 // Flip ready:true when a product's deck/coach ships (a product is only
 // enterable once its data file has registered into PRODUCT_DATA).
 const PRODUCTS = [
-  {key:"sunesta",      icon:"⛱️", name:"Sunesta® Awnings",   coach:"Sunesta",       tag:"Retractable awnings — the full demo deck", ready:true},
-  {key:"eclipse",      icon:"🪟", name:"Eclipse® Screens",   coach:"Eclipse",       tag:"Motorized screens & track systems", ready:true},
-  {key:"gutterhelmet", icon:"🍂", name:"Gutter Helmet®",     coach:"Gutter Helmet", tag:"Gutter protection · Helmet Heat", ready:false},
-  {key:"pergola",      icon:"🏛️", name:"Louvered Pergolas",  coach:"Pergola",       tag:"Motorized louvered roofs", ready:false}
+  {key:"sunesta",      icon:ICON.awning,  name:"Sunesta® Awnings",   coach:"Sunesta",       tag:"Retractable awnings — the full demo deck", ready:true},
+  {key:"eclipse",      icon:ICON.screen,  name:"Eclipse® Screens",   coach:"Eclipse",       tag:"Motorized screens & track systems", ready:true},
+  {key:"gutterhelmet", icon:ICON.gutter,  name:"Gutter Helmet®",     coach:"Gutter Helmet", tag:"Gutter protection · Helmet Heat", ready:false},
+  {key:"pergola",      icon:ICON.pergola, name:"Louvered Pergolas",  coach:"Pergola",       tag:"Motorized louvered roofs", ready:false}
 ];
 
 // Shared rep training — ATH / Profectus method, true for every product.

@@ -324,7 +324,7 @@ function renderSlide(){
     if(lightboxIndex!==null){
       const lb = document.createElement("div");
       lb.className="lightbox";
-      lb.innerHTML = `<button class="lightbox-close">✕</button><img src="${s.photos[lightboxIndex]}">`;
+      lb.innerHTML = `<button class="lightbox-close">${ICON.close}</button><img src="${s.photos[lightboxIndex]}">`;
       lb.onclick=(e)=>{ e.stopPropagation(); if(e.target===lb){ lightboxIndex=null; renderSlide(); } };
       lb.querySelector(".lightbox-close").onclick=(e)=>{ e.stopPropagation(); lightboxIndex=null; renderSlide(); };
       area.appendChild(lb);
@@ -357,7 +357,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="popover-close">✕</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -428,7 +428,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="popover-close">✕</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
+      pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
       pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
       area.appendChild(pop);
@@ -472,7 +472,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="popover-close">✕</button>
+      pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>
         ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}
         ${r.logo?`<img class="popover-logo" src="${r.logo}">`:""}
         <h3>${r.label}</h3><p>${r.detail}</p></div>`;
@@ -539,7 +539,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">✕</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">${ICON.close}</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -571,7 +571,7 @@ function renderSlide(){
            </div>
          </div>`
       : (s.docViewer
-        ? `<div class="split-photo-box doc-open-box"><img src="${s.image}"><div class="doc-open-badge">📖 ${s.docViewer.tapLabel||'Tap to open'}</div></div>`
+        ? `<div class="split-photo-box doc-open-box"><img src="${s.image}"><div class="doc-open-badge">${ICON.book} ${s.docViewer.tapLabel||'Tap to open'}</div></div>`
         : (s.images
           ? `<div class="split-photo-box dual">${s.images.map(im=>`
              <div class="dual-photo-item">
@@ -598,7 +598,7 @@ function renderSlide(){
       dv.innerHTML = `
         <div class="doc-viewer-head">
           <div class="doc-viewer-title">${docViewer.title}</div>
-          <button class="doc-viewer-close" aria-label="Close">✕</button>
+          <button class="doc-viewer-close" aria-label="Close">${ICON.close}</button>
         </div>
         <div class="doc-viewer-scroll">
           ${docViewer.pages.map((p,i)=>`<img src="${p}" alt="Page ${i+1}"${i<2?'':' loading="lazy"'}>`).join("")}
@@ -659,7 +659,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="popover-close">✕</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -809,7 +809,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">✕</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">${ICON.close}</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -839,7 +839,7 @@ function renderSlide(){
           </div>`).join("")}
       </div>
       <div class="mv2-actions">
-        <button id="btnModelCompare">⇄ Compare all three</button>
+        <button id="btnModelCompare">${ICON.compare} Compare all three</button>
         <button class="secondary" id="btnGallery">Options gallery</button>
         <button class="secondary" id="btnCompare">vs. the competition</button>
       </div>
@@ -865,7 +865,7 @@ function renderSlide(){
             <div class="spec-name" style="color:${mo.c1};">${mo.name}</div>
             <div class="spec-tag">${mo.tag}</div>
           </div>
-          <button class="spec-close" id="specClose">✕</button>
+          <button class="spec-close" id="specClose">${ICON.close}</button>
         </div>
         <div class="spec-body">
           <div class="warranty-tiles">
@@ -900,7 +900,7 @@ function renderSlide(){
             <div class="spec-name">${mc.title || 'Sunesta · Sunstyle · Sunlight'}</div>
             <div class="spec-tag">Tap a category chip to show or hide it</div>
           </div>
-          <button class="spec-close" id="mcClose">✕</button>
+          <button class="spec-close" id="mcClose">${ICON.close}</button>
         </div>
         <div class="mc-toggles">
           ${mc.cats.map(c=>`<button class="mc-chip ${cmpCats[c.key]?'on':''}" data-k="${c.key}">${c.label}</button>`).join("")}
@@ -944,7 +944,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card">
-          <div class="gallery-head">Options <button id="gClose">✕</button></div>
+          <div class="gallery-head">Options <button id="gClose">${ICON.close}</button></div>
           <div class="gallery-body">
             <button class="gallery-nav prev">‹</button>
             ${bodyContent}
@@ -967,7 +967,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card compare-card">
-          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose">✕</button></div>
+          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose">${ICON.close}</button></div>
           <div class="compare-scroll">
             <table class="compare-table3">
               <tr>
@@ -1031,9 +1031,9 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — every call</div>
       <h2>Do & Don't</h2>
-      <div class="tref-section"><h3 class="tref-h3 bad">❌ What NOT to do</h3><ul class="talking-points">${dont.map(t=>`<li>${t}</li>`).join("")}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3 good">✅ What TO do</h3><ul class="talking-points">${dos.map(t=>`<li>${t}</li>`).join("")}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3">🎯 The Four Sales</h3><div class="script-block">${fs.intro}</div><ul class="talking-points">${fs.items.map(t=>`<li>${t}</li>`).join("")}</ul><div class="coach-note">👉 ${fs.footer}</div></div>
+      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dont.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dos.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${fs.intro}</div><ul class="talking-points">${fs.items.map(t=>`<li>${t}</li>`).join("")}</ul><div class="coach-note">${ICON.bulb} ${fs.footer}</div></div>
     `;
   }
   if(view==="faq"){
@@ -1052,7 +1052,7 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — the pricing moment</div>
       <h2>Pricing & Close</h2>
-      <div class="coach-note tref-gap">👉 ${c.note}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${c.note}</div>
       ${c.sections.map(sec=>`<div class="tref-section"><h3 class="tref-h3">${sec.title}</h3><div class="script-block">${sec.body}</div></div>`).join("")}
     `;
   }
@@ -1061,7 +1061,7 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — before slide 1</div>
       <h2>Pre-Demo Recap at the Table</h2>
-      <div class="coach-note tref-gap">👉 ${p.intro}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${p.intro}</div>
       <div class="script-block">${p.body}</div>
     `;
   }
@@ -1070,7 +1070,7 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — the whole visit</div>
       <h2>Our 10-Step Sales Process</h2>
-      <div class="coach-note tref-gap">👉 ${t.intro}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${t.intro}</div>
       <ol class="ten-steps">
         ${t.steps.map(st=>`
           <li class="ten-step">
@@ -1099,9 +1099,9 @@ function renderRehearsal(){
       <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
       <h2>${s.title}</h2>
       ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
-      ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">✎ Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
+      ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
       ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
-      ${s.coach ? `<div class="coach-note">👉 ${s.coach}</div>` : ""}
+      ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
     `;
   } else {
     body = trainingBodyHTML(trainingView);
@@ -1134,17 +1134,17 @@ function renderHome(){
     </div>
     <div class="home-cards">
       <div class="home-card" id="homeGoPresent">
-        <div class="home-card-icon">▶</div>
+        <div class="home-card-icon">${ICON.play}</div>
         <div class="home-card-name">Presentations</div>
         <div class="home-card-sub">Customer-facing product demos</div>
       </div>
       <div class="home-card secondary" id="homeGoCenter">
-        <div class="home-card-icon">🎓</div>
+        <div class="home-card-icon">${ICON.cap}</div>
         <div class="home-card-name">Training Center</div>
         <div class="home-card-sub">Rep-only — coaches, scripts & tools</div>
       </div>
       <div class="home-card secondary" id="homeGoQuote">
-        <div class="home-card-icon">🧮</div>
+        <div class="home-card-icon">${ICON.calculator}</div>
         <div class="home-card-name">Quote Builder</div>
         <div class="home-card-sub">Live pricing from Cockpit — works offline</div>
       </div>
@@ -1196,14 +1196,14 @@ function renderCenter(){
       .reduce((n,c)=>n+(PHOTO_LIBRARY[c]?PHOTO_LIBRARY[c].photos.length:0),0);
     const docsCard = PROD.docsCard || {name:"Docs & Spec Sheets", sub:"Product documents"};
     const cards = [
-      {key:"deck",     icon:"🖥", name:"Training Presentation", sub:"The full deck with word-for-word scripts & coach notes"},
-      {key:"tensteps", icon:"🔟", name:"Our 10-Step Sales Process", sub:"The whole visit, start to finish"},
-      {key:"library",  icon:"📸", name:"Photo Library", sub:photoCount+" real project photos — by model & category"},
-      {key:"docs",     icon:"📄", name:docsCard.name, sub:docsCard.sub},
-      {key:"recap",    icon:"📋", name:"Pre-Demo Recap", sub:"At the table, before slide 1"},
-      {key:"dodont",   icon:"🎯", name:"Do & Don't", sub:"Every call · The Four Sales"},
-      {key:"faq",      icon:"💬", name:"FAQs & Objections", sub:"Verbatim responses, any slide any time"},
-      {key:"close",    icon:"💰", name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"}
+      {key:"deck",     icon:ICON.monitor, name:"Training Presentation", sub:"The full deck with word-for-word scripts & coach notes"},
+      {key:"tensteps", icon:ICON.steps, name:"Our 10-Step Sales Process", sub:"The whole visit, start to finish"},
+      {key:"library",  icon:ICON.camera, name:"Photo Library", sub:photoCount+" real project photos — by model & category"},
+      {key:"docs",     icon:ICON.doc, name:docsCard.name, sub:docsCard.sub},
+      {key:"recap",    icon:ICON.clipboard, name:"Pre-Demo Recap", sub:"At the table, before slide 1"},
+      {key:"dodont",   icon:ICON.target, name:"Do & Don't", sub:"Every call · The Four Sales"},
+      {key:"faq",      icon:ICON.chat, name:"FAQs & Objections", sub:"Verbatim responses, any slide any time"},
+      {key:"close",    icon:ICON.tag, name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"}
     ];
     el.innerHTML = `
       <div class="center-head">
@@ -1278,7 +1278,7 @@ function renderCenter(){
       const lb = document.createElement("div");
       lb.className = "lib-lightbox";
       lb.innerHTML = `
-        <button class="lightbox-close">✕</button>
+        <button class="lightbox-close">${ICON.close}</button>
         <button class="lib-nav prev">‹</button>
         <figure><img src="${ph.f}"><figcaption>${ph.c}</figcaption></figure>
         <button class="lib-nav next">›</button>
@@ -1300,12 +1300,12 @@ function renderCenter(){
         <div class="doc-list">
           ${(PROD.docs || []).map(d=>`
             <a class="doc-row" href="${d.file}" target="_blank" rel="noopener">
-              <span class="doc-icon">${d.kind==="pdf"?"📄":"🎨"}</span>
+              <span class="doc-icon">${d.kind==="pdf"?ICON.doc:ICON.palette}</span>
               <span class="doc-name">${d.name}</span>
               <span class="doc-open">${d.kind==="pdf"?"Open PDF ›":"View ›"}</span>
             </a>`).join("")}
         </div>
-        <div class="coach-note" style="margin-top:16px;">👉 Documents open in a new tab — hand the iPad over for fabric browsing, or AirDrop the PDF to the customer.</div>
+        <div class="coach-note" style="margin-top:16px;">${ICON.bulb} Documents open in a new tab — hand the iPad over for fabric browsing, or AirDrop the PDF to the customer.</div>
       </div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
@@ -1324,21 +1324,27 @@ function renderCenter(){
 
 function renderTopbarNav(){
   const nav = document.getElementById("topbarNav");
+  const deckNav = document.getElementById("slidebarLead");
+  let html = "";
   if(appView==="present"){
     // deliberately unlabeled — customers just see a quiet close control
-    nav.innerHTML = `<button class="exit-btn" id="exitBtn" aria-label="Exit">✕</button>`;
+    html = `<button class="exit-btn" id="exitBtn" aria-label="Exit">${ICON.close}</button>`;
   } else if(appView==="training-deck"){
-    nav.innerHTML = `<button class="back-btn" id="backCenterBtn">‹ ${productInfo().coach} Coach</button>`;
+    html = `<button class="back-btn" id="backCenterBtn">‹ ${productInfo().coach} Coach</button>`;
   } else if(appView==="center"){
-    nav.innerHTML = `<button class="back-btn" id="backCoachesBtn">‹ Training Center</button>`;
+    html = `<button class="back-btn" id="backCoachesBtn">‹ Training Center</button>`;
   } else if(appView==="presentations" || appView==="coaches"){
-    nav.innerHTML = `<button class="back-btn" id="homeBtn">‹ Home</button>`;
+    html = `<button class="back-btn" id="homeBtn">‹ Home</button>`;
   } else if(appView==="quote"){
     const label = qbView==="picker" ? "Home" : "Quote Builder";
-    nav.innerHTML = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
-  } else {
-    nav.innerHTML = "";
+    html = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
   }
+  // Deck views hide the top bar (full-bleed), so their exit/back control
+  // renders into the slide-counter row instead. Exactly one container is
+  // populated at a time, so the button ids stay unique either way.
+  const inDeck = appView==="present" || appView==="training-deck";
+  nav.innerHTML     = inDeck ? "" : html;
+  deckNav.innerHTML = inDeck ? html : "";
   const ex = document.getElementById("exitBtn");   if(ex) ex.onclick = goHome;
   const hm = document.getElementById("homeBtn");   if(hm) hm.onclick = goHome;
   const bc = document.getElementById("backCenterBtn"); if(bc) bc.onclick = ()=>{ appView="center"; centerView=null; renderApp(); };
@@ -1353,6 +1359,10 @@ function goHome(){ appView = "home"; centerView = null; libPhoto = null; if(type
 
 function renderApp(){
   const showDeck = appView==="present" || appView==="training-deck";
+  // Full-bleed edge-to-edge layout, deck views only (see css "FULL-BLEED
+  // DECK LAYOUT"). Gated on appView, so both product decks get it and the
+  // home/picker/Quote Builder card layouts are left alone.
+  document.body.classList.toggle("deck-full", showDeck);
   const showPanel = appView==="center" || appView==="presentations" || appView==="coaches";
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";
