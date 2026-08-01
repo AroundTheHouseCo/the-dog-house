@@ -145,6 +145,18 @@ function tcReactiveHTML(entry){
       ${r.note ? `<div class="tc-qa-note">${tcResolve(r.note)}</div>` : ""}</details>`).join("")}</div>`;
 }
 
+// The highest-value field in the system (spec, Variables §4): when the rep
+// has filled ACCOMPLISH_LIST, surface it as a standing callout on every
+// node whose text actually carries the token — visible in BOTH layers, so
+// the tie-back can't be skipped by staying in beats view. Detection scans
+// the entry itself, so it can never disagree with the script below it.
+function tcAccomplishHTML(entry){
+  const v = tcValues().ACCOMPLISH_LIST;
+  if (!v) return "";
+  if (!JSON.stringify(entry).includes("{{ACCOMPLISH_LIST}}")) return "";
+  return `<div class="tc-accomplish"><span class="tc-accomplish-k">Their Accomplish List</span>${tcEsc(v)}</div>`;
+}
+
 // ------------------------------------------------------------ assembly ----
 // The two-layer display. Beats by default; one tap swaps in the verbatim
 // script. This is the single most important behaviour in the app — a new rep
@@ -153,6 +165,9 @@ function tcEntryHTML(entry, opts){
   opts = opts || {};
   const id = entry.slide_id || entry.module_id;
   const expanded = tcIsExpanded(id);
+  // No display_beats (the module, and any future beats-less entry) => there
+  // is no beats layer to default to — show the script itself, no toggle.
+  const hasBeats = !!(entry.display_beats && entry.display_beats.length);
   const num = entry.display_number || (entry.slide_number ? `${entry.slide_number}` : "");
 
   return `
@@ -169,12 +184,13 @@ function tcEntryHTML(entry, opts){
       ${entry.subtitle ? `<div class="tc-subtitle">${tcResolve(entry.subtitle)}</div>` : ""}
     </div>
     ${tcToneHTML(entry)}
+    ${tcAccomplishHTML(entry)}
     ${tcPurposeHTML(entry)}
     <div class="tc-layer">
-      <button class="tc-toggle" data-tc-toggle="${tcEsc(id)}" aria-expanded="${expanded}">
+      ${hasBeats ? `<button class="tc-toggle" data-tc-toggle="${tcEsc(id)}" aria-expanded="${expanded}">
         ${expanded ? "Show beats" : "Show full script"}
-      </button>
-      ${expanded ? tcScriptHTML(entry) : tcBeatsHTML(entry)}
+      </button>` : ""}
+      ${(expanded || !hasBeats) ? tcScriptHTML(entry) : tcBeatsHTML(entry)}
     </div>
     ${tcSlowDownHTML(entry)}
     ${tcEngagementHTML(entry)}

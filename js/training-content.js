@@ -23,6 +23,12 @@
 // undefined = still loading · null = not shipped/failed · object = loaded
 let TRAINING_CONTENT;
 
+// Which product's deck this content file covers. The mapping audit and the
+// rehearsal panel's "missing content" state apply ONLY to this product —
+// every other product (Eclipse today) legitimately has no JSON content and
+// keeps the legacy data-<product>.js training fields.
+const TC_PRODUCT = "sunesta";
+
 // deck slide id (js/data-sunesta.js)  ->  JSON slide_id
 // Verified 1:1 by title against all 22 in-deck slides.
 const DECK_TO_CONTENT = {
@@ -44,7 +50,7 @@ function loadTrainingContent(){
     .then((r) => (r.ok ? r.json() : null))
     .then((d) => {
       TRAINING_CONTENT = (d && Array.isArray(d.slides) && d.slides.length) ? d : null;
-      if (TRAINING_CONTENT) indexContent();
+      if (TRAINING_CONTENT) { indexContent(); tcAuditMapping(); }
       if (typeof onTrainingContentReady === "function") onTrainingContentReady();
     })
     .catch(() => {
@@ -63,6 +69,34 @@ function indexContent(){
 }
 
 function tcReady(){ return !!(TRAINING_CONTENT && TRAINING_CONTENT.slides); }
+
+// DECK_TO_CONTENT is a manual artifact, which means it can rot: a slide
+// added to the deck without a map entry would silently fall back to stale
+// pre-overhaul content — the worst failure mode for a training tool. This
+// audit runs once at load and screams to the console about (a) covered-deck
+// slides with no map entry, (b) map entries pointing at slide_ids that
+// don't exist in the content file, and (c) stale map keys for deck slides
+// that no longer exist. The admin Flags view surfaces the same list.
+function tcAuditMapping(opts){
+  const problems = [];
+  const prod = (typeof PRODUCT_DATA === "object") && PRODUCT_DATA[TC_PRODUCT];
+  if (prod && prod.deck) {
+    const deckIds = [];
+    for (const tab of Object.keys(prod.deck)) for (const sl of prod.deck[tab]) {
+      deckIds.push(sl.id);
+      if (!(sl.id in DECK_TO_CONTENT))
+        problems.push(`deck slide "${sl.id}" (${tab}) has no DECK_TO_CONTENT entry — reps see a visible gap, not stale content`);
+      else if (!_byId[DECK_TO_CONTENT[sl.id]])
+        problems.push(`deck slide "${sl.id}" maps to "${DECK_TO_CONTENT[sl.id]}", which does not exist in the content file`);
+    }
+    for (const k of Object.keys(DECK_TO_CONTENT))
+      if (!deckIds.includes(k))
+        problems.push(`DECK_TO_CONTENT has an entry for "${k}", which is no longer in the deck (stale after a slide removal?)`);
+  }
+  if (problems.length && !(opts && opts.silent))
+    console.error("TRAINING CONTENT MAPPING PROBLEMS (js/training-content.js):\n  - " + problems.join("\n  - "));
+  return problems;
+}
 function tcEntry(id){ return _byId[id] || null; }
 function tcModule(){ return (TRAINING_CONTENT && TRAINING_CONTENT.modules && TRAINING_CONTENT.modules[0]) || null; }
 function tcForDeckSlide(deckId){ return tcReady() ? (_byId[DECK_TO_CONTENT[deckId]] || null) : null; }
