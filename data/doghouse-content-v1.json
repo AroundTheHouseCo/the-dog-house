@@ -1,0 +1,2636 @@
+{
+  "meta": {
+    "content_version": "1.1.0",
+    "generated": "2026-07-31",
+    "company": "Around The House Home Solutions",
+    "product_line": "Sunesta Retractable Awnings",
+    "presentation_name": "Sunesta In-Home Presentation",
+    "source": "ATH Sunesta script refinement session, July 2026",
+    "primary_rep_reference": "Matt Allison",
+    "estimated_runtime": "32:50 - 40:00 across slides with timing set, plus 3:00-4:00 for the pricing transition module",
+    "notes_for_engineers": "This file is the single source of truth for Doghouse training mode. Do not paraphrase, summarize, rewrite, or 'improve' any value in this file. Render it. All content changes happen in this file, not in code.",
+    "revised": "2026-07-31",
+    "authority_rule": "The live deck (data-sunesta.js) owns slide ORDER and SECTION membership. This file owns CONTENT. Join by slide_id. sections[] below is advisory only - do not use it for routing."
+  },
+  "variables": [
+    {
+      "key": "REP_NAME",
+      "label": "Rep name",
+      "type": "text",
+      "source": "rep_profile"
+    },
+    {
+      "key": "REP_PERSONAL_STORY",
+      "label": "Rep personal story (why you work here)",
+      "type": "longtext",
+      "source": "rep_profile",
+      "guidance": "Where you came from, why you chose ATH, what you think of the people you work with. Under 60 seconds. Must be true."
+    },
+    {
+      "key": "ACCOMPLISH_LIST",
+      "label": "Accomplish List items",
+      "type": "list",
+      "source": "discovery",
+      "required": true,
+      "guidance": "3-6 outcome-based items confirmed with the homeowner before any product presentation. Phrase as benefits, never product names."
+    },
+    {
+      "key": "THEIR_AREA",
+      "label": "Customer's neighborhood or area",
+      "type": "text",
+      "source": "discovery"
+    },
+    {
+      "key": "AREA_RELEVANCE",
+      "label": "Why that area is relevant (wind, exposure, etc.)",
+      "type": "text",
+      "source": "discovery"
+    },
+    {
+      "key": "THEIR_WIND_COMMENT",
+      "label": "What they said about wind",
+      "type": "text",
+      "source": "discovery"
+    },
+    {
+      "key": "YEARS_IN_HOME",
+      "label": "Years in the home",
+      "type": "text",
+      "source": "discovery"
+    },
+    {
+      "key": "WIDTH_FT",
+      "label": "Measured width",
+      "type": "text",
+      "source": "measure"
+    },
+    {
+      "key": "PROJECTION_FT",
+      "label": "Measured projection",
+      "type": "text",
+      "source": "measure"
+    },
+    {
+      "key": "LEAD_TIME_WEEKS",
+      "label": "Current install lead time (weeks)",
+      "type": "range",
+      "source": "company_settings",
+      "required": true,
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRICE_ONLINE_HANDYMAN",
+      "label": "Price conditioning: online + handyman route",
+      "type": "currency",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRICE_SUSPICION_THRESHOLD",
+      "label": "Price conditioning: quote low enough to be a red flag",
+      "type": "currency",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRICE_PERGOLA_FLOOR",
+      "label": "Price conditioning: pergola / louvered starting point",
+      "type": "currency",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRICE_QUALITY_RANGE_LOW",
+      "label": "Price conditioning: quality awning range low",
+      "type": "currency",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRICE_QUALITY_RANGE_HIGH",
+      "label": "Price conditioning: quality awning range high",
+      "type": "currency",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    },
+    {
+      "key": "PRODUCT_NAME",
+      "label": "Product being installed",
+      "type": "text",
+      "source": "proposal"
+    },
+    {
+      "key": "WARRANTY_TERM",
+      "label": "Warranty term",
+      "type": "text",
+      "source": "proposal"
+    },
+    {
+      "key": "CURRENT_PROMO",
+      "label": "Current promotion",
+      "type": "text",
+      "source": "company_settings",
+      "status": "NOT_SET"
+    }
+  ],
+  "slides": [
+    {
+      "slide_id": "prep_recap",
+      "slide_number": 0,
+      "display_number": "0A",
+      "section": "prep",
+      "title": "Table Recap on iPad",
+      "status": "final",
+      "in_deck": false,
+      "purpose": [
+        "Confirm understanding of the awning before any slide appears",
+        "Get a yes on the design before presenting the company"
+      ],
+      "duration": {
+        "min_sec": 240,
+        "max_sec": 300,
+        "display": "4:00 – 5:00"
+      },
+      "tone_mood": "Collaborative and technical. The rep is confirming, not selling. iPad on the table, annotated photos if needed.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Before I show you the product — how long have you guys been in the home?” (Or: “You guys said you've been in the home {{YEARS_IN_HOME}} years, is that correct?”)",
+            "“And this space here… is this where you spend most of your time, or where you'd like to spend most of your time outside?”",
+            "“Is this something you've all been thinking about for a while?”"
+          ],
+          "stage_directions": [
+            "Tie back to Accomplish List (subtle reminder)"
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "Confirm the design",
+          "script": [
+            "“Perfect — so really making this usable, cooler, and protected is the goal.”",
+            "“To recap what we looked at outside, I measured {{WIDTH_FT}} ft in width to cover the desired space, with a {{PROJECTION_FT}} projection away from the home. When factoring in some pitch, that will place the end of your new awning near the end of the deck. During the installation our technicians will work with you to determine the pitch versus head clearance.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Power and cable management",
+          "script": [
+            "“For cable management, these awnings require 110v power, so we'll plan to plug it into this outlet here. The cords are outdoor rated and typically stay plugged in year round. The cords come in a couple of color options, but we can also paint them to match your siding or stucco if you have paint available for us. We'll typically run the wiring as discreetly as possible down your window or door trim to conceal it as much as possible.”",
+            "“Do you have a preference on painting the cord versus the cord color options?”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "Sun orientation",
+          "script": [
+            "“Based on your orientation versus the sun, this will provide great coverage during your toughest hours and make this space much more usable and cooler throughout the year.”"
+          ],
+          "stage_directions": [
+            "Reference Lumos photos if available"
+          ]
+        },
+        {
+          "block_id": "b5",
+          "label": "Drop screen (if relevant)",
+          "conditional": true,
+          "script": [
+            "If a drop screen could be considered an essential feature, explain why and build value here. Explain it can be added later, and that you'll price both models. Not available on Sunlight."
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b6",
+          "label": "Get the yes",
+          "script": [
+            "“Based on what I went over, do you feel this is the right option for you and your home?”"
+          ],
+          "stage_directions": [
+            "GET A YES.",
+            "If no, maybe, or anything short of a yes — ask additional questions to uncover possible objections and handle them throughout the presentation."
+          ]
+        }
+      ],
+      "transition_out": "“Okay great, I'm going to pop outside real quick and grab a product sample. While I'm out there, I'll take a few minutes to start preparing your estimate. Should I let myself back in, or do you want me to knock?”",
+      "slow_down_on": null,
+      "coaching_note": "Head outside, update the sales form, contact info, and prepare most or all of the estimates. Do NOT transcribe onto the paper copy yet — that happens inside the house.",
+      "engagement_question": null,
+      "variables_used": [
+        "PROJECTION_FT",
+        "WIDTH_FT",
+        "YEARS_IN_HOME"
+      ],
+      "verification": [],
+      "flags": [],
+      "display_beats": [
+        "How long in the home",
+        "Is this where you spend time outside",
+        "Recap measurements + pitch",
+        "110v power + cord routing",
+        "Sun orientation + coverage hours",
+        "Drop screen if relevant",
+        "GET THE YES",
+        "Step outside for sample + estimate"
+      ]
+    },
+    {
+      "slide_id": "preframe",
+      "slide_number": 0,
+      "display_number": "0B",
+      "section": "prep",
+      "title": "Pre-Frame",
+      "status": "final",
+      "in_deck": false,
+      "purpose": [
+        "Set expectations and control before a single slide is on screen",
+        "Positions the rep as the guide, not a presenter"
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 – 60 seconds"
+      },
+      "tone_mood": "Friendly and confident. Relaxed body language. Sitting, not standing.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Awesome — well, thanks again for having us out. Not everyone offers us water and is as easy to work with as you two, so I appreciate that.”"
+          ],
+          "stage_directions": [],
+          "alternates": [
+            {
+              "condition": "If nothing was offered",
+              "script": [
+                "“Awesome — well, thanks again for having us out. I appreciate you both making the time for this.”"
+              ]
+            }
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": null,
+          "script": [
+            "“So here's what we'll do. I'm going to take about twenty minutes and walk you through how these systems work, what makes ours different, and how we'd design this specifically for your space back here. Then we'll look at a couple of options together and figure out what actually makes the most sense for your home.”",
+            "“And everything I show you is going to come back to what you told me outside — {{ACCOMPLISH_LIST}}.”",
+            "“If anything comes up along the way, just stop me. This works a lot better as a conversation.”"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "“Sound good?” (Get the yes.) “Perfect — let's get into it.”",
+      "slow_down_on": null,
+      "coaching_note": "Do not skip the yes. It's small, but it's the first of the commitments, and a presentation that starts with a yes closes at a measurably different rate than one that starts with a slide.",
+      "engagement_question": null,
+      "variables_used": [
+        "ACCOMPLISH_LIST"
+      ],
+      "verification": [],
+      "flags": [],
+      "display_beats": [
+        "Thank them",
+        "About twenty minutes",
+        "How it works / what's different / designed for your space",
+        "Tie to their Accomplish List",
+        "Stop me anytime — this is a conversation",
+        "GET THE YES"
+      ]
+    },
+    {
+      "slide_id": "s01",
+      "slide_number": 1,
+      "section": "why_ath",
+      "title": "Intro Video / Warm-Up",
+      "status": "placeholder",
+      "in_deck": true,
+      "purpose": [],
+      "duration": {
+        "min_sec": null,
+        "max_sec": null,
+        "display": "TBD"
+      },
+      "tone_mood": null,
+      "blocks": [],
+      "transition_out": null,
+      "slow_down_on": null,
+      "coaching_note": null,
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "No script exists. Slide follows immediately after the pre-frame, creating dead air at the worst possible moment.",
+          "recommendation": "Needs a purpose and a 20-30 second talk track for what the rep says over or around the video."
+        }
+      ],
+      "display_beats": []
+    },
+    {
+      "slide_id": "s02",
+      "slide_number": 2,
+      "section": "why_ath",
+      "title": "Your Exclusive Sunesta Dealer",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Trust and local positioning",
+        "First credibility slide — establishes who ATH is before any product talk"
+      ],
+      "duration": {
+        "min_sec": 105,
+        "max_sec": 120,
+        "display": "1:45 – 2:00"
+      },
+      "tone_mood": "Warm, grounded, unhurried. Conversational, not rehearsed. This is the slide where the rep sounds like a neighbor, not a presenter. No selling energy yet.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“A quick background on us —",
+            "We are Around the House Home Solutions. We're a local, family-owned company based right up in Monument. We've been in business since 2004, so a little over 20 years. In that time, we've completed thousands of projects throughout southern Colorado so this isn't something we just picked up last year.” Our focus is on the exterior of the house providing high quality shade solutions so homeowners can enjoy their outdoor living space and living in Colorado to the fullest.",
+            "“Something our clients really appreciate — we're not some big corporation out of Denver… you call us, you get us. As a company, we care deeply about our customers, employees, and the local communities we serve as well."
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "INSERT PERSONAL TOUCH (WHY YOU WORK HERE)",
+          "script": [
+            "{{REP_PERSONAL_STORY}}"
+          ],
+          "stage_directions": [],
+          "sample": "FOR MATT: “Myself, I've been in the home remodeling industry since I graduated from College in 2014. I've worked with organizations ranging from large, national remodeling companies to small, owner-operated contractors, helping design and deliver projects from full home additions, interior remodels and outdoor improvements like decks and concrete patios. Over the years, I realized I have to be happy and love where I work so when I met Jack and his brother Maxx, I couldn't pass up the opportunity to work with good people that have integrity and communicate well, so I'm really happy to have found my home here at Around the House.”"
+        }
+      ],
+      "transition_out": "Outside of awnings, we specialize in a few other products.",
+      "slow_down_on": {
+        "line": "you call us, you get us",
+        "why": "Let it land. It's the whole slide in five words."
+      },
+      "coaching_note": "The personal touch is not filler and it is not optional. Homeowners buy the rep before they buy the company. A new rep who skips this because it feels self-indulgent will feel the difference at the close. Write your own version — same shape as the sample: where you came from, why you chose here, what you think of the people you work with. Keep it under 60 seconds and make it true.",
+      "engagement_question": null,
+      "variables_used": [
+        "REP_PERSONAL_STORY"
+      ],
+      "verification": [
+        {
+          "claim": "\"Exclusive\" Sunesta dealer",
+          "status": "unverified",
+          "note": "Exclusive in what territory? Verify with Sunesta before print."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "Slide title says 'Your Exclusive Sunesta Dealer' but the script never says Sunesta or exclusive. Homeowner reads a claim the rep doesn't support.",
+          "recommendation": "Retitle to 'Who We Are' / 'Local, Family-Owned Since 2004', or add a line that earns the title."
+        },
+        {
+          "severity": "medium",
+          "issue": "'A little over 20 years' conflicts with Slide 3's 'all 22 years'.",
+          "recommendation": "Standardize. 2004 to 2026 is 22."
+        }
+      ],
+      "display_beats": [
+        "Local, family-owned, Monument",
+        "Since 2004 — thousands of projects",
+        "Exterior focus, shade solutions",
+        "Not a Denver corporation — you call us, you get us",
+        "YOUR personal story"
+      ]
+    },
+    {
+      "slide_id": "s03",
+      "slide_number": 3,
+      "section": "why_ath",
+      "title": "Our Products",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Anchor service and accountability",
+        "Establishes ATH as a full exterior company, not a one-product awning outfit"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30 (brisk — this is a flyover, not a second presentation)"
+      },
+      "tone_mood": "Confident, matter-of-fact, moving. This is the one slide where the rep is allowed to sound like he's covering ground. Breadth is the point — depth belongs to the awning.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“We have been the authorized dealer for Gutter Helmet and heat cable systems for all 22 years we've been in business with over 4000 Gutter Helmet customers in Southern Colorado. Gutter Helmet is a patented leaf and debris gutter and roof protection system designed to where you never need to clean your gutters again, reducing maintenance, keeping people off ladders, and helping prolong the life of the exterior of your home.",
+            "“High quality Motorized Screen & Track Systems which have become a very popular product to invest in due to both the high UV/heat and wind resistance provided by the product helping make outdoor spaces more usable and enjoyable.",
+            "Motorized Louvered Roof Systems, Detached and Freestanding, which are commercial grade, 135 mph products built to handle the wind and harsh weather we deal with here in CO. Often these are combined with our motorized screen products to help combat the wind and sun to create a 3-season outdoor living type experience.",
+            "All these products are made in the USA and typically come with lifetime warranties. I'm happy to measure any of these products for you and answer any questions."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "Outside of family, your home is typically your largest investment so we only install quality products to the highest standards with great warranties to back them up.",
+      "slow_down_on": {
+        "line": "over 4000 Gutter Helmet customers",
+        "why": "That number is the proof point on this slide — say it, then pause a beat before moving to screens."
+      },
+      "coaching_note": "The offer to measure other products is a seed, not an invitation. If the homeowner bites — “actually, how much would screens be?” — acknowledge it and park it: “Great question, let's absolutely look at that. Let me finish walking you through the awning first and we'll come back to it at the end.” Chasing a second product mid-presentation kills the flow, doubles the length, and usually costs you both sales. Plant it here, harvest it after the close.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "135 mph louvered roof rating",
+          "status": "unverified",
+          "note": "Eclipse Super Duty screens confirmed to 130 MPH pending rep confirmation. Verify Latitude louvered roof engineering number."
+        },
+        {
+          "claim": "Lifetime warranties across all three product lines",
+          "status": "unverified",
+          "note": "Eclipse and Sunesta terms are not interchangeable. Do not conflate."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "'All these products are made in the USA' directly contradicts Slide 7, which says everything except the motor, which comes from Spain.",
+          "recommendation": "Fix here, not on Slide 7 — the Slide 7 detail is the more credible version."
+        },
+        {
+          "severity": "medium",
+          "issue": "'All 22 years' conflicts with Slide 2's 'a little over 20 years'.",
+          "recommendation": "Standardize to 'since 2004 — 22 years' everywhere."
+        }
+      ],
+      "display_beats": [
+        "Gutter Helmet — 22 years, 4,000+ customers",
+        "Motorized screen & track systems",
+        "Motorized louvered roof systems",
+        "Made in USA, lifetime warranties",
+        "Happy to measure anything"
+      ]
+    },
+    {
+      "slide_id": "s04",
+      "slide_number": 4,
+      "section": "why_ath",
+      "title": "Building Trust & Craftsmanship",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Differentiate install quality (huge close factor)",
+        "The slide that justifies price before price is ever mentioned"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 135,
+        "display": "2:00 – 2:15"
+      },
+      "tone_mood": "Calm authority. Not defensive, not bitter about competitors — matter-of-fact. The rep is describing how a professional does it, and letting the contrast speak. Slight smile on the 'chuck in a truck' line so it lands as observation, not attack.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Of course, what's really important is picking a great product but if it's not installed correctly and to manufacturers standards you won't have a real warranty. So when we mount your awning, we're not guessing… we're making sure it's structurally correct for wind, load, and long-term performance.”",
+            "“A lot of companies… it's kind of a ‘chuck in a truck’ or hire someone off Craigslist situation — often times they only install a few of these products a year so they just slap it up and hope for the best. There's no real consistency from one install to the next which can lead to homeowners having to pay for the project multiple times.”",
+            "“Most Awning and Shade products in Colorado don't require any regulations or permitting – keeping the barrier of entry very low for inexperienced companies. Since we cover small- and large-scale projects like pergola structures, we hold our PPRBD license in good standing and follow our building code regardless of the size of project.”",
+            "Our installers are trained directly by us to meet our manufacturer's specifications and standards to ensure the installation quality matches the product quality.",
+            "We're also a licensed and insured contractor, so we hold a license for project that require a permit and if something were to happen on the job, your protected and we're protected as well.",
+            "We always perform a final inspection with our clients and take pride in getting it right the first time so we are a company that stands. If anything comes up and you have any issues with your new awning just call our 719 number and we'll schedule a time to come out and take a look and get."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "This is what we do day in and day out and our success earned us some pretty cool awards. (Slight smile — let that land.)",
+      "slow_down_on": {
+        "line": "you won't have a real warranty",
+        "why": "That's the fear this whole slide resolves. Say it, pause, then deliver the fix."
+      },
+      "coaching_note": "This is the highest-leverage trust slide in the deck and the easiest one to rush, because it's all company talk and no product. Don't. Every dollar of price difference between us and a cheaper bid gets defended here — if the rep skips it, the price objection arrives later with nothing to push back against. Deliver the 'chuck in a truck' line lightly. The moment it sounds like the rep is running down competitors, the homeowner starts defending them.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "Says 'our installers are trained directly by us.' The subcontractor script says 'we work with subcontractor partners.' If the homeowner asks the subcontractor question after this slide, the rep has to walk back what he just said.",
+          "recommendation": "Add one line that makes both true: installers and longstanding subcontractor partners, all trained directly by us, all working only for us."
+        },
+        {
+          "severity": "high",
+          "issue": "Two truncated sentences: '...so we are a company that stands.' and '...come out and take a look and get.' Both are incomplete as written.",
+          "recommendation": "Finish both before this reaches a new rep. Reading them cold means trailing off mid-sentence in front of a customer."
+        },
+        {
+          "severity": "medium",
+          "issue": "PPRBD is an unexplained acronym.",
+          "recommendation": "Spell it out once: 'our PPRBD license — that's the Pikes Peak Regional Building Department.'"
+        },
+        {
+          "severity": "low",
+          "issue": "'just call our 719 number' is vague.",
+          "recommendation": "Use the actual number: 719-495-2673."
+        }
+      ],
+      "display_beats": [
+        "No real warranty without correct install",
+        "Chuck-in-a-truck problem",
+        "Low barrier to entry in Colorado",
+        "We hold PPRBD anyway",
+        "Our installers, our training",
+        "Licensed & insured",
+        "Final inspection — one call to fix"
+      ]
+    },
+    {
+      "slide_id": "s05",
+      "slide_number": 5,
+      "section": "why_ath",
+      "title": "Sunesta Dealer of the Year / Our People",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Convert the award into proof, then hand the credibility to the people who do the work",
+        "Answers the question every homeowner has but rarely asks: who is actually showing up at my house?"
+      ],
+      "duration": {
+        "min_sec": 90,
+        "max_sec": 105,
+        "display": "1:30 – 1:45"
+      },
+      "tone_mood": "Proud but understated. The rep should sound like he's reporting a fact, not accepting a trophy. Humility sells the award better than enthusiasm does — let the homeowner be impressed on their own.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "The award",
+          "script": [
+            "“So in 2025, Sunesta named us their Dealer of the Year.",
+            "What I'll say about that is the award isn't really about sales volume. They look at install quality, warranty claims, customer satisfaction scores — the stuff that shows whether a dealer is actually taking care of people after the check clears. Out of every Sunesta dealer in the country, that came to us.”"
+          ],
+          "stage_directions": [
+            "Pause. Let them react. Don't fill the silence."
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "The people",
+          "script": [
+            "“But honestly — an award is a company thing. What matters to you is who shows up at your house.",
+            "You can build a great company and a great process, but if you don't have the right people on a project, it's not going to go well. So when people are vetting a contractor, it really comes down to three questions.",
+            "How long have they been doing this? We've been at it over twenty years and installed thousands of projects. That takes a lot of people management to get right.",
+            "Who's actually performing the work? We have our certified technicians, a fully staffed operations department, and longstanding subcontractor partners who work with us and only us.",
+            "Are they qualified? Our teams are trained to manufacturer specification and to our own standards on top of that — and ours are higher. We do that because we want your project to look great on day one and still look great in fifteen years.",
+            "And behind all of it you've got a full operations team supporting every single project — so you're not just relying on me remembering to follow up.”"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "And that's a big part of why we've picked up some of the recognition we have.",
+      "slow_down_on": {
+        "line": "who shows up at your house",
+        "why": "That's the pivot from bragging to serving, and it's the line that makes the award land instead of clang."
+      },
+      "coaching_note": "New reps oversell awards and undersell people. The award buys about fifteen seconds of attention — spend it, then move to the three questions, because that's what a homeowner is actually worried about. The three questions also do quiet competitive work: a cheaper bidder usually can't answer any of them well, and now the homeowner has a framework to evaluate that bid with.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Award criteria (install quality, warranty claims, satisfaction scores)",
+          "status": "unverified",
+          "note": "Inferred, not sourced. Confirm with Sunesta rep. If criteria are volume-based, rewrite honestly."
+        },
+        {
+          "claim": "Award scope — national vs regional",
+          "status": "unverified",
+          "note": "Script says national. Conflicts with Slide 7's 'Western US'. Resolve."
+        },
+        {
+          "claim": "'Certified technicians'",
+          "status": "unverified",
+          "note": "Certified by whom? If internal, use 'our trained technicians'."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Original '#1 National Dealer in the western U.S.' was not a coherent claim — national award or regional ranking, not both.",
+          "recommendation": "Replaced with 'out of every Sunesta dealer in the country'. Survives scrutiny."
+        },
+        {
+          "severity": "low",
+          "issue": "If the award content is only 15 seconds and people content carries the slide, the title may be backwards.",
+          "recommendation": "Consider retitling to 'Our People' with the award as a corner badge."
+        }
+      ],
+      "display_beats": [
+        "2025 Sunesta Dealer of the Year",
+        "Award is about quality, not volume",
+        "PAUSE — let them react",
+        "An award is a company thing — who shows up matters",
+        "Q1: How long have they been doing this?",
+        "Q2: Who performs the work?",
+        "Q3: Are they qualified?",
+        "Full ops team behind every project"
+      ]
+    },
+    {
+      "slide_id": "s06",
+      "slide_number": 6,
+      "section": "why_ath",
+      "title": "Local Project Photos",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Localization equals credibility",
+        "Closes the 'have you done work around here?' question before the homeowner has to ask it"
+      ],
+      "duration": {
+        "min_sec": 60,
+        "max_sec": 75,
+        "display": "1:00 – 1:15"
+      },
+      "tone_mood": "Relaxed and specific. This is show-and-tell, not a pitch. The rep is pointing at neighbors' houses. Slow the pace down here — photos are the one place a homeowner is genuinely looking at the screen instead of at the rep.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Here's a couple of photos of local projects we've installed. This is one we installed in {{THEIR_AREA}} — {{AREA_RELEVANCE}}.”",
+            "“This homeowner had the same issue — {{ACCOMPLISH_LIST}}.”",
+            "“Very similar to the problems you all are dealing with.”"
+          ],
+          "stage_directions": [
+            "Tie to their problem"
+          ],
+          "sample": "Worked example: “This is one we installed in Falcon — probably one of the windiest areas around here. This homeowner had the same issue — direct west sun, heat, and wind.”"
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": {
+        "line": "the tie-back",
+        "why": "Don't say it while advancing the slide — say it, stop, and let them look at the photo while the comparison sinks in."
+      },
+      "coaching_note": "The whole value of this slide is that it's THEIR neighborhood and THEIR problem on someone else's house. A generic 'here are some installs we've done' wastes it. Before the appointment, pick the two photos closest to this customer — same exposure, same deck style, same part of town — so the comparison is real and not a stretch. If the rep can name the general area and the homeowner recognizes it, that's worth more than any badge in the deck.",
+      "engagement_question": {
+        "text": "“Do you know anybody around here who's had one put in?”",
+        "when": "Optional — good spot for one, the room has been quiet since Slide 4",
+        "branches": [
+          "If yes: ask what they thought.",
+          "If no: opens the door to the reference map at Slide 10."
+        ]
+      },
+      "variables_used": [
+        "ACCOMPLISH_LIST",
+        "AREA_RELEVANCE",
+        "THEIR_AREA"
+      ],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Original script was hardcoded to Falcon / west sun / wind. Now variable-driven.",
+          "recommendation": "Rep must fill variables before the appointment. Falcon retained as the worked example only."
+        },
+        {
+          "severity": "medium",
+          "issue": "Only real ATH install photos. No Sunesta stock photography — it defeats the purpose of the slide and homeowners can tell.",
+          "recommendation": "Build a tagged photo library: by area, by exposure, by structure type."
+        },
+        {
+          "severity": "medium",
+          "issue": "Underbuilt for its position — first proof slide after four claim slides, currently ~20 seconds of script.",
+          "recommendation": "Consider two or three photos with a one-line story each."
+        }
+      ],
+      "display_beats": [
+        "Local install in {{THEIR_AREA}}",
+        "Same issue this homeowner had",
+        "PAUSE — let them look",
+        "Tie back to their problem"
+      ]
+    },
+    {
+      "slide_id": "s07",
+      "slide_number": 7,
+      "section": "why_sunesta",
+      "title": "Sunesta Difference #1",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Authority and longevity",
+        "Transfers trust from ATH to the manufacturer — the homeowner now has two companies standing behind the project instead of one"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Steady and factual. This is a heritage slide, so let the dates do the work — 1981, forty-plus years, made here. The rep should sound like he's sharing something he finds genuinely interesting, not reciting a brochure.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“We've been around since 2004 — but Sunesta has been around since 1981.”",
+            "“They are pioneers in the industry and were actually one of the first awning manufacturers in the country — and they've stayed at the top in terms of engineering and quality. This is important because the products have been tried and tested for over 40 years. We experience some pretty extreme weather here in Southern Colorado, sometimes getting all four seasons in a single day so having that peace of mind knowing your new awning is built to last is great to have.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Manufacturing credibility",
+          "script": [
+            "“Everything is U.S.-made — fabric, frame, components — except the motor, which comes from Spain and is a hand-assembled high-quality Somfy motor.",
+            "“The fabric is mostly manufactured in North Carolina, Arms and frame made in Florida.”",
+            "It's important for us to use products made in the USA, so we keep as many of our components as local as possible.”"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "What's great for our customers is due to the high volume of units Sunesta manufactures our company being the #1 dealer in the Western US we are able to provide a high-quality product at a more affordable price.",
+      "slow_down_on": {
+        "line": "since 1981",
+        "why": "Pair it with a beat — most homeowners assume retractable awnings are a recent product, and forty-five years of engineering is the whole point of the slide."
+      },
+      "coaching_note": "Homeowners worry about two failures — the product breaking, and the company disappearing. Slides 2 through 5 answered the second one about ATH. This slide answers it about the manufacturer, which matters more than reps think: the fear behind a cheap bid isn't just poor quality, it's an orphaned warranty. Say the specific states out loud. 'North Carolina' and 'Florida' sound like real places where real people build things. 'American-made' alone sounds like marketing.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Somfy motor assembled in Spain",
+          "status": "unverified",
+          "note": "Somfy is headquartered in France with production across multiple facilities. Verify with Sunesta before print."
+        },
+        {
+          "claim": "#1 dealer in the Western US",
+          "status": "unverified",
+          "note": "Conflicts with Slide 5 scope. Resolve to one claim."
+        },
+        {
+          "claim": "North Carolina fabric",
+          "status": "unverified",
+          "note": "Strongly suggests Sunbrella / Glen Raven. If confirmed, naming the brand is a meaningful upgrade in homeowner recognition."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Transition introduces price sixteen slides before pricing, and argues we're cheaper while the rest of the deck argues we're worth more.",
+          "recommendation": "Reframe as buying power rather than affordability."
+        },
+        {
+          "severity": "medium",
+          "issue": "'Over 40 years' undersells. 1981 to 2026 is 45.",
+          "recommendation": "Use forty-five."
+        },
+        {
+          "severity": "low",
+          "issue": "Transition runs three clauses together with no break — a new rep will stumble reading it cold.",
+          "recommendation": "Repunctuate or rebuild."
+        },
+        {
+          "severity": "low",
+          "issue": "'Sunesta Difference #1' implies a series that doesn't exist.",
+          "recommendation": "Number the subsequent Sunesta slides or drop the numbering."
+        }
+      ],
+      "display_beats": [
+        "ATH since 2004 — Sunesta since 1981",
+        "One of the first awning manufacturers in the country",
+        "Tried and tested for 40+ years",
+        "US-made: fabric NC, arms & frame FL",
+        "Motor: hand-assembled Somfy"
+      ]
+    },
+    {
+      "slide_id": "s08",
+      "slide_number": 8,
+      "section": "why_sunesta",
+      "title": "Badges / Validation",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Stack credibility fast",
+        "Removes risk from every angle at once — engineering, health, reputation, recourse"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 135,
+        "display": "2:00 – 2:15"
+      },
+      "tone_mood": "Brisk and confident, then warm on the BBB close. This slide is a stack, so keep it moving — one badge, one sentence of meaning, next. The one place to slow down is the wind, because that's the badge tied to something the homeowner has personally watched happen in their backyard.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "Engineering",
+          "script": [
+            "“Our awning systems are Miami-Dade County approved — which means they've been tested in hurricane conditions.”",
+            "“The arms on our strongest unit actually held up to about 98 MPH winds before failure.”",
+            "Use the client's home as an example like, “Your home is in {{THEIR_AREA}} which is one of the most wind prone areas in the Springs” Or, “You mentioned {{THEIR_WIND_COMMENT}}...”",
+            "“While we don't deal with hurricanes here in Southern Colorado, we certainly get hit with some major winds."
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "HEALTH ANGLE",
+          "script": [
+            "The fabric's UV blockage is tested and approved by The Skin Cancer Foundation — it carries their seal of recommendation for effective sun protection. At Colorado elevation, where UV exposure runs significantly higher than people expect, that matters. We love to get all this sun of course, but it may be one of those years where we're either hiding inside or hanging out in the shade. Super important to stay protected.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "LOCAL PROOF",
+          "script": [
+            "“Here locally, we've also got over 230 5-star reviews. Our reputation is extremely important to us, so we've worked hard to communicate well and create happy customers."
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "SUNESTA DEALER OF THE YEAR",
+          "script": [
+            "I mentioned our Sunesta dealer of the year award and we are also a 4x Customer Satisfaction award winner for Gutter Helmet (2 years in a row) so in an industry like home remodeling that's notorious for complaints, it is pretty cool that we're winning awards.”"
+          ],
+          "stage_directions": [
+            "Try to deliver this so the customer smiles or comments on this in a positive light."
+          ]
+        },
+        {
+          "block_id": "b5",
+          "label": "BBB",
+          "script": [
+            "A+ rated and accredited. It doesn't mean we're perfect, but we have zero unresolved complaints in our company history — and what that really means is when something comes up, we take care of it."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "As you move forward with us, here is our proven process that you can rely on.",
+      "slow_down_on": {
+        "line": "zero unresolved complaints",
+        "why": "It's the best line on the slide and it's sitting last where it's easiest to rush. The reframe that follows — it doesn't mean we're perfect, it means we take care of it — is what makes it believable. Deliver both, then stop."
+      },
+      "coaching_note": "Every badge needs a 'which means' attached to it. Miami-Dade means nothing to a Colorado homeowner until the rep says hurricane tested. The Skin Cancer Foundation seal means nothing until the rep says and we're at 6,000 feet where UV is worse than people think. A new rep will read the badge and move on — the translation is the entire job of this slide. Localize the wind line every single time. This is the moment the homeowner connects an engineering number to the thing they've watched blow across their own patio.",
+      "engagement_question": null,
+      "variables_used": [
+        "THEIR_AREA",
+        "THEIR_WIND_COMMENT"
+      ],
+      "verification": [
+        {
+          "claim": "98 MPH before failure",
+          "status": "unverified",
+          "priority": "highest",
+          "note": "Standing rule: Sunesta rated 30 MPH with wind sensor standard. 98 is a destructive-test number, not an operating rating, and the script does not distinguish. Risk: homeowner leaves awning out in 50 MPH, damage claim denied against 30 MPH rating. Recommended framing once sourced: 'Rated for 30 MPH operation with the wind sensor standard — and in destructive testing, the arms held to about 98 before failure.' Same claim appears on Slide 14."
+        },
+        {
+          "claim": "Miami-Dade County approval",
+          "status": "unverified",
+          "note": "NOA approvals are product-specific and expire. Confirm which Sunesta models carry a current NOA."
+        },
+        {
+          "claim": "Skin Cancer Foundation Seal of Recommendation",
+          "status": "unverified",
+          "note": "Seal is granted to specific fabrics, not manufacturers. Confirm it covers the fabrics we quote."
+        },
+        {
+          "claim": "230 5-star reviews",
+          "status": "unverified",
+          "note": "Verify current count. Specify whether Google or aggregated."
+        },
+        {
+          "claim": "4x Customer Satisfaction award (2 years in a row)",
+          "status": "unverified",
+          "note": "Reads as a contradiction. Clarify actual award history."
+        },
+        {
+          "claim": "BBB zero unresolved complaints in company history",
+          "status": "unverified",
+          "note": "Checkable claim — homeowners will look it up. Verify against current BBB profile."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Slide is doing five jobs at 2:15 — the badges dilute each other.",
+          "recommendation": "The health angle is strong enough to stand alone if the deck is ever restructured."
+        },
+        {
+          "severity": "low",
+          "issue": "Dealer of the Year mentioned again three slides after Slide 5.",
+          "recommendation": "Keep as a callback setting up the Gutter Helmet awards; revisit if Slide 5 is rebuilt."
+        }
+      ],
+      "display_beats": [
+        "Miami-Dade approved = hurricane tested",
+        "Arms held to ~98 MPH before failure",
+        "LOCALIZE to their wind",
+        "Skin Cancer Foundation seal — UV at elevation",
+        "230+ 5-star reviews",
+        "Dealer of the Year + Gutter Helmet awards",
+        "BBB A+ — zero unresolved complaints"
+      ]
+    },
+    {
+      "slide_id": "s09",
+      "slide_number": 9,
+      "section": "why_sunesta",
+      "title": "Our Proven Process",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Remove uncertainty about what happens after they say yes",
+        "Answers the industry's number one complaint — communication and timelines — before the homeowner has to worry about it"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Reassuring and organized. The rep should sound like someone describing a system that already exists and runs without him. Steady pace, no urgency — this slide's job is to lower the homeowner's blood pressure, not raise interest.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "1. Once the details are finalized, we'll assign you a project manager who will reach out to identify and manage your needs. If an HOA is involved, we'll prepare a packet you can send in for review and approval. If the HOA requires any additional information or paperwork we are always happy to help.",
+            "2. We'll maintain a clean, respectful and professional construction site from start to finish.",
+            "3. Installation typically takes about half a day. If it happens to take more than one day, due to weather or a more complex install, we will typically come back the following day to ensure your project is completed as soon as possible.",
+            "4. We'll perform a final walk-through of the project for quality assurance and craftsmanship. We'll check the pitch and head clearance vs. your space to make sure the setup works best for you.",
+            "5. At the end of it all, we will activate and send out warranty packets and leave you with a home you can be happy with and a relationship with the Around the House team you count on."
+          ],
+          "stage_directions": [
+            "Mention this is one of the factors that helped us win our Sunesta Dealer of the Year award."
+          ]
+        }
+      ],
+      "transition_out": "A lot of folks ask us if we've done work in the area. And we have.",
+      "slow_down_on": {
+        "line": "we'll assign you a project manager",
+        "why": "That single sentence separates ATH from every one-truck operation bidding against us. Say it, pause, then continue — most homeowners have been through a project where nobody was in charge."
+      },
+      "coaching_note": "This slide feels like housekeeping to a new rep, so it gets rushed. It shouldn't be. Home improvement is the most complained-about industry in the country, and the complaints are almost never about the product — they're about nobody calling back, nobody showing up, and nobody knowing who's responsible. Every step here is quietly answering one of those fears. Deliver it like a promise, not a checklist.",
+      "engagement_question": {
+        "text": "“Have you had any work done on the home before? How was that experience?”",
+        "when": "Strong fit here. Ask before walking the steps.",
+        "branches": [
+          "If good: agree and be glad for them, then move on.",
+          "If bad: acknowledge the industry is notorious for it, and that communication and timelines are what people complain about most — which is exactly why the process runs the way it does."
+        ]
+      },
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "No lead time anywhere in the process. Jumps from 'details are finalized' to a project manager calling, with nothing about deposit, final measure, fabrication, or weeks until install. This is the question every homeowner actually asks.",
+          "recommendation": "Add a step between 1 and 2 covering final measure and current lead time, with weeks as a variable."
+        },
+        {
+          "severity": "medium",
+          "issue": "Third Dealer of the Year mention (Slides 5, 8, 9). Three brags in five slides works against itself.",
+          "recommendation": "Cut it here. The process stands on its own."
+        },
+        {
+          "severity": "medium",
+          "issue": "HOA packet promise depends on the ARC/HOA submission package, which is still on the roadmap.",
+          "recommendation": "Confirm the packet exists in sendable form before a new rep promises it."
+        },
+        {
+          "severity": "low",
+          "issue": "Step 1 does two unrelated jobs — PM assignment and HOA handling.",
+          "recommendation": "Split HOA out as a conditional sub-bullet."
+        }
+      ],
+      "display_beats": [
+        "Project manager assigned",
+        "HOA packet if needed",
+        "Clean, respectful site",
+        "Install typically half a day",
+        "Final walk-through — pitch & clearance",
+        "Warranty packets activated"
+      ]
+    },
+    {
+      "slide_id": "s10",
+      "slide_number": 10,
+      "section": "why_sunesta",
+      "title": "Reference Maps / Referrals",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Turn 'have you worked around here?' into a visual answer",
+        "Sets up the reference map as a tool the rep can return to at the close"
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 seconds – 1:00"
+      },
+      "tone_mood": "Easy and conversational. This is a show-and-tell slide, not a claim slide — the map does the talking. Let the homeowner look for their own neighborhood; that's the moment that lands.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "We've completed projects all over the greater Colorado Springs area. Every home and project is unique, but we've worked through just about every type of scenario out there."
+          ],
+          "stage_directions": [
+            "Show reference map"
+          ]
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": {
+        "line": "the pause after showing the map",
+        "why": "Don't narrate over it. Give them five or six seconds to find where they live — homeowners almost always do it on their own, and when they say 'oh, that's right by us' the slide has done its job better than any line could."
+      },
+      "coaching_note": "The map is one of the few assets that gets used twice in an appointment. It's proof here, and it comes back during the marketing program conversation later as part of building value. Don't burn it — show it, let them react, move on. A new rep who over-explains the map has nothing left to bring back to the table.",
+      "engagement_question": {
+        "text": "“Do you see your neighborhood on there?”",
+        "when": "Natural fit — makes the pause productive",
+        "branches": [
+          "If yes: “That one over here we did about two years ago — same west exposure you've got.” Only say that if it's true."
+        ]
+      },
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Reference map currency",
+          "status": "unverified",
+          "note": "Confirm the map is current and pulls from real job data."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Two sentences on the closing slide of the trust section — ends the section on a shrug.",
+          "recommendation": "Add a shade-specific local install count if available in JobNimbus."
+        },
+        {
+          "severity": "medium",
+          "issue": "'Referrals' is in the title and nowhere in the script.",
+          "recommendation": "Either add the referral line — most of these came from neighbors telling neighbors — or narrow the title."
+        },
+        {
+          "severity": "medium",
+          "issue": "No transition out. Next slide is a burner. Two consecutive low-energy moments right before the section changes.",
+          "recommendation": "Add a transition that closes the trust section deliberately."
+        }
+      ],
+      "display_beats": [
+        "Projects all over greater Colorado Springs",
+        "Show the map",
+        "PAUSE — let them find their neighborhood"
+      ]
+    },
+    {
+      "slide_id": "s11",
+      "slide_number": 11,
+      "section": "why_sunesta",
+      "title": "10 Reasons to Choose Sunesta",
+      "status": "final",
+      "in_deck": true,
+      "is_reference_slide": true,
+      "purpose": [
+        "Burner slide — closes the Why Sunesta section and hands into the product",
+        "Primary value is as a callback asset: return here during price presentation or objection handling to rebuild value fast"
+      ],
+      "duration": {
+        "min_sec": 20,
+        "max_sec": 30,
+        "display": "20 – 30 seconds on first pass. Do not present all ten."
+      },
+      "tone_mood": "Light and quick. Almost a throwaway. The rep is acknowledging the slide exists, not teaching from it. Confidence here comes from NOT needing to read all ten — the case has already been made.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "First pass",
+          "script": [
+            "“I won't walk you through all ten of these — you've already heard most of them.",
+            "This is really just a summary of why we landed on Sunesta as the product we build our business around. I'll leave it up for a second in case anything jumps out at you.”"
+          ],
+          "stage_directions": [
+            "Pause. Let them scan. If they point at one, talk about that one and only that one."
+          ]
+        }
+      ],
+      "transition_out": "“Alright — so that's the company and the manufacturer. Let's talk about your space and what shade actually does back here.”",
+      "slow_down_on": null,
+      "coaching_note": "New reps see ten bullets and read ten bullets. That's a four-minute detour that repeats material the homeowner already accepted, and it costs energy right before the section that actually sells. Say the line, pause, move.\n\nThe real use for this slide comes later. When price lands and the room goes quiet, or when a homeowner says they want to compare bids, this is the fastest way to rebuild value without starting over. Flip back and say: “Before we talk numbers — let's look at what you're actually getting.” Then walk the two or three reasons that map to what they told you they wanted. It works because it's a recap, not a new pitch.",
+      "callback_triggers": [
+        "Recapping value immediately before presenting price",
+        "The homeowner mentions getting other quotes",
+        "Price objection surfaces and value needs rebuilding before right-sizing",
+        "The homeowner asks what makes this one different from the cheaper one"
+      ],
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "The actual ten reasons have not been supplied. The rep has a callback tool with no defined content.",
+          "recommendation": "Supply the list. Then map two or three to common Accomplish List items for the callback version."
+        },
+        {
+          "severity": "medium",
+          "issue": "If ten is really six or seven strong ones, cut it. A slide with three strong and seven filler reasons trains reps to skip it entirely.",
+          "recommendation": "Better to have six that all land."
+        },
+        {
+          "severity": "low",
+          "issue": "This slide may do more work after Slide 22 price conditioning than here.",
+          "recommendation": "Consider when reordering. Currently retained as a section-closer."
+        }
+      ],
+      "display_beats": [
+        "I won't walk through all ten",
+        "PAUSE — let them scan",
+        "Talk only about what they point at"
+      ]
+    },
+    {
+      "slide_id": "s12",
+      "slide_number": 12,
+      "section": "awnings",
+      "title": "Reasons for Shade",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Re-anchor THEIR why — pivot from company credibility to the homeowner's space",
+        "First Accomplish List callback of the presentation. Everything after this slide is answering something they said here."
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 150,
+        "display": "2:00 – 2:30"
+      },
+      "tone_mood": "Warmer and slower than the trust section. The rep stops presenting and starts listening. This is a conversation slide — if the homeowner isn't talking by the end of it, the rep is doing it wrong.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Most people we work with are trying to solve 2–3 things: Heat, glare, and actually being able to use the space.”"
+          ],
+          "stage_directions": [
+            "ADDITION: A lot of these products look similar but function and perform differently."
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "Temperature",
+          "script": [
+            "“Under these awnings, they typically keep the area at least 20 degrees cooler so it can turn a 90 degree hot day, down to a cool 70.",
+            "“Adds some protection for your flooring and furniture, helping prevent them from fading”"
+          ],
+          "stage_directions": [
+            "Click the temperature gauge"
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "Tie to their list",
+          "script": [
+            "“For you guys, it sounded like the biggest ones were… {{ACCOMPLISH_LIST}}”",
+            "Frame question — ask this regardless: “What sort of things do you all like to do outside in this space?”",
+            "Draw out more if needed: “Have drinks? Dinner? Play games?”",
+            "“These awnings can make a really big difference allowing you to create a perfect day in the space most days of the week.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "Rain use",
+          "conditional": true,
+          "script": [
+            "“Our awning products can also be used when it rains so whether it is during the day or you just want to enjoy your space in the evening while raining, it will allow you to have some coverage. This can come in handy if you are wanting to bbq outside while it's raining as well. In Colorado though, you want to be careful with the rain because oftentimes it is followed by hail, so not something we recommend leaving out while you are away — but a great feature, especially with a lighting package in the evening to set some ambience or do some reading. I'll show you a bit more about the lights here in a bit.”"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": {
+        "line": "the Accomplish List callback",
+        "why": "Say their items back in their own words, then stop. Silence here is productive — it's the moment the homeowner realizes this is about their house, not a product."
+      },
+      "coaching_note": "This is where the presentation turns. Slides 2 through 11 were about us. From here on, every feature the rep shows has to answer something the homeowner said on this slide. A new rep will treat the Accomplish List callback as a formality and rush it — don't. If the list is thin or the rep isn't confident in it, the frame question fixes it: ask what they like to do out here, listen, and add whatever comes out to the list before moving on.\n\nNever present a feature later that doesn't connect back to something said here. If it doesn't map to their list, it's a spec, and specs don't close.",
+      "engagement_question": {
+        "text": "“What sort of things do you all like to do outside in this space?”",
+        "when": "Built into block 3 — ask regardless of how strong the Accomplish List is",
+        "branches": [
+          "Draw out more if needed: drinks, dinner, games."
+        ]
+      },
+      "variables_used": [
+        "ACCOMPLISH_LIST"
+      ],
+      "verification": [
+        {
+          "claim": "At least 20 degrees cooler / 90 down to 70",
+          "status": "unverified",
+          "note": "'At least' is a floor, which makes it a guarantee. Shade lowers perceived and surface temperature substantially, but ambient air under an awning does not reliably drop twenty degrees. Recommend 'up to' plus a source."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "SOURCE ERROR CORRECTED: original read 'not something we recommend leaving retracted while you are away.' Retracted means closed and in the case, which is exactly where you'd want it during hail. Corrected to 'leaving out.'",
+          "recommendation": "Do not let this regress. As originally written it tells a homeowner to leave the awning open when hail is coming."
+        },
+        {
+          "severity": "high",
+          "issue": "Original had OR between the Accomplish List callback and the frame question, allowing a rep to skip the callback. Changed to 'ask this regardless.'",
+          "recommendation": "Tying back to the list is not optional per the sales framework."
+        },
+        {
+          "severity": "medium",
+          "issue": "Rain use needs a manufacturer check — confirm Sunesta guidance on light rain, required pitch, and water pooling.",
+          "recommendation": "If the script promises rain use and the warranty limits it, that's a conflict at claim time."
+        },
+        {
+          "severity": "medium",
+          "issue": "Hail is raised and then left open. The script names a worry and doesn't say what protects them from it.",
+          "recommendation": "Add one line teasing the wind sensor and Smart Case in the same breath as the worry."
+        },
+        {
+          "severity": "medium",
+          "issue": "The Brief History block (European adoption, east vs west coast, ATH's mission) was omitted from this version.",
+          "recommendation": "Decision pending. It is a 60-second history lesson at the exact moment the rep should be handing the floor to the homeowner. The mission line survives as one sentence if you want the sentiment."
+        }
+      ],
+      "display_beats": [
+        "Heat, glare, using the space",
+        "Temperature gauge — cooler underneath",
+        "Protects flooring and furniture",
+        "THEIR Accomplish List — say it back",
+        "What do you like to do out here?",
+        "Rain use + hail caution"
+      ]
+    },
+    {
+      "slide_id": "s13",
+      "slide_number": 13,
+      "section": "awnings",
+      "title": "How the Awning Works (Visual Slider)",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Make it simple and memorable",
+        "Gives the homeowner a mental model they can repeat to a spouse who isn't in the room"
+      ],
+      "duration": {
+        "min_sec": 60,
+        "max_sec": 75,
+        "display": "1:00 – 1:15 (add 30–45 seconds if cross arms apply)"
+      },
+      "tone_mood": "Light and hands-on. The most fun slide in the deck — use the slider, use your hands, get the laugh. The rep should be demonstrating on his own body while he talks. Energy up here; it's the last easy moment before the models slide does the real work.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "The body analogy",
+          "script": [
+            "“We like to explain this like the human body…”",
+            "Shoulders = mounting structure",
+            "Elbows = arm pivot",
+            "Wrists = fabric tension",
+            "“That's what allows it to extend out strong and stay tight and keep the fabric taut.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Personality",
+          "script": [
+            "“Unfortunately it doesn't come with the beach… but your view is better anyway. But hey, I'll take our Mountain Views over the beach most days.”"
+          ],
+          "stage_directions": [
+            "Get a laugh or smile"
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "CROSS ARMS",
+          "conditional": true,
+          "conditional_note": "Only if the project requires them — skip entirely if it doesn't",
+          "script": [
+            "“One thing worth mentioning on yours — because of how the width and projection work out on this space, we'd be looking at what's called a cross-arm setup.",
+            "Think back to the shoulders and elbows. When you want the awning to reach further out than the space is wide, the arms don't have room to fold straight — so they have to overlap in the middle, like folding your arms across your chest.",
+            "It works, and it's engineered for it. But I'd rather tell you the trade-offs up front than have you notice them after installation. Where the arms cross, you lose a little head clearance out front, and visually it's a little lankier than a standard setup.”",
+            "“If we widen it out a bit, or pull the projection in slightly, we can usually avoid crossing the arms altogether. It's not a right-or-wrong thing — it's whether you'd rather have the extra coverage or the cleaner look and clearance. What matters more to you?”"
+          ],
+          "stage_directions": [
+            "Then give them the choice"
+          ]
+        }
+      ],
+      "transition_out": "“So that's how they all work. Where they start to really differ is in what they're built out of — let's look at the models.”",
+      "slow_down_on": {
+        "line": "the three body parts",
+        "why": "Say them, and physically show them — shoulders, elbows, wrists. Homeowners remember this one, and a homeowner who can explain how the awning works to their spouse later is doing your follow-up for you."
+      },
+      "coaching_note": "The body analogy is the most repeatable thing in the presentation. Reps who rush it lose a tool that pays off two slides later, when the models conversation is about arm strength — the customer already knows what an elbow does, so 'stronger arms' means something instead of sounding like a spec.\n\nOn cross arms: tell them before install, not after. A homeowner who finds out about reduced head clearance on installation day feels sold to. A homeowner who chose it at the table feels like a partner. It also positions the rep as the person who says the awkward thing out loud, which pays back at the close.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Cross-arm requirement threshold",
+          "status": "unverified",
+          "note": "Width-to-projection ratio where Sunesta requires crossing is not documented. Get the number from the Sunesta rep — 'anything past X feet of projection on a width under Y' is far stronger than the general description."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "Training notes in the source document say 'slow down at Slide 13 (money slide).' Slide 13 is this one — the money slide is 14.",
+          "recommendation": "Corrected in the pricing transition module. Do not let it regress."
+        },
+        {
+          "severity": "medium",
+          "issue": "Cross arms may not belong in the linear flow if most projects don't need them.",
+          "recommendation": "Tagged conditional. Consider a reference slide the rep opens only when it applies."
+        },
+        {
+          "severity": "low",
+          "issue": "The beach line depends on the slider image actually being a beach scene.",
+          "recommendation": "Copy and image are coupled here — flag for whoever builds the slide."
+        }
+      ],
+      "display_beats": [
+        "Shoulders = mounting structure",
+        "Elbows = arm pivot",
+        "Wrists = fabric tension",
+        "Beach joke",
+        "CROSS ARMS if applicable — trade-offs + their choice"
+      ]
+    },
+    {
+      "slide_id": "s14",
+      "slide_number": 14,
+      "section": "awnings",
+      "title": "Custom Made For You / Models",
+      "status": "final",
+      "in_deck": true,
+      "is_money_slide": true,
+      "purpose": [
+        "THIS IS WHERE YOU SELL THE SUNESTA MODEL",
+        "Sets up the two-option close — everything at price presentation comes back to the choice made on this slide"
+      ],
+      "duration": {
+        "min_sec": 300,
+        "max_sec": 360,
+        "display": "5:00 – 6:00 total (longest slide in the deck)"
+      },
+      "tone_mood": "This is the shift from presenting to recommending. The rep stops being neutral and takes a position. Confident, hands-on, slower than anything before it. Props come out. The homeowner should be touching things, not just watching.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "MODELS",
+          "duration_sec": 60,
+          "script": [
+            "“So we've got three models — Sunlight, Sunstyle, and Sunesta.”",
+            "“Out here in Colorado… we almost always recommend our flagship product, the Sunesta (unless the site is better suited for the Sunstyle).",
+            "“The Sunlight option is a product that is more of an industry standard and comparable to a lot of our competitors but something we rarely install, so here in Colorado it's typically choosing between the Sunesta and Sunstyle.”"
+          ],
+          "stage_directions": [
+            "Lean in"
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "WHY — THE ARMS",
+          "duration_sec": 75,
+          "script": [
+            "Strongest arms — arms tested to open and close up to 80,000 times. That's the equivalent of the arms opening and closing about 10 times a day for 20 years.",
+            "Handles wind up to 30 MPH, but tested up to 98 MPH.",
+            "Largest projection, engineered to reach out that far because of its strength (~15'). It takes a strong arm to go out to 15'.",
+            "Lifetime arm warranty vs. 12 year arm warranty.",
+            "“Go ahead and feel that arm — that's solid extruded aluminum.”",
+            "PVC coated steel cable, rust proof — versus a bicycle-chain type system."
+          ],
+          "stage_directions": [
+            "Use prop",
+            "SAFETY: control the spring-loaded sample. Keep it pointed away from faces and keep a hand on it while the customer handles it."
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "FABRIC & FABRIC SCIENCE",
+          "duration_sec": 60,
+          "move_recommendation": "s15",
+          "script": [
+            "10 year warranty and 20+ year lifespan of the fabric with the Smart Case",
+            "Antimicrobial nature of the fabric",
+            "Acrylic vs. vinyl — 100% solution-dyed fibers. Water resistant, antimicrobial, more fibrous. Helps prevent fading and mold.",
+            "Material types"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "SMART CASE (IMPORTANT CLOSE DRIVER)",
+          "duration_sec": 90,
+          "script": [
+            "“This is one of the biggest differences — the Smart Case.”",
+            "“A lot of awnings are installed with little to no protection, so the fabric is exposed to the elements year round and ends up damaged after just a few years. We call it the ‘string cheese’ effect because the awning gets torn up and damaged. You've maybe seen this with some of the models installed here in town or off the side of RVs with no case. This means the homeowner has to replace the fabric every few years or buy a brand new unit — which is why we offer the Smart Case as a standard feature to ensure you are protected.",
+            "“It fully encloses the fabric when it's closed — so rain, snow, UV, pine needles… none of that sits on your fabric.”",
+            "“Especially here — with pine trees, critters, hail… this is huge.”",
+            "“That's why we see fabrics lasting 15–20+ years.”",
+            "“If it happens to get wet, we recommend letting it dry out before retracting it back into the case. Otherwise that moisture can get enclosed in the Smart Case, and if it's left in there over a long period of time, mold and mildew can grow on the awning. We have clients who close the awning for the winter season and don't use it until spring. Fortunately in Colorado it dries out quickly, so if it gets rain or snow on it we just recommend letting it dry a bit before closing it up.",
+            "For cleaning, you can hose it down — no problem at all — but as I mentioned, we recommend letting the fabric dry before rolling it into the Smart Case.”"
+          ],
+          "stage_directions": [
+            "LOCALIZE",
+            "EDUCATE"
+          ]
+        },
+        {
+          "block_id": "b5",
+          "label": "PITCH ADJUSTMENT",
+          "duration_sec": 30,
+          "script": [
+            "“We also do lifetime adjustments — so if you ever want more shade or more head clearance, we come back and dial it in.”",
+            "“So after install, if you feel the awning is too high or low, just let us know and we're happy to come out for free and adjust it as needed.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b6",
+          "label": "DROP SCREEN (IF RELEVANT)",
+          "duration_sec": 45,
+          "conditional": true,
+          "move_recommendation": "s17",
+          "script": [
+            "“You can also add a drop screen — manual or motorized — now or even later.”",
+            "“The motor for the drop screen adds a little over $1,000 so most folks opt for the manual operation, since it's much lighter than the awning itself — but we can look at the motorized option as well. This is an option that can be added later, but it's a bit more expensive if added on separately because we need to change out a few parts along with adding the motor.”"
+          ],
+          "stage_directions": [
+            "NEEDS: selling points about the drop screen, warranty, features, functionality"
+          ]
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": {
+        "line": "string cheese",
+        "why": "It's the most memorable line in the entire deck. Say it, let them picture it, and let them tell you they've seen one. The Smart Case is the feature that survives comparison shopping, because the cheap bid doesn't have it and can't add it."
+      },
+      "coaching_note": "This slide is the fork in the road. Everything before it built permission to recommend; this is where the rep actually does. Don't present three models neutrally and ask them to pick — take a position, explain why, and narrow to two. The homeowner should leave this slide understanding they're choosing between Sunesta and Sunstyle, because that's the exact choice they'll be handed at price presentation.\n\nGet the arm in their hands. Physical contact with the product changes the conversation more than any statistic on the slide — a homeowner who has felt the difference between extruded aluminum and a competitor's arm has a reason to say no to a cheaper bid that they came up with themselves.\n\nWatch the clock here. Five minutes is the longest stretch of the presentation and it's all product. If the room goes flat, cut the fabric science block and keep the Smart Case — Smart Case closes, fabric chemistry informs.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "80,000 arm cycles",
+          "status": "unverified",
+          "note": "Flagged in source as NEED TO FACT CHECK. If confirmed, the '10 times a day for 20 years' translation is excellent and should stay verbatim. If unsourceable, cut the number and keep the durability claim qualitative."
+        },
+        {
+          "claim": "Tested up to 98 MPH",
+          "status": "unverified",
+          "priority": "highest",
+          "note": "Second appearance (also Slide 8). Pairs with the 30 MPH operating rating here, which is better, but does not explain that one is operational and one is destructive. Recommended framing once sourced: 'Rated for 30 MPH operation with the wind sensor standard — and in destructive testing, the arms held to about 98 before failure.'"
+        },
+        {
+          "claim": "Lifetime arm warranty vs 12 year",
+          "status": "unverified",
+          "priority": "high",
+          "note": "Flagged in source as NEED TO FACT CHECK. Load-bearing: the marketing program offer in the objection script promises to upgrade to the Sunesta lifetime product at the Sunstyle price point. That offer only has teeth if this gap is real. Also blocks Slide 21."
+        },
+        {
+          "claim": "Free lifetime pitch adjustments",
+          "status": "unverified",
+          "note": "Verify against the 1-year free service package. If adjustments are free forever, the service package needs to be about something else."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "Fabric science block belongs on Slide 15, which is titled 'Fabrics & Frame' and currently has no content. The source note on this slide even says 'not sure if we have a page focused on fabric.'",
+          "recommendation": "Move block b3 to s15. Cleanest structural win in the deck — cuts a minute off the longest slide and gives s15 real substance."
+        },
+        {
+          "severity": "high",
+          "issue": "Drop screen content is here while Slide 17 (titled 'Drop Screen') is empty. Also introduces the first hard dollar figure eight slides before pricing, which violates price-after-value.",
+          "recommendation": "Leave one sentence here as a tease; move pricing and manual-vs-motor content to s17."
+        },
+        {
+          "severity": "medium",
+          "issue": "Smart Case deserves its own slide. It's the strongest close driver in the deck, needs a competitor damaged-fabric photo, and is currently block four of six on the longest slide.",
+          "recommendation": "If splitting anywhere, split here: 14A Models & Arms, 14B Smart Case."
+        },
+        {
+          "severity": "medium",
+          "issue": "The Sunlight model is doing straw-man work — the only place an ATH-offered product is described as not worth buying.",
+          "recommendation": "Add a sentence on when Sunlight IS the right call, or a sharp homeowner asks why you sell it at all."
+        }
+      ],
+      "display_beats": [
+        "Three models — we recommend Sunesta",
+        "Arms: cycles, wind, projection, warranty",
+        "FEEL THE ARM (safety: control the spring)",
+        "Fabric science",
+        "SMART CASE — string cheese effect",
+        "Lifetime pitch adjustments",
+        "Drop screen available"
+      ]
+    },
+    {
+      "slide_id": "s15",
+      "slide_number": 15,
+      "section": "awnings",
+      "title": "Fabrics, Frame & Hardware",
+      "status": "final_new",
+      "in_deck": true,
+      "purpose": [
+        "Prove the quality difference with something they can hold",
+        "The comparison-shopping defense slide — this is what makes a cheaper bid look cheap"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 150,
+        "display": "2:00 – 2:30"
+      },
+      "tone_mood": "Hands-on and slightly conspiratorial — the rep is showing them something most homeowners never get to see. Not a lecture. Let the samples do the talking and keep the commentary short. This is the slide where the rep sounds like a tradesman, not a salesperson.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "FABRIC",
+          "duration_sec": 60,
+          "script": [
+            "“Let's talk about the part you'll actually be looking at every day — the fabric.",
+            "Ours is 100% solution-dyed acrylic. The short version: the color is built into the fiber itself, not printed or coated onto the surface. So as it wears, it doesn't fade off — it's the same color all the way through.",
+            "Cheaper awnings use vinyl or a surface-dyed fabric. It looks fine on day one. Three or four Colorado summers later at this elevation, it's chalky, it's faded, and it's brittle.”",
+            "“Here — feel that one. That came off a real awning.”",
+            "“Now feel this one.”",
+            "“That's the difference. Ours is more fibrous, it's water resistant, and it's antimicrobial, so it resists the mold and mildew that shows up on cheap fabric — especially anywhere it stays damp.",
+            "The fabric carries a 10-year warranty, and paired with the Smart Case we're regularly seeing 20-plus years of real life out of it.”"
+          ],
+          "stage_directions": [
+            "Hand them the competitor sample",
+            "Then hand them ours"
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "FRAME & HARDWARE",
+          "duration_sec": 60,
+          "script": [
+            "“Same story with the frame and the hardware — and this is the part nobody thinks to ask about.",
+            "Our arms and frame are solid extruded aluminum, powder coated. Powder coating is baked on, so it bonds to the metal rather than sitting on top of it like paint.”",
+            "“This is what a cheaper finish looks like after a few years outside. See how it's lifting and flaking off? Once that finish fails, you've got bare aluminum, oxidation, and staining running down the side of the house.",
+            "And it's not just cosmetic. That's usually the first sign the whole unit was built to a price.”",
+            "“Out here you've got intense UV, big temperature swings, hail — the finish takes more abuse in Colorado than it would almost anywhere else in the country.”"
+          ],
+          "stage_directions": [
+            "Hand them the flaking sample",
+            "Localize"
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "THE POINT",
+          "duration_sec": 30,
+          "script": [
+            "“I show you this because when you get another quote, everything is going to look about the same on paper. Retractable awning, motorized, fabric, arms. Same words.",
+            "What you can't see on a proposal is what it's made out of — and that's the entire difference between something that looks good for four years and something that looks good for twenty.”"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "“Alright — let's look at a few of the options you can add to it.”",
+      "slow_down_on": {
+        "line": "the handoff of the two fabric samples",
+        "why": "Don't talk while they're feeling them. The gap between the ripped one and ours is the whole slide, and a rep narrating over it steps on his own proof."
+      },
+      "coaching_note": "This is the slide that follows the homeowner out to their next appointment. When a competitor is sitting at this same table in two weeks, the homeowner is going to reach out and feel that guy's sample — and they'll be thinking about the ripped one. That's the job here. Nothing else on this slide matters as much as getting both samples into their hands.\n\nNever name a competitor while holding the bad sample. 'This came off a real awning' is enough, and it's more credible than naming names. The moment the rep sounds like he's running someone down, the homeowner starts defending the other guy.\n\nKeep both samples in the bag, not on the table. Pulling them out mid-slide is a small reveal, and reveals hold attention.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Powder coat description and failure mode",
+          "status": "unverified",
+          "note": "Written without a source. Standard for the material, but confirm with Sunesta."
+        },
+        {
+          "claim": "'More fibrous' / fade and chalking timeline",
+          "status": "unverified",
+          "note": "Consistent with existing document language but not sourced."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "This slide does not work without physical samples. Ripped competitor fabric and flaking powder-coat samples must be in every rep's bag, not just Matt's.",
+          "recommendation": "Build a sample kit: our fabric, competitor fabric, our arm section, flaking finish sample. Photos in the app as fallback."
+        },
+        {
+          "severity": "medium",
+          "issue": "Content moved from Slide 14 block b3. If retained here, delete there — otherwise the rep says it twice, four minutes apart.",
+          "recommendation": "Confirm the move before publishing."
+        },
+        {
+          "severity": "medium",
+          "issue": "'20-plus years' here vs '15–20+ years' on Slide 14.",
+          "recommendation": "Pick one."
+        },
+        {
+          "severity": "low",
+          "issue": "Fabric colour and pattern selection is not covered anywhere in the deck.",
+          "recommendation": "Decide whether it belongs here or at the proposal. It's a genuinely enjoyable part of the process and currently invisible."
+        }
+      ],
+      "display_beats": [
+        "100% solution-dyed acrylic — colour through the fibre",
+        "HAND THEM the competitor sample, then ours",
+        "10-year warranty, 20+ year life with Smart Case",
+        "Extruded aluminium, powder coated",
+        "HAND THEM the flaking sample",
+        "Every quote looks the same on paper"
+      ]
+    },
+    {
+      "slide_id": "s16",
+      "slide_number": 16,
+      "section": "awnings",
+      "title": "Smart Tech",
+      "status": "parked",
+      "in_deck": true,
+      "purpose": [],
+      "duration": {
+        "min_sec": null,
+        "max_sec": null,
+        "display": "TBD"
+      },
+      "tone_mood": null,
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Some optional upgrades — totally preference-based.”"
+          ],
+          "stage_directions": [
+            "Keep it light"
+          ]
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": null,
+      "coaching_note": null,
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Parked. Functions as a section header for 17–20, not a slide with content.",
+          "recommendation": "During reorg, decide whether it survives as a divider or gets absorbed into the first upgrade slide."
+        }
+      ],
+      "display_beats": []
+    },
+    {
+      "slide_id": "s17",
+      "slide_number": 17,
+      "section": "awnings",
+      "title": "Drop Screen – Block the Low Sun",
+      "status": "parked",
+      "in_deck": true,
+      "purpose": [],
+      "duration": {
+        "min_sec": null,
+        "max_sec": null,
+        "display": "TBD"
+      },
+      "tone_mood": null,
+      "blocks": [],
+      "transition_out": null,
+      "slow_down_on": null,
+      "coaching_note": null,
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "Empty slide whose content currently lives on Slide 14 block b6 — including the $1,000 motor figure, the manual-vs-motorized comparison, and the add-later cost note.",
+          "recommendation": "When unparked, move that content here. Also needs selling points, warranty, features, functionality."
+        },
+        {
+          "severity": "medium",
+          "issue": "'Not available in Sunlight' appears only in the pre-slide table recap and nowhere in the presentation itself.",
+          "recommendation": "Belongs on this slide when built."
+        }
+      ],
+      "display_beats": []
+    },
+    {
+      "slide_id": "s18",
+      "slide_number": 18,
+      "section": "awnings",
+      "title": "myLink – Your Awning on Your Phone",
+      "status": "parked",
+      "in_deck": true,
+      "purpose": [],
+      "duration": {
+        "min_sec": null,
+        "max_sec": null,
+        "display": "TBD"
+      },
+      "tone_mood": null,
+      "blocks": [],
+      "transition_out": null,
+      "slow_down_on": null,
+      "coaching_note": null,
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Title only, no script.",
+          "recommendation": "Build during the upgrades cluster reorg."
+        }
+      ],
+      "display_beats": []
+    },
+    {
+      "slide_id": "s19",
+      "slide_number": 19,
+      "section": "awnings",
+      "title": "Automatic Sensors: Wind, Rain, Sun",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Risk removal",
+        "Closes the loop on every 'what if we're not home' worry raised earlier in the presentation"
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 seconds – 1:00"
+      },
+      "tone_mood": "Reassuring and easy. This is a relief slide, not a feature slide — the rep is taking a worry off the table, not adding a spec. Slower and warmer than the upgrade slides around it.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“This is one of the biggest peace-of-mind features — the wind sensor.”",
+            "“If you leave and forget… it retracts automatically.”",
+            "The wind sensor is actually a motion sensor. It won't activate with a single gust of wind, which would be quite annoying — it requires a 5–7 second duration to trigger the arms to close.",
+            "“You don't have to babysit it.”"
+          ],
+          "stage_directions": [
+            "Emotional relief"
+          ]
+        }
+      ],
+      "transition_out": null,
+      "slow_down_on": {
+        "line": "you don't have to babysit it",
+        "why": "That line is the whole slide. Say it and stop — the pause is what lets the homeowner realize the thing they were quietly worried about just got handled."
+      },
+      "coaching_note": "Tie this back explicitly. If wind came up on the Accomplish List, or if hail got mentioned at Slide 12, name it: “Remember when you said the wind rips through here in the afternoon — this is what handles that.” A feature the homeowner didn't ask about is a spec. The same feature answering something they said out loud is a reason to buy.\n\nThis is also the slide that makes the 30 MPH rating a non-issue. A homeowner who hears 'rated to 30 MPH' and then hears 'it closes itself before it gets there' stops worrying about the number. A rep who never connects those two leaves the concern sitting.",
+      "engagement_question": null,
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Wind sensor is actually a motion sensor",
+          "status": "unverified",
+          "priority": "high",
+          "note": "Flagged in source as NEED TO FACT CHECK. Will generate an immediate follow-up question from any curious homeowner. Understanding is that Somfy's standard wind sensor detects vibration or movement of the awning itself rather than measuring wind speed. Confirm mechanism, then rewrite in plain language."
+        },
+        {
+          "claim": "5–7 second duration to trigger",
+          "status": "unverified",
+          "note": "Specific numbers get quoted back. If a homeowner counts three seconds and nothing happens, that's a service call. Verify or generalise to 'sustained movement, not a single gust.'"
+        },
+        {
+          "claim": "Wind sensor standard vs optional",
+          "status": "unverified",
+          "priority": "high",
+          "note": "Slide 14 says 'wind sensor standard.' This slide sits in the upgrades cluster, implying optional. Both cannot be true, and it matters at price presentation."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Title says three sensors, script covers one. Homeowner reads three and hears one.",
+          "recommendation": "Add a line each for rain and sun, or narrow the title to the wind sensor."
+        },
+        {
+          "severity": "medium",
+          "issue": "No answer anywhere in the deck for what happens if the power is out during a storm.",
+          "recommendation": "Script a line once the actual behaviour is known."
+        },
+        {
+          "severity": "low",
+          "issue": "Sun sensor may be the least useful of the three — auto-extending on sun is often disabled by owners after a month.",
+          "recommendation": "Check against service call history before promoting it."
+        }
+      ],
+      "display_beats": [
+        "Wind sensor = biggest peace-of-mind feature",
+        "Leave and forget — it retracts itself",
+        "Needs sustained movement, not one gust",
+        "You don't have to babysit it"
+      ]
+    },
+    {
+      "slide_id": "s20",
+      "slide_number": 20,
+      "section": "awnings",
+      "title": "LED Lights",
+      "status": "final_pending_revision",
+      "in_deck": true,
+      "purpose": [
+        "Lifestyle close — the last emotional moment before the presentation turns toward numbers",
+        "Also serves as the open-questions checkpoint before warranty and pricing"
+      ],
+      "duration": {
+        "min_sec": 60,
+        "max_sec": 75,
+        "display": "1:00 – 1:15"
+      },
+      "tone_mood": "Warm and a little indulgent. This is the fun one. Everything before it was about protection and durability — this is about what the space feels like on a summer night. Let the rep enjoy it. If there's a photo of a lit awning at dusk, this is the slide to linger on.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“This is actually our most popular add-on — LED lighting.”",
+            "“It completely changes the space at night — whether you want soft ambiance or full brightness. We can place the lights under the arms for some functional lighting, or on top of the arms for an underglow effect, which is our more popular option. They can also be added to the project later but typically cost a little more because it requires a return trip.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Service package",
+          "incomplete": true,
+          "script": [
+            "Lastly, with all of our awnings, we include a free one year service so after one year [SENTENCE INCOMPLETE IN SOURCE — DO NOT DELIVER AS WRITTEN]"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "“Well, thanks for your time on that. Any questions about anything? Our company, products, me — anything at all?”",
+      "slow_down_on": {
+        "line": "it completely changes the space at night",
+        "why": "Then stop and let the photo work. This is the one moment in the presentation where the homeowner pictures themselves using the space, and a rep talking over that picture is interrupting the sale."
+      },
+      "coaching_note": "Lighting is where the project stops being a purchase and starts being a plan. Tie it to what they told you they do out here — if they mentioned dinners, evenings, entertaining, or the fire pit, name it: “You mentioned you eat out here most nights in the summer — this is what makes that work in September when it's dark at seven.”\n\nThe open-questions transition is not a formality. It's the last clean opportunity to surface a concern before price is on the table, and an objection that comes out here costs far less than the same objection surfacing after a number. Ask it, then actually wait. New reps ask and immediately keep talking, which defeats the entire purpose.",
+      "engagement_question": {
+        "text": "“Any questions about anything? Our company, products, me — anything at all?”",
+        "when": "End of slide, before warranty and pricing",
+        "branches": [
+          "Wait. Do not fill the silence."
+        ]
+      },
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "Most popular add-on",
+          "status": "unverified",
+          "note": "Checkable in JobNimbus. If sensors or drop screens attach more often, move this line."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "The service package sentence is unfinished: 'we include a free one year service so after one year' — and it stops. A new rep reading this cold trails off mid-sentence in a customer's kitchen.",
+          "recommendation": "Complete it. Terms of the one-year service (cleaning, battery replacement, adjustments) need confirming first."
+        },
+        {
+          "severity": "high",
+          "issue": "The service package is on the wrong slide — tacked onto lighting with no transition. Slide 21 is the warranty slide.",
+          "recommendation": "Move to s21 where it can be sold as value rather than mentioned as an afterthought."
+        },
+        {
+          "severity": "medium",
+          "issue": "Conflicts with Slide 14's free lifetime pitch adjustments. If adjustments are free forever, the one-year package must be about something else.",
+          "recommendation": "Resolve both claims together."
+        },
+        {
+          "severity": "medium",
+          "issue": "Slide is pending revision. Jack flagged that this was previously the last slide and needs rewriting now that 21 and 22 follow it.",
+          "recommendation": "Revisit after the reorg."
+        },
+        {
+          "severity": "low",
+          "issue": "Under-arm vs over-arm placement is stated, not asked. A homeowner who has expressed a preference is closer to buying it.",
+          "recommendation": "Consider: “do you like the softer underglow, or would you rather have light you can actually read by?”"
+        }
+      ],
+      "display_beats": [
+        "Most popular add-on",
+        "Under-arm functional vs over-arm underglow",
+        "Costs more to add later — return trip",
+        "One year free service",
+        "OPEN QUESTIONS — then wait"
+      ]
+    },
+    {
+      "slide_id": "s21",
+      "slide_number": 21,
+      "section": "awnings",
+      "title": "The Warranty, Recapped / Why People Work With ATH",
+      "status": "final",
+      "in_deck": true,
+      "purpose": [
+        "Kill competitors cleanly — establish that the warranty behind this project will still exist in ten years",
+        "Last risk-removal slide before pricing. Everything after this is numbers."
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Confident and slightly amused. The Frankenstein line is the only place in the deck the rep gets to be funny about competitors, and it works because it's a picture, not an insult. Light on the delivery, then straight back to reassurance.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "“Sunesta is a national brand — so yes, we're your local company… but you also have a national warranty backing you.”",
+            "“A lot of other companies piece together parts from a bunch of different manufacturers — we call those Frankenstein awnings. When that company goes out of business, your warranty typically goes with them, so it's nice knowing a national brand has you covered.”",
+            "Your new awning comes with a unique QR code which contains all the important data about your awning — product type, measurements, fabric information — which makes the warranty process simple and efficient.",
+            "The warranty is fully transferable as well to the next homeowner, so it adds some good value to the project and the home."
+          ],
+          "stage_directions": [
+            "Get a laugh on Frankenstein",
+            "Light humour builds contrast"
+          ]
+        }
+      ],
+      "transition_out": "“Any questions about the warranties?”",
+      "slow_down_on": {
+        "line": "when that company goes out of business, your warranty goes with them",
+        "why": "That's the real fear behind every cheap bid, and it's the one thing a low-price competitor genuinely cannot answer. Say it plainly, don't oversell it, and move on."
+      },
+      "coaching_note": "Two companies stand behind this project — ATH locally and Sunesta nationally. That's the whole argument, and it's the strongest structural advantage in the deck. A homeowner comparing bids is usually choosing between one company standing behind the work and none.\n\nThe Frankenstein line has to be delivered lightly. It lands as a joke about the industry, not an attack on a specific competitor. The moment it sounds personal, the homeowner starts defending the other guy — and that's a hole the rep digs for himself.\n\nDon't rush the engagement question. It's the last checkpoint before pricing, and a warranty concern surfacing here is far cheaper to handle than the same concern showing up after a number is on the table.",
+      "engagement_question": {
+        "text": "“Any questions about the warranties?”",
+        "when": "End of slide — last checkpoint before pricing",
+        "branches": []
+      },
+      "variables_used": [],
+      "verification": [
+        {
+          "claim": "QR code on all units",
+          "status": "unverified",
+          "note": "If a recent Sunesta addition, confirm it applies to every model."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "The slide does not actually recap the warranty. It covers the national-brand argument, Frankenstein awnings, QR code, and transferability — but never states what's covered, for how long, or on which components.",
+          "recommendation": "Once arm warranty terms are confirmed, name specific coverage on two components (motor vs. arm) per the original plan."
+        },
+        {
+          "severity": "high",
+          "issue": "Blocked on the same unconfirmed arm warranty terms as Slide 14.",
+          "recommendation": "Prioritise. It blocks two slides plus the marketing program offer."
+        },
+        {
+          "severity": "medium",
+          "issue": "The 1-year free service package belongs here, currently stranded as an unfinished sentence on Slide 20.",
+          "recommendation": "Move, finish, and sell as included value."
+        },
+        {
+          "severity": "medium",
+          "issue": "Transferability is undersold as a throwaway. It's a resale-value argument.",
+          "recommendation": "One more sentence tying it to home value."
+        },
+        {
+          "severity": "low",
+          "issue": "'Why People Work With ATH' is in the title and unaddressed.",
+          "recommendation": "Narrow the title or add a one-line callback to Slides 2–5."
+        }
+      ],
+      "display_beats": [
+        "Local company + national warranty",
+        "Frankenstein awnings — warranty dies with the company",
+        "QR code = simple warranty process",
+        "Fully transferable to next homeowner",
+        "ANY QUESTIONS ABOUT WARRANTIES?"
+      ]
+    },
+    {
+      "slide_id": "s22",
+      "slide_number": 22,
+      "section": "awnings",
+      "title": "Not All Shade Costs the Same",
+      "status": "final_new",
+      "in_deck": true,
+      "purpose": [
+        "Price conditioning — build the range before revealing their number",
+        "Turns 'how much is it?' from a fear into a question they already know the answer to"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 150,
+        "display": "2:00 – 2:30"
+      },
+      "tone_mood": "Lightest the rep has been since Slide 13. Loose, a little funny, genuinely helpful — the rep is being straight with them about an industry that isn't always straight. Energy comes back up here on purpose, because the last two slides were serious. By the end of this slide the room should feel easier, not tighter.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "SET IT UP",
+          "duration_sec": 20,
+          "script": [
+            "“Alright — before I show you numbers, let me give you some context, because ‘retractable awning’ can mean about six completely different things depending on who you're talking to.",
+            "I'd rather you know where everything falls than have me just throw a number at you cold.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "THE BOTTOM",
+          "duration_sec": 40,
+          "script": [
+            "“At the very bottom you've got shade sails and the cheap manual overhead stuff. A couple hundred bucks. And honestly? For a summer or two, fine.",
+            "Then there's the buy-it-online-and-have-a-handyman-hang-it route. Usually somewhere around {{PRICE_ONLINE_HANDYMAN}}. The awning shows up in a box, somebody bolts it to your house, and everybody hopes for the best.”",
+            "“The problem isn't really the awning — it's that when something goes wrong, there's nobody to call. The website doesn't come fix it. And whoever hung it isn't putting his name on it.”",
+            "“Then you've got the low-end companies. Manual arms, low wind ratings, and if it is motorized, it's usually a motor with a one-year warranty. Two cable arms, thin hardware, no case on the fabric. That's the ‘string cheese’ one we talked about.”",
+            "“So here's my honest advice — if somebody sits at this table and quotes you {{PRICE_SUSPICION_THRESHOLD}} for a motorized retractable awning, ask them a few questions. How are you doing it that cheap? How long have you been in business? Who's actually installing it — your guys or somebody you found this morning?",
+            "It's not that the number is a lie. It's that you'll probably be buying another one in about four years.”"
+          ],
+          "stage_directions": [
+            "Light delivery here",
+            "Give them the test"
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "THE TOP",
+          "duration_sec": 30,
+          "script": [
+            "“Now on the other end — high-end aluminum pergolas, cedar structures, louvered roof systems with motorized screens. Beautiful stuff, and we build those too. But you're talking {{PRICE_PERGOLA_FLOOR}} and up, and it's a construction project. Permits, engineering, concrete, several weeks.",
+            "That's a different animal than what we're doing back here.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "THE MIDDLE — WHERE WE LIVE",
+          "duration_sec": 30,
+          "script": [
+            "“A professionally installed, high-quality awning — real company, real warranty, real installers — is going to land somewhere between {{PRICE_QUALITY_RANGE_LOW}} and {{PRICE_QUALITY_RANGE_HIGH}} in this market.",
+            "We're going to fall right in there. We're not the cheapest quote you'll get, and I'd be a little worried if we were. But we're also not the most expensive, and there's a reason for that — we do a lot of volume with Sunesta, and that buying power comes back to you.”"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b5",
+          "label": "REBUILD & HAND OFF",
+          "duration_sec": 20,
+          "script": [
+            "“So that's the landscape. Nothing I'm about to show you should be a surprise.",
+            "And based on everything we talked about — {{ACCOMPLISH_LIST}} — I think you're going to like where this comes in.”"
+          ],
+          "stage_directions": [
+            "Smile. Then go straight into pricing. Do NOT pause for questions here."
+          ]
+        }
+      ],
+      "transition_out": "“Are you all excited? Should I do a drum roll?” (only if rapport supports it) “Alright — here's what I put together for you.”",
+      "slow_down_on": {
+        "line": "we're not the cheapest quote you'll get, and I'd be a little worried if we were",
+        "why": "That's the most valuable sentence on the slide. It's honest, it's slightly funny, and it inoculates against every competing bid the homeowner is going to see for the next three weeks."
+      },
+      "coaching_note": "This slide exists so the number isn't the first piece of price information in the room. A homeowner with no reference point hears a price and reacts emotionally. A homeowner who just agreed that a quality awning runs between two numbers hears a price and evaluates it. Same number, completely different conversation.\n\nSay the ranges with total ease. Any hesitation or apology in the rep's voice tells the homeowner the price is high before they've heard it. The rep should sound like a guy explaining how the market works, not a guy softening a blow.\n\nDo not stop for questions at the end. The energy built here is what carries into the reveal — a pause lets it leak out and invites a pre-emptive objection before there's even a number to object to.\n\nAnd the low end is where the humour lives, not the high end. Cheap awnings are funny. Expensive ones need to sound serious, because their job is to make our number feel reasonable.",
+      "engagement_question": null,
+      "variables_used": [
+        "ACCOMPLISH_LIST",
+        "PRICE_ONLINE_HANDYMAN",
+        "PRICE_PERGOLA_FLOOR",
+        "PRICE_QUALITY_RANGE_HIGH",
+        "PRICE_QUALITY_RANGE_LOW",
+        "PRICE_SUSPICION_THRESHOLD"
+      ],
+      "verification": [],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "All five price variables are unset. The slide cannot run without them, and the quality range is the anchor everything else hangs on.",
+          "recommendation": "Pull actual sold prices from JobNimbus to set the range."
+        },
+        {
+          "severity": "high",
+          "issue": "If the customer's quote lands ABOVE the range the rep just gave, the slide backfires badly.",
+          "recommendation": "Range must be wide enough and honest enough to contain real ATH quotes, including larger units with lighting and drop screens."
+        },
+        {
+          "severity": "medium",
+          "issue": "Pergola mention cuts both ways — it plants an idea, and 'we may do a pergola later instead' is a known objection.",
+          "recommendation": "Worth including for contrast, but the rep should move past it briskly and not sell it here."
+        },
+        {
+          "severity": "medium",
+          "issue": "Competitor photos and estimates called for in the ideas doc are not built.",
+          "recommendation": "A real screenshot of a cheap online awning next to a real failed install would strengthen this considerably."
+        },
+        {
+          "severity": "low",
+          "issue": "'String cheese' callback depends on Slide 14 block b4 staying intact.",
+          "recommendation": "Dependency noted."
+        }
+      ],
+      "display_beats": [
+        "Retractable awning means six different things",
+        "Bottom: shade sails, online + handyman",
+        "Low-end companies — the string cheese one",
+        "The questions to ask a cheap quote",
+        "Top: pergolas and louvered roofs",
+        "Middle: where quality lands — and where we are",
+        "Not the cheapest, and I'd worry if we were",
+        "GO STRAIGHT INTO PRICING"
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "m_pricing_transition",
+      "section": "pricing",
+      "title": "Pricing Transition",
+      "subtitle": "CRITICAL MOMENT",
+      "status": "final",
+      "is_slide": false,
+      "purpose": [
+        "You MUST control this",
+        "Everything in the presentation was built to make this moment feel expected instead of scary"
+      ],
+      "duration": {
+        "min_sec": 180,
+        "max_sec": 240,
+        "display": "3:00 – 4:00 through the micro-close, then the close transition"
+      },
+      "tone_mood": "Confident and excited — genuinely, not performed. The rep should sound like someone about to hand over good news. Any hesitation, apology, or throat-clearing tells the homeowner the number is high before they've seen it. Indifference is the target: warm, engaged, and completely unattached to the outcome.",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "LAYING OFF PRICING",
+          "duration_sec": 60,
+          "script": [
+            "Ask first — get the smile: “Are you all excited?” (If rapport supports it: “Should I do a drum roll?”)",
+            "“So based on everything we talked about — and your goals of {{ACCOMPLISH_LIST}} — this is what I put together for you.”",
+            "These numbers include installing your new {{PRODUCT_NAME}} with a {{WARRANTY_TERM}} warranty.",
+            "(If applicable) We will pull all necessary permits for your new {{PRODUCT_NAME}}.",
+            "We are {{LEAD_TIME_WEEKS}} weeks out for installation, and your project will typically be completed in half a day. Of course, most importantly, you'll get to enjoy and take advantage of your deck and outdoor space year-round with all the great features we covered."
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "PRICE PRESENTATION FRAME (PROFECTUS COMPLIANT)",
+          "duration_sec": 60,
+          "script": [
+            "Tie to the list FIRST, then show numbers: “This option is designed to give you everything you said you wanted…”",
+            "Then present two options: Option 1 = Ideal. Option 2 = Rightsized.",
+            "(Review estimate. Rebuild value and any real urgency during the recap.)"
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "REBUILD EXCITEMENT",
+          "duration_sec": 30,
+          "script": [
+            "“And the good news is — you actually caught us at a great time…”",
+            "Insert {{CURRENT_PROMO}} naturally. Say it once, with authority. Do not repeat it or apologise for it.",
+            "Selling the one-year price: “This price is good for the next year, which is great. You can call me tomorrow, six months from now, 364 days from now, and this price is locked in for you all. It's very competitive with what you'll find in our industry.”"
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "MICRO-CLOSE BEFORE THE REAL CLOSE",
+          "duration_sec": 15,
+          "script": [
+            "“Does this all make sense so far?”",
+            "Wait for the answer. This is a checkpoint, not a rhetorical question."
+          ]
+        },
+        {
+          "phase": 5,
+          "label": "CLOSE TRANSITION",
+          "duration_sec": 15,
+          "script": [
+            "“So between the two options we've narrowed down together — which one stands out as your initial preference?”",
+            "NOT: “What do you think?” NOT: “Any questions?”",
+            "What you'll typically hear — ~90%: “For the difference in cost between the Sunesta and the Sunstyle, we'd rather have the stronger awning.” ~10%: “Whatever's cheapest is fine — we don't plan to be out there when it's windy.”"
+          ]
+        },
+        {
+          "phase": 6,
+          "label": "OBJECTION SETUP (BUILT-IN)",
+          "duration_sec": null,
+          "script": [
+            "If hesitation: “Totally fair — let me ask you this…”",
+            "Use: Money Fork · Thermometer Close · Value Questions (Profectus framework)"
+          ]
+        }
+      ],
+      "training_notes": {
+        "do_not": [
+          "Don't read slides",
+          "Don't info dump",
+          "Don't skip tying back to their goals",
+          "Don't ask 'any questions?' at the close",
+          "Don't fill the silence after the preference question"
+        ],
+        "do": [
+          "Always relate back to THEIR situation",
+          "Slow down at Slide 14 — Models. That's the money slide.",
+          "Build emotion → then logic → then close",
+          "Present two options, never three",
+          "Let the number sit. The first person to talk after the price loses ground."
+        ]
+      },
+      "slow_down_on": {
+        "line": "the Accomplish List repeat in Phase 1",
+        "why": "That's the sentence that makes the number feel like an answer instead of a demand. Say their goals in their words, then the number."
+      },
+      "coaching_note": "The rep's job here is emotional control, not persuasion. The presentation already did the persuading. What's left is delivering a number without flinching — because the homeowner reads the rep's face before they read the paper.\n\nIndifference is the skill. Not coldness — indifference. The rep who needs this sale reeks of it, and homeowners can smell commission breath from across the table. The rep who is genuinely fine either way is the one who closes.\n\nTwo options, never three. Three creates paralysis; two creates a choice. And the choice is between ideal and rightsized — never between buy and don't buy.\n\nAfter the preference question, stop talking. Whatever silence follows belongs to the homeowner. New reps fill it, and filling it hands back everything the presentation earned.",
+      "variables_used": [
+        "ACCOMPLISH_LIST",
+        "CURRENT_PROMO",
+        "LEAD_TIME_WEEKS",
+        "PRODUCT_NAME",
+        "WARRANTY_TERM"
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "The one-year price lock and the promo work against each other. 'This price is locked for 364 days' removes every reason to decide today. Then Phase 3 inserts a promo, which is a reason to decide today. A homeowner hearing both concludes: take the promo whenever I feel like it, the price is locked anyway.",
+          "recommendation": "Either the lock applies to base price while the promo is explicitly today-only, or move the lock out of the close entirely and use it as a give-up tool during objection handling — which is where it appears in Matt's objection script. Recommended: the second."
+        },
+        {
+          "severity": "high",
+          "issue": "CURRENT_PROMO is undefined. Meanwhile the marketing program (5% for review + yard sign) exists in the objection sequence as a Step 7 tool. If the 5% is offered here, it's gone when the rep needs it during objection handling.",
+          "recommendation": "Per the established decision — marketing program is one package, stated once with authority — it cannot be spent twice. Needs an explicit rule in the app."
+        },
+        {
+          "severity": "high",
+          "issue": "Money Fork and Thermometer Close are named but never defined. A new rep hits two technique names with no content behind them at the exact moment they need help most.",
+          "recommendation": "Needs entries in the app or the objection-handling module."
+        },
+        {
+          "severity": "medium",
+          "issue": "SEQUENCING FIX APPLIED: 'Which option works best for you all?' was in the source at the end of Phase 1, before options were presented and before the micro-close. Moved to Phase 5.",
+          "recommendation": "As originally sequenced, the rep asks for a decision, keeps presenting, then asks again — training the homeowner not to answer the first time."
+        },
+        {
+          "severity": "medium",
+          "issue": "REMOVED FROM SOURCE: 'Any questions about the one year prices?' sat directly above a training note saying NOT 'any questions?'. The document contradicted itself two lines apart.",
+          "recommendation": "Cut. Do not restore."
+        },
+        {
+          "severity": "medium",
+          "issue": "Financing placement risk. Standing rule is zero money down, never lead with financing before price. The script is correctly reactive, but a new rep seeing financing below the price section may reach for it early.",
+          "recommendation": "Add an explicit 'reactive only' marker in the app."
+        },
+        {
+          "severity": "low",
+          "issue": "Permits contradiction. Slide 4 says most awning products in Colorado don't require permitting; Phase 1 says 'we will pull all necessary permits.'",
+          "recommendation": "The (if applicable) tag handles it, but note that this line is for pergola and structural work."
+        }
+      ],
+      "reactive_scripts": [
+        {
+          "script_id": "financing",
+          "label": "FINANCING SCRIPT",
+          "trigger": "Only when asked, or after price. Never volunteer before price.",
+          "question": "“Do you all offer any financing?”",
+          "answer": [
+            "“Yes, absolutely. We have some great options available. Unlike credit cards with yearly fees and interest rates as high as 29%, we work with home improvement lenders. There's no prepayment penalty, and everything extra you pay goes directly toward the principal. We have low monthly budget plans available with rates as low as 10.99%, or a 12-month no-interest, same-as-cash option. These are popular because there's no money down either way you go, with the first payment not due until after the installation is complete.",
+            "We can look into getting you pre-approved with no impact on your credit score. Is this something you'd be interested in?”"
+          ],
+          "verification": [
+            {
+              "claim": "10.99% and 12-month same-as-cash terms",
+              "status": "unverified",
+              "note": "Matches established two-option structure. Confirm rates are current before shipping to a training app."
+            }
+          ]
+        },
+        {
+          "script_id": "subcontractor",
+          "label": "SUBCONTRACTOR SCRIPT",
+          "trigger": "Reactive",
+          "question": "“Will you all be doing this work, or do you use subcontractors?”",
+          "answer": [
+            "“Yes — we work with subcontractor partners. We train with them, critique the work, and perform final inspections. They work for us and only us. All of our partners install to the specifications required by the manufacturers and are trained directly by us as well. Around the House manages and warranties the work, and we perform a final walk-through to ensure quality and satisfaction.”"
+          ],
+          "verification": [],
+          "note": "With Slide 5 revised to mention longstanding subcontractor partners inside the qualification frame, this answer reads as confirmation rather than contradiction. Slide 4 still needs its one-line fix."
+        }
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "oi01",
+      "item": "20 vs. 22 years in business",
+      "blocks": [
+        "s02",
+        "s03",
+        "s05",
+        "s07"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi02",
+      "item": "Dealer of the Year scope — national or Western US",
+      "blocks": [
+        "s05",
+        "s07",
+        "s08"
+      ],
+      "owner": "Jack / Sunesta rep",
+      "status": "open"
+    },
+    {
+      "id": "oi03",
+      "item": "98 MPH framing — operational vs destructive test",
+      "blocks": [
+        "s08",
+        "s14"
+      ],
+      "owner": "Jack / Sunesta rep",
+      "status": "open",
+      "priority": "highest"
+    },
+    {
+      "id": "oi04",
+      "item": "Current install lead time in weeks",
+      "blocks": [
+        "s09",
+        "m_pricing_transition"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi05",
+      "item": "The ten reasons to choose Sunesta",
+      "blocks": [
+        "s11"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi06",
+      "item": "Arm warranty terms by model (lifetime vs 12 year)",
+      "blocks": [
+        "s14",
+        "s21",
+        "marketing_program_offer"
+      ],
+      "owner": "Jack / Sunesta rep",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi07",
+      "item": "Cross-arm requirement threshold",
+      "blocks": [
+        "s13"
+      ],
+      "owner": "Sunesta rep",
+      "status": "open"
+    },
+    {
+      "id": "oi08",
+      "item": "Promo identity — is it the same as the 5% marketing program?",
+      "blocks": [
+        "m_pricing_transition"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi09",
+      "item": "One-year price lock placement — close or objection handling?",
+      "blocks": [
+        "m_pricing_transition"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi10",
+      "item": "Money Fork and Thermometer Close definitions",
+      "blocks": [
+        "m_pricing_transition"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi11",
+      "item": "Wind sensor — standard or optional?",
+      "blocks": [
+        "s14",
+        "s19"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi12",
+      "item": "1-year free service package terms + conflict with lifetime pitch adjustments",
+      "blocks": [
+        "s14",
+        "s20",
+        "s21"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi13",
+      "item": "Five price conditioning variables",
+      "blocks": [
+        "s22"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi14",
+      "item": "Slide 1 intro video script",
+      "blocks": [
+        "s01"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi15",
+      "item": "Slide 20 rewrite now that 21 and 22 follow it",
+      "blocks": [
+        "s20"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi16",
+      "item": "Slide 4 subcontractor line fix",
+      "blocks": [
+        "s04"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi17",
+      "item": "Slide 4 two truncated sentences",
+      "blocks": [
+        "s04"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi18",
+      "item": "Slide 20 unfinished service package sentence",
+      "blocks": [
+        "s20"
+      ],
+      "owner": "Jack",
+      "status": "open"
+    },
+    {
+      "id": "oi19",
+      "item": "Physical sample kit for Slide 15",
+      "blocks": [
+        "s15"
+      ],
+      "owner": "Jack / ops",
+      "status": "open"
+    },
+    {
+      "id": "oi20",
+      "item": "Tagged local photo library for Slide 6",
+      "blocks": [
+        "s06"
+      ],
+      "owner": "Jack / marketing",
+      "status": "open"
+    }
+  ],
+  "global_conventions": {
+    "never_say": [
+      "at Power",
+      "energy savings (for awnings)",
+      "petroleum-based product",
+      "Mickey Mouse windows — use 'generic box-store awning'",
+      "if it works great, if not no worries",
+      "95 MPH"
+    ],
+    "always": [
+      "Tie back to the homeowner's Accomplish List items",
+      "Financing: always 'zero money down', never lead with financing before price",
+      "Real ATH install photos over manufacturer stock",
+      "No Eclipse or manufacturer branding on ATH-facing client documents"
+    ],
+    "product_naming": {
+      "awnings": "Sunesta® retractable awnings",
+      "screens": "Eclipse® motorized zipper screens / E-Zip",
+      "louvered": "Eclipse® Latitude™ louvered roof systems",
+      "gutters": "Gutter Helmet® gutter protection",
+      "company": "Around The House or ATH"
+    },
+    "contacts": {
+      "office": "719-495-2673",
+      "jack": {
+        "email": "Jack@aroundthehouseco.com",
+        "phone": "719-482-6183"
+      },
+      "matt": {
+        "email": "Matt@aroundthehouseco.com",
+        "phone": "719-644-9333"
+      },
+      "web": "www.AroundTheHouseCo.com"
+    }
+  },
+  "sections_advisory": [
+    {
+      "id": "prep",
+      "label": "Before You Start",
+      "order": 1,
+      "slide_ids": [
+        "prep_recap",
+        "preframe"
+      ],
+      "advisory": true
+    },
+    {
+      "id": "why_ath",
+      "label": "Why Us",
+      "order": 2,
+      "slide_ids": [
+        "s01",
+        "s02",
+        "s03",
+        "s04",
+        "s05",
+        "s06"
+      ],
+      "advisory": true
+    },
+    {
+      "id": "why_sunesta",
+      "label": "Why Sunesta",
+      "order": 3,
+      "slide_ids": [
+        "s07",
+        "s08",
+        "s09",
+        "s10",
+        "s11"
+      ],
+      "advisory": true
+    },
+    {
+      "id": "awnings",
+      "label": "Awnings",
+      "order": 4,
+      "slide_ids": [
+        "s12",
+        "s13",
+        "s14",
+        "s15",
+        "s16",
+        "s17",
+        "s18",
+        "s19",
+        "s20",
+        "s21",
+        "s22"
+      ],
+      "advisory": true
+    },
+    {
+      "id": "pricing",
+      "label": "Pricing & Close",
+      "order": 5,
+      "slide_ids": [],
+      "advisory": true
+    }
+  ]
+}

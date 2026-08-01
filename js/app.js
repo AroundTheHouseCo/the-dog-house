@@ -1112,14 +1112,23 @@ function renderRehearsal(){
   let body = "";
 
   if(trainingView==="slide"){
-    body = `
-      <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
-      <h2>${s.title}</h2>
-      ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
-      ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
-      ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
-      ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
-    `;
+    // Training content now comes from data/doghouse-content-v1.json via the
+    // adapter, joined by slide id. The legacy data-sunesta.js script/coach
+    // fields remain the fallback for any deck slide the JSON has no entry
+    // for (and for the Eclipse deck, which has no JSON content yet).
+    const tc = (typeof tcForDeckSlide === "function") ? tcForDeckSlide(s.id) : null;
+    if(tc){
+      body = `<div class="tc-panel">${tcEntryHTML(tc, {section: activeTab})}</div>`;
+    } else {
+      body = `
+        <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
+        <h2>${s.title}</h2>
+        ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
+        ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
+        ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
+        ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
+      `;
+    }
   } else {
     body = trainingBodyHTML(trainingView);
   }
@@ -1128,6 +1137,13 @@ function renderRehearsal(){
   panel.querySelectorAll(".training-tabs button").forEach(b=>{
     b.onclick = ()=>{ trainingView = b.dataset.view; renderRehearsal(); };
   });
+  if(typeof tcBindToggles === "function") tcBindToggles(panel, renderRehearsal);
+}
+
+// Called by the content adapter once the JSON resolves.
+function onTrainingContentReady(){
+  if(mode === "rehearse" && document.getElementById("rehearsalPanel").style.display !== "none") renderRehearsal();
+  if(appView === "center" && centerView === "coach") renderCenter();
 }
 
 function renderAll(){

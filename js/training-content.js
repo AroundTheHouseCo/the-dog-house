@@ -1,0 +1,175 @@
+// Training content adapter — data/doghouse-content-v1.json.
+//
+// THE ONE RULE (DOGHOUSE_BUILD_SPEC.md): that JSON is the single source of
+// truth and is rendered VERBATIM. Nothing in this file paraphrases,
+// summarises, truncates, reflows or "improves" any string value. The only
+// transformation performed anywhere is {{TOKEN}} substitution, which the
+// spec explicitly asks for. Content changes happen in the JSON, never here.
+//
+// AUTHORITY RULE (spec v1.1):
+//   The live deck (js/data-sunesta.js) owns slide ORDER and SECTION
+//   membership. This JSON owns CONTENT. They join by id.
+//
+// That is why DECK_TO_CONTENT below is an explicit hand-verified map rather
+// than a positional or slide_number-based lookup. The JSON's slide_number
+// happens to match the deck's current order today, but the deck has been
+// reordered before (Drop Screen moved AWNINGS -> SMART TECHNOLOGY) and will
+// be again. An explicit map survives that; an index does not.
+//
+// The JSON carries ZERO render keys — no type/image/hotspots/models. It
+// cannot and must not drive the customer-facing deck. It replaces only the
+// training slice of each slide.
+
+// undefined = still loading · null = not shipped/failed · object = loaded
+let TRAINING_CONTENT;
+
+// deck slide id (js/data-sunesta.js)  ->  JSON slide_id
+// Verified 1:1 by title against all 22 in-deck slides.
+const DECK_TO_CONTENT = {
+  introvideo: "s01",  dealer:     "s02",  products:  "s03",  training:   "s04",
+  doypeople:  "s05",  local:      "s06",  difference:"s07",  badges:     "s08",
+  process:    "s09",  refmap:     "s10",  tenreasons:"s11",  reasons:    "s12",
+  scrub:      "s13",  models:     "s14",  fabrics:   "s15",  smarttitle: "s16",
+  dropscreen: "s17",  mylink:     "s18",  sensors:   "s19",  led:        "s20",
+  warrantyrecap: "s21", pricecond: "s22",
+};
+
+// Training-only items: real content with no Canva/deck counterpart
+// (in_deck:false). They exist only in the standalone Training Coach walk.
+const CONTENT_PREP_IDS = ["prep_recap", "preframe"];
+
+// ---------------------------------------------------------------- load ----
+function loadTrainingContent(){
+  return fetch("data/doghouse-content-v1.json", {cache:"no-cache"})
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      TRAINING_CONTENT = (d && Array.isArray(d.slides) && d.slides.length) ? d : null;
+      if (TRAINING_CONTENT) indexContent();
+      if (typeof onTrainingContentReady === "function") onTrainingContentReady();
+    })
+    .catch(() => {
+      TRAINING_CONTENT = null;
+      if (typeof onTrainingContentReady === "function") onTrainingContentReady();
+    });
+}
+
+let _byId = {}, _varsByKey = {};
+function indexContent(){
+  _byId = {};
+  for (const s of TRAINING_CONTENT.slides) _byId[s.slide_id] = s;
+  for (const m of TRAINING_CONTENT.modules || []) _byId[m.module_id] = m;
+  _varsByKey = {};
+  for (const v of TRAINING_CONTENT.variables || []) _varsByKey[v.key] = v;
+}
+
+function tcReady(){ return !!(TRAINING_CONTENT && TRAINING_CONTENT.slides); }
+function tcEntry(id){ return _byId[id] || null; }
+function tcModule(){ return (TRAINING_CONTENT && TRAINING_CONTENT.modules && TRAINING_CONTENT.modules[0]) || null; }
+function tcForDeckSlide(deckId){ return tcReady() ? (_byId[DECK_TO_CONTENT[deckId]] || null) : null; }
+
+// The full ordered training walk. Order and section labels come from the
+// DECK (authority rule); the prep items lead, and the pricing module is
+// appended as an explicit special case — it lives in modules[], not
+// slides[], so no slide lookup can ever return it.
+function tcWalk(){
+  if (!tcReady()) return [];
+  const out = CONTENT_PREP_IDS
+    .filter((id) => _byId[id])
+    .map((id) => ({ kind:"slide", id, section:"Before You Start", entry:_byId[id], deckId:null }));
+
+  if (typeof PDECK === "object" && typeof tabs !== "undefined") {
+    for (const tab of tabs) {
+      for (const s of PDECK[tab]) {
+        const e = tcForDeckSlide(s.id);
+        if (e) out.push({ kind:"slide", id:e.slide_id, section:tab, entry:e, deckId:s.id });
+      }
+    }
+  }
+  const m = tcModule();
+  if (m) out.push({ kind:"module", id:m.module_id, section:"Pricing & Close", entry:m, deckId:null });
+  return out;
+}
+
+// --------------------------------------------------------- variables ----
+// Values live in localStorage so a rep's profile and the admin's company
+// settings survive a reload. Per-appointment discovery fields are stored the
+// same way and cleared with tcClearAppointment().
+const TC_VALUES_KEY = "doghouse.training.values";
+function tcValues(){
+  try { return JSON.parse(localStorage.getItem(TC_VALUES_KEY) || "{}"); }
+  catch { return {}; }
+}
+function tcSetValue(key, val){
+  const v = tcValues();
+  if (val === "" || val == null) delete v[key]; else v[key] = val;
+  localStorage.setItem(TC_VALUES_KEY, JSON.stringify(v));
+}
+function tcClearAppointment(){
+  const v = tcValues(), keep = {};
+  for (const [k, val] of Object.entries(v)) {
+    const src = (_varsByKey[k] || {}).source;
+    if (src === "rep_profile" || src === "company_settings") keep[k] = val;
+  }
+  localStorage.setItem(TC_VALUES_KEY, JSON.stringify(keep));
+}
+function tcVarsBySource(src){ return (TRAINING_CONTENT.variables || []).filter((v) => v.source === src); }
+// Declared NOT_SET in the JSON *and* still not filled in locally.
+function tcUnsetVars(){
+  const vals = tcValues();
+  return (TRAINING_CONTENT.variables || []).filter((v) => v.status === "NOT_SET" && !vals[v.key]);
+}
+
+// Resolve {{TOKEN}} against stored values. Unfilled tokens become a visible
+// placeholder chip carrying the variable's own label — never raw braces,
+// never blank space (spec, Variables §2).
+const tcEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+function tcResolve(text){
+  if (typeof text !== "string") return "";
+  const vals = tcValues();
+  return tcEsc(text).replace(/\{\{([A-Z_0-9]+)\}\}/g, (raw, key) => {
+    const v = vals[key];
+    if (v) return `<span class="tc-var-filled">${tcEsc(v)}</span>`;
+    const label = (_varsByKey[key] && _varsByKey[key].label) || key;
+    const unset = _varsByKey[key] && _varsByKey[key].status === "NOT_SET";
+    return `<span class="tc-var-chip${unset ? " unset" : ""}" title="${tcEsc(
+      unset ? "Not set — admin needs to fill this in" : "Fill in during discovery")}">[${tcEsc(label)}]</span>`;
+  });
+}
+
+// ------------------------------------------------------------- search ----
+// title + every script paragraph + the module's reactive_scripts questions
+// (spec, Navigation §4).
+function tcSearch(q){
+  if (!tcReady() || !q || q.trim().length < 2) return [];
+  const needle = q.trim().toLowerCase();
+  const hits = [];
+  for (const node of tcWalk()) {
+    const e = node.entry;
+    const found = [];
+    if ((e.title || "").toLowerCase().includes(needle)) found.push({ where:"Title", text:e.title });
+    const groups = e.blocks || e.phases || [];
+    for (const g of groups) {
+      for (const line of g.script || []) {
+        if (line.toLowerCase().includes(needle)) found.push({ where:g.label || "Script", text:line });
+      }
+    }
+    for (const r of e.reactive_scripts || []) {
+      if ((r.question || "").toLowerCase().includes(needle)) found.push({ where:"Q&A", text:r.question });
+    }
+    if (found.length) hits.push({ node, matches:found });
+  }
+  return hits;
+}
+
+// -------------------------------------------------------------- admin ----
+function tcAllFlags(){
+  if (!tcReady()) return [];
+  const rank = { high:0, medium:1, low:2 };
+  const rows = [];
+  for (const s of TRAINING_CONTENT.slides) for (const f of s.flags || []) rows.push({ ...f, on:s.slide_id, title:s.title });
+  for (const m of TRAINING_CONTENT.modules || []) for (const f of m.flags || []) rows.push({ ...f, on:m.module_id, title:m.title });
+  return rows.sort((a, b) => (rank[a.severity] ?? 9) - (rank[b.severity] ?? 9));
+}
+function tcOpenItems(){ return (tcReady() && TRAINING_CONTENT.open_items) || []; }
+
+loadTrainingContent();
