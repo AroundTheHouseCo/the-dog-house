@@ -1037,6 +1037,7 @@ function renderSlide(){
 // Shared reference-body builders — used by both the rehearsal side panel (tabs)
 // and the Training Center's full-page resource views.
 function trainingBodyHTML(view){
+  if(typeof tcvIsView === "function" && tcvIsView(view)) return tcvBodyHTML(view);
   if(view==="dodont"){
     // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js) + this
     // product's own additions appended to each list.
@@ -1112,14 +1113,40 @@ function renderRehearsal(){
   let body = "";
 
   if(trainingView==="slide"){
-    body = `
-      <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
-      <h2>${s.title}</h2>
-      ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
-      ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
-      ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
-      ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
-    `;
+    // Training content comes from data/doghouse-content-v1.json via the
+    // adapter, joined by slide id. Fallback policy differs by product:
+    //   · Covered product (sunesta), content loaded, slide unmapped ->
+    //     VISIBLE gap state. Never the legacy fields: a rep silently reading
+    //     stale pre-overhaul content is worse than a visible hole, and the
+    //     startup audit (tcAuditMapping) has already flagged it loudly.
+    //   · Covered product, content file failed to load -> legacy fields
+    //     WITH a warning banner (different failure, still never silent).
+    //   · Any other product (Eclipse) or content still loading -> legacy
+    //     fields, unchanged.
+    const covered = (typeof TC_PRODUCT !== "undefined") && activeProduct === TC_PRODUCT;
+    const tc = covered && (typeof tcForDeckSlide === "function") ? tcForDeckSlide(s.id) : null;
+    if(tc){
+      body = `<div class="tc-panel">${tcEntryHTML(tc, {section: activeTab})}</div>`;
+    } else if(covered && typeof tcReady === "function" && tcReady()){
+      body = `
+        <div class="tc-missing">
+          <div class="tc-missing-k">${ICON.warn} No training content for this slide</div>
+          <p>Deck slide <code>${s.id}</code> has no entry in the training content file.
+          Nothing stale is shown in its place — add a <code>DECK_TO_CONTENT</code> entry in
+          <code>js/training-content.js</code> (the console lists every gap at load).</p>
+        </div>`;
+    } else {
+      const loadFailed = covered && typeof TRAINING_CONTENT !== "undefined" && TRAINING_CONTENT === null;
+      body = `
+        ${loadFailed ? `<div class="tc-loadfail">${ICON.warn} Training content file failed to load — showing legacy notes. Reconnect or reinstall the app.</div>` : ""}
+        <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
+        <h2>${s.title}</h2>
+        ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
+        ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
+        ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
+        ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
+      `;
+    }
   } else {
     body = trainingBodyHTML(trainingView);
   }
@@ -1128,6 +1155,13 @@ function renderRehearsal(){
   panel.querySelectorAll(".training-tabs button").forEach(b=>{
     b.onclick = ()=>{ trainingView = b.dataset.view; renderRehearsal(); };
   });
+  if(typeof tcBindToggles === "function") tcBindToggles(panel, renderRehearsal);
+}
+
+// Called by the content adapter once the JSON resolves.
+function onTrainingContentReady(){
+  if(mode === "rehearse" && document.getElementById("rehearsalPanel").style.display !== "none") renderRehearsal();
+  if(appView === "center") renderCenter();
 }
 
 function renderAll(){
@@ -1220,7 +1254,10 @@ function renderCenter(){
       {key:"recap",    icon:ICON.clipboard, name:"Pre-Demo Recap", sub:"At the table, before slide 1"},
       {key:"dodont",   icon:ICON.target, name:"Do & Don't", sub:"Every call · The Four Sales"},
       {key:"faq",      icon:ICON.chat, name:"FAQs & Objections", sub:"Verbatim responses, any slide any time"},
-      {key:"close",    icon:ICON.tag, name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"}
+      {key:"close",    icon:ICON.tag, name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"},
+      // Training v2 views (js/training-coach.js) — only offered when the
+      // JSON content file covers this product and has loaded.
+      ...((typeof tcvHubCards === "function") ? tcvHubCards() : [])
     ];
     el.innerHTML = `
       <div class="center-head">
@@ -1335,6 +1372,7 @@ function renderCenter(){
       <div class="resource-page">${trainingBodyHTML(centerView)}</div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
+    if(typeof tcvIsView === "function" && tcvIsView(centerView)) tcvBind(el, centerView);
     el.scrollTop = 0;
   }
 }

@@ -23,7 +23,7 @@
 // but an edit to an *existing* file's content does. The two versions are
 // independent on purpose: a Tier 1 content change shouldn't force every
 // installed client to re-download 80MB of Tier 2, and vice versa.
-const TIER1_VERSION = "2026-07-28.4";
+const TIER1_VERSION = "2026-08-01.1";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -69,6 +69,11 @@ const TIER1_URLS = [
   "vendor/leaflet.css",
   "vendor/leaflet.js",
   "js/icons.js",
+  "js/training-content.js",
+  "js/training-render.js",
+  "js/training-coach.js",
+  "data/doghouse-content-v1.json",
+  "data/company-settings.json",
   "js/reference-map.js",
   // Reference Map dataset (jittered coords + abbreviated names, 13KB).
   // Precached so the town list works offline; only the map tiles need a
