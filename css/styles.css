@@ -2311,3 +2311,14 @@
   .tcv-flag-issue{font-size:12.5px;color:#555;line-height:1.5;}
   .tcv-flag-rec{font-size:12px;color:#41618c;margin-top:3px;line-height:1.5;}
   .tcv-flag-rec code{background:#f4f7fb;border-radius:4px;padding:0 5px;font-size:11.5px;}
+
+  /* company value overridden locally — visible, and one tap to revert */
+  .tcv-override{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.04em;
+    text-transform:uppercase;background:#fdf6e3;color:#8a6a1f;border:1px solid #e8dfc4;
+    border-radius:999px;padding:1px 8px;margin-left:6px;}
+  .tcv-revert{display:inline-block;margin-top:5px;border:1px solid #d8d5cc;background:#fff;
+    border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:800;
+    color:var(--green-dark);cursor:pointer;}
+  .tcv-revert:hover{border-color:var(--green);background:#f4faf5;}
+  .tcv-group-note code{background:#fff;border:1px solid #e7e4da;border-radius:4px;
+    padding:0 4px;font-size:11.5px;}

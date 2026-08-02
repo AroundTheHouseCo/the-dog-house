@@ -123,7 +123,7 @@ function tcvRenderWalk(root){
 // ------------------------------------------------------------ setup ------
 // A form, not a feature. Values persist in localStorage on this device.
 const TCV_SOURCES = [
-  ["company_settings", "Company settings", "Set once by an admin. Price conditioning and lead times move — a stale range quoted at a kitchen table is worse than none."],
+  ["company_settings", "Company settings", "Company-wide, from the committed <code>data/company-settings.json</code> — the same values on every rep's iPad. Editing here overrides that default on this device only, for one appointment."],
   ["rep_profile", "Rep profile", "Set once per rep on their own iPad."],
   ["discovery", "This appointment — discovery", "Entered during discovery, cleared after the appointment."],
   ["measure", "This appointment — measure", ""],
@@ -132,7 +132,8 @@ const TCV_SOURCES = [
 
 function tcvRenderSetup(root){
   const unset = tcUnsetVars();
-  const vals = tcValues();
+  const vals = tcValues();              // resolved: committed default + local
+  const local = tcLocalValues();
   // which slides each unset var actually blocks — computed from live tokens
   const blockedBy = (key) => tcWalk()
     .filter(n => JSON.stringify(n.entry).includes(`{{${key}}}`))
@@ -153,22 +154,32 @@ function tcvRenderSetup(root){
         return `<div class="tcv-group">
           <h3>${label}</h3>
           ${note ? `<p class="tcv-group-note">${note}</p>` : ""}
-          ${vars.map(v => `
+          ${vars.map(v => {
+            const isCo = src === "company_settings";
+            const overridden = isCo && tcIsOverridden(v.key);
+            const shown = isCo ? (local[v.key] ?? tcCompanyDefault(v.key)) : (vals[v.key] || "");
+            return `
             <label class="tcv-field">
               <span class="tcv-field-label">${tcEsc(v.label)}${v.required ? ' <em>required</em>' : ""}
-                ${v.status === "NOT_SET" && !vals[v.key] ? '<span class="tc-var-chip unset">not set</span>' : ""}</span>
+                ${v.status === "NOT_SET" && !vals[v.key] ? '<span class="tc-var-chip unset">not set</span>' : ""}
+                ${overridden ? '<span class="tcv-override">overridden on this device</span>' : ""}</span>
               ${(v.type === "longtext" || v.type === "list")
-                ? `<textarea data-var="${v.key}" rows="3">${tcEsc(vals[v.key] || "")}</textarea>`
-                : `<input type="text" data-var="${v.key}" value="${tcEsc(vals[v.key] || "")}">`}
+                ? `<textarea data-var="${v.key}" rows="3">${tcEsc(shown)}</textarea>`
+                : `<input type="text" data-var="${v.key}" value="${tcEsc(shown)}">`}
+              ${overridden ? `<button class="tcv-revert" data-revert="${v.key}">Revert to company value${
+                  tcCompanyDefault(v.key) ? ` (${tcEsc(tcCompanyDefault(v.key))})` : " (not set)"}</button>` : ""}
               ${v.guidance ? `<span class="tcv-field-guide">${tcEsc(v.guidance)}</span>` : ""}
-            </label>`).join("")}
+            </label>`;}).join("")}
         </div>`;}).join("")}
       <button class="tcv-clear" id="tcvClearAppt">Clear appointment data</button>
-      <p class="tcv-group-note">Keeps company settings and rep profile; clears discovery, measure and proposal values. Values live on this device.</p>
+      <p class="tcv-group-note">Clears discovery, measure and proposal values on this device. Rep profile stays; company settings come from the committed file and are unaffected.</p>
     </div>`;
 
   root.querySelectorAll("[data-var]").forEach(el => {
     el.onchange = () => { tcSetValue(el.dataset.var, el.value.trim()); tcvRenderSetup(root); };
+  });
+  root.querySelectorAll("[data-revert]").forEach(b => {
+    b.onclick = (e) => { e.preventDefault(); tcSetValue(b.dataset.revert, ""); tcvRenderSetup(root); };
   });
   root.querySelector("#tcvClearAppt").onclick = () => {
     if (confirm("Clear this appointment's discovery, measure and proposal values?")) {

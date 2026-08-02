@@ -1,0 +1,13 @@
+{
+  "_comment": "Company-wide values for the training content merge fields. Committed on purpose: these are company values, not per-rep values -- if two reps enter two different price ranges, slide 22 teaches two different things at two different kitchen tables. This file is the default and the source of truth; a rep can still override locally for one appointment, and the setup form shows when they have. Empty string = not set yet, which renders as a visible placeholder chip (never raw braces, never blank).",
+  "_keys_are": "variables[].key from data/doghouse-content-v1.json where source == company_settings",
+  "values": {
+    "LEAD_TIME_WEEKS": "",
+    "PRICE_ONLINE_HANDYMAN": "",
+    "PRICE_SUSPICION_THRESHOLD": "",
+    "PRICE_PERGOLA_FLOOR": "",
+    "PRICE_QUALITY_RANGE_LOW": "",
+    "PRICE_QUALITY_RANGE_HIGH": "",
+    "CURRENT_PROMO": ""
+  }
+}

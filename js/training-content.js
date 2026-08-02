@@ -46,7 +46,9 @@ const CONTENT_PREP_IDS = ["prep_recap", "preframe"];
 
 // ---------------------------------------------------------------- load ----
 function loadTrainingContent(){
-  return fetch("data/doghouse-content-v1.json", {cache:"no-cache"})
+  // company settings are fetched in parallel; this awaits them so the first
+  // render already has the committed defaults resolved
+  return loadCompanySettings().then(() => fetch("data/doghouse-content-v1.json", {cache:"no-cache"}))
     .then((r) => (r.ok ? r.json() : null))
     .then((d) => {
       TRAINING_CONTENT = (d && Array.isArray(d.slides) && d.slides.length) ? d : null;
@@ -125,21 +127,59 @@ function tcWalk(){
 }
 
 // --------------------------------------------------------- variables ----
-// Values live in localStorage so a rep's profile and the admin's company
-// settings survive a reload. Per-appointment discovery fields are stored the
-// same way and cleared with tcClearAppointment().
+// Two tiers, deliberately:
+//
+//   company_settings  -> data/company-settings.json, COMMITTED and deployed.
+//        These are company values, not per-rep values. Left on per-device
+//        storage, two reps enter two different price ranges and slide 22
+//        teaches two different things at two different kitchen tables — the
+//        same drift the authority rule exists to prevent.
+//
+//   rep_profile / discovery / measure / proposal -> localStorage, per device.
+//        Correctly per-person and per-appointment.
+//
+// A rep may still override a company value locally for one appointment; the
+// setup form shows when a value differs from the committed default and
+// offers a one-tap revert. Resolution order is local-override -> committed
+// default -> unset (visible placeholder chip).
+let TC_COMPANY = null;          // null until the file loads (or if it 404s)
+function loadCompanySettings(){
+  return fetch("data/company-settings.json", {cache:"no-cache"})
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => { TC_COMPANY = (d && d.values) || {}; })
+    .catch(() => { TC_COMPANY = {}; });
+}
+function tcCompanyDefault(key){
+  return (TC_COMPANY && typeof TC_COMPANY[key] === "string" && TC_COMPANY[key] !== "")
+    ? TC_COMPANY[key] : "";
+}
+// True when the rep has set a local value that differs from the committed one.
+function tcIsOverridden(key){
+  if ((_varsByKey[key] || {}).source !== "company_settings") return false;
+  const local = tcLocalValues()[key];
+  return !!local && local !== tcCompanyDefault(key);
+}
+
 const TC_VALUES_KEY = "doghouse.training.values";
-function tcValues(){
+// Raw per-device storage — what the rep actually typed on this iPad.
+function tcLocalValues(){
   try { return JSON.parse(localStorage.getItem(TC_VALUES_KEY) || "{}"); }
   catch { return {}; }
 }
+// The resolved view every renderer uses: committed company defaults first,
+// then anything set on this device on top.
+function tcValues(){
+  const out = {};
+  if (TC_COMPANY) for (const [k, v] of Object.entries(TC_COMPANY)) if (v) out[k] = v;
+  return Object.assign(out, tcLocalValues());
+}
 function tcSetValue(key, val){
-  const v = tcValues();
+  const v = tcLocalValues();
   if (val === "" || val == null) delete v[key]; else v[key] = val;
   localStorage.setItem(TC_VALUES_KEY, JSON.stringify(v));
 }
 function tcClearAppointment(){
-  const v = tcValues(), keep = {};
+  const v = tcLocalValues(), keep = {};
   for (const [k, val] of Object.entries(v)) {
     const src = (_varsByKey[k] || {}).source;
     if (src === "rep_profile" || src === "company_settings") keep[k] = val;
@@ -149,7 +189,7 @@ function tcClearAppointment(){
 function tcVarsBySource(src){ return (TRAINING_CONTENT.variables || []).filter((v) => v.source === src); }
 // Declared NOT_SET in the JSON *and* still not filled in locally.
 function tcUnsetVars(){
-  const vals = tcValues();
+  const vals = tcValues();          // resolved: committed default + local
   return (TRAINING_CONTENT.variables || []).filter((v) => v.status === "NOT_SET" && !vals[v.key]);
 }
 
