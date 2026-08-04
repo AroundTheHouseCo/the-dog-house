@@ -158,9 +158,21 @@ const DECK = {
       title:"Custom Made For You",
       script:"So we've got three models — Sunlight, Sunstyle, and Sunesta.\n\nThe Sunlight is more of an industry standard — comparable to a lot of our competitors — and something we rarely install. Out here it's typically choosing between our flagship, the Sunesta, and the Sunstyle. 90% of our projects are the Sunesta — unless the site is better suited for the Sunstyle, it's what we recommend. Here's why.\n\n(Hand them the arm sample) Go ahead and feel that — solid extruded aluminum, engineered to hold. Inside each arm are four PVC-coated steel cables — they will not rust. A lot of competitors run a bicycle-chain system inside their arms; out here with the elements, those corrode over time and you end up with an awning that doesn't function. Not something you'll deal with here.\n\nIt handles 30 mph winds day-to-day and it's been tested to 98 mph before failure. And it takes a strong arm to project out to nearly 15 feet.\n\nWarranty — straight from the official Sunesta warranty: lifetime on the frame and on the Sunesta's arms. Fabric and motor are ten years, and in practice the fabric lasts 15–20+ years. The Sunstyle is a solid product too — its arms carry a 15-year warranty instead of lifetime, and the Sunlight's arms are twelve. All three: lifetime frame, 10-year fabric, 10-year motor — the arms are the difference.\n\nWIND DEPTH — the quiet difference: all three models carry a 24–30 mph wind class, but only the Sunesta holds it deep into its reach — all the way through 13 feet of projection. The Sunstyle drops a wind class past 8'3\", the Sunlight past 6'8\". If they want reach AND wind performance, there's really one answer.\n\nTHE SMART CASE — something we include as standard that a lot of competitors skip. A lot of awnings are installed with little to no protection, so the fabric sits exposed year-round and gets torn up after a few years — we call it the 'string cheese' effect. You've maybe seen it around town, or off the side of RVs. The Smart Case fully encloses the fabric when it's retracted — rain, snow, UV, hail, pine needles — none of it sits on your fabric. That's why we see fabrics lasting 15 to 20-plus years.\n\n👉 Educate — care: \"If it gets wet, let it dry before you retract it — moisture closed up in the case for a long stretch can grow mildew. Fortunately in Colorado it dries out fast. Cleaning is easy too: hose it down, let it dry, roll it in.\"\n\nPITCH ADJUSTMENT — the arms adjust in pitch, and we offer free lifetime adjustments. After install, if you want more head clearance or more coverage, we come back out and dial it in — no charge. Rule of thumb: about an inch of drop per foot of projection, and keep at least a foot and a half of clearance over your tallest family member.\n\n⚠️ UNVERIFIED — confirm before repeating to a customer: the spec sheet rates the arm CABLES at 80,000 movements of working life (that's roughly 10 open/closes a day for 20 years). Jack is confirming the right attribution with Sunesta — keep it out of customer conversations until then.",
       talkingPoints:["Lead with the flagship — 90% choose the Sunesta","Tap a model card → fullscreen spec popup with the warranty grid · ⇄ compares all three","Arm warranty is the separator: Sunesta LIFETIME · Sunstyle 15-yr · Sunlight 12-yr (frame lifetime + fabric/motor 10-yr on all three)","Wind-class depth: Sunesta holds 24–30 mph thru 13' · Sunstyle thru 8'3\" · Sunlight thru 6'8\"","Arm sample + cable story: PVC-coated steel, no bicycle chains","Smart Case = standard; tell the 'string cheese' story","Free lifetime pitch adjustments — inch of drop per foot of projection"],
-      coach:"THIS IS YOUR MONEY SLIDE. Slow down. Build the value. ⚠️ Careful with the spring-loaded arm sample — it can fly open and whack someone in the face. Control it, then hand it over. Note: older printed spec sheets show outdated frame/motor warranty lines — the 2026 warranty doc (lifetime frame, 10-yr motor) governs.",
+      coach:"THIS IS YOUR MONEY SLIDE. Slow down. Build the value. ⚠️ Careful with the spring-loaded arm sample — it can fly open and whack someone in the face. Control it, then hand it over. Note: older printed spec sheets show outdated frame/motor warranty lines — the 2026 warranty doc (lifetime frame, 10-yr motor) governs. ⚠️ FLAG FOR JACK — the three model card graphics now render distinct case housings and arm thickness per model (data fields on each model: caseType, armGauge). caseType and maxProjectionFt restate numbers already confirmed elsewhere on this slide (Fabric protection / Projection options), but armGauge (1–3) is my own visual read of the relative arm language, not a manufacturer spec — confirm the case silhouettes and arm-thickness ratio against real Sunstyle/Sunlight units before relying on this graphic with a customer.",
       models:[
         {name:"Sunesta", tag:"Flagship — 90% of our installs", c1:"#1b5e3f", c2:"#2e7d4f", armYears:"Lifetime",
+         // Render-only fields for the model-card silhouette (app.js awningSVG).
+         // maxProjectionFt is the same number already printed in "Projection
+         // options" below — restated here as a number so the graphic can
+         // scale reach honestly instead of drawing all three identically.
+         // caseType is the same fact as "Fabric protection" below, restated
+         // as full|semi|open. armGauge (1-3) has no source number — it's my
+         // visual read of "four cables + up to three tension springs" vs.
+         // Sunstyle's plain four-cable arm vs. Sunlight's stated
+         // "lighter-duty" arm — NOT a manufacturer spec. Flagged in this
+         // slide's coach note for Jack to confirm against real units before
+         // this ships to a customer.
+         maxProjectionFt:14.667, caseType:"full", armGauge:3,
          chips:["To 14'8\" projection","Widths to 40'","24–30 mph thru 13'"],
          specs:[
            ["Projection options","Seven: 5' · 6'8\" · 8'3\" · 10' · 11'6\" · 13' · 14'8\""],
@@ -173,6 +185,7 @@ const DECK = {
          ],
          bestFor:"The Colorado pick — biggest reach, strongest arms, and the only model that keeps its full wind class deep into its projection range."},
         {name:"Sunstyle", tag:"Mid-line — the comparison option", c1:"#27435f", c2:"#3a5a7d", armYears:"15 years",
+         maxProjectionFt:11.5, caseType:"semi", armGauge:2,
          chips:["To 11'6\" projection","Widths to 40'","24–30 mph @ 8'3\""],
          specs:[
            ["Projection options","Five: 5' · 6'8\" · 8'3\" · 10' · 11'6\""],
@@ -185,6 +198,7 @@ const DECK = {
          ],
          bestFor:"A solid product for smaller spaces — but past 8'3\" of projection its wind class drops a full step."},
         {name:"Sunlight", tag:"Entry level — rarely our recommendation", c1:"#8a6c48", c2:"#b6a27c", armYears:"12 years",
+         maxProjectionFt:10, caseType:"open", armGauge:1,
          chips:["To 10' projection","Widths to 24'","24–30 mph thru 6'8\""],
          specs:[
            ["Projection options","Four: 5' · 6'8\" · 8'3\" · 10'"],
@@ -335,21 +349,36 @@ const DECK = {
       // tier2 "Fix broken awning frame, patch awning" by sf-dvs (CC BY 2.0); tier3 "Collapsed Awning" by
       // Fire At Will [Photography] (CC BY-SA 2.0); tier4 "Red Retractable Awning" by ersshading (CC BY 2.0).
       // tier5 + tier6 are ATH's own photos (Sunesta beauty shot · Latitude pergola from aroundthehouseco.com).
-      id:"pricecond", type:"productcards",
+      id:"pricecond", type:"costscale",
       eyebrow:"Know the market — position, don't surprise",
       title:"Not All Shade Costs the Same",
-      paragraph:"Six tiers of shade, from a sail on poles to a motorized louvered roof. Tap any tier to see what your money actually buys.",
-      rows:[
-        {num:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"Shade sails & manual shades", sublabel:"No engineering · no wind rating", detail:"Entry-level overhead fabric — no engineering, no wind rating, no real warranty to speak of."},
-        {num:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"DIY / online + handyman", sublabel:"Whoever installs it owns the mistakes", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
-        {num:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Lower-grade companies", sublabel:"1-yr motors · 2-cable arms · thin hardware", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: a buckled arm and the fabric on the railing."},
-        {num:4, photo:IMAGES.pcTier4, popPhoto:IMAGES.pcTier4, label:"Mid-tier", sublabel:"Hood, no cassette · fees after install", detail:"A decent-looking product — a hood but no full cassette, 1–5 year motor warranties, and trip charges and service-call fees after the install."},
-        {num:5, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Higher-end — where we live", sublabel:"Quality hardware + full SmartCase", detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
-        {num:6, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Cedar & aluminum pergolas", sublabel:"Top of the market — our Latitude line", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
+      paragraph:"Five tiers of shade, from a sail on poles to a motorized louvered roof. Tap any tier to see what your money actually buys.",
+      // 5 rungs — matches the price-conditioning script's 5 price points
+      // exactly (data/doghouse-content-v1.json, s22: blocks b2/b3/b4 walk
+      // shade-sails -> online/handyman -> low-end-companies -> [pergolas
+      // top / our-tier middle]). No dollar figures here — the rep speaks
+      // the PRICE_* values live; the slide shows relative position only.
+      //
+      // NOTE for Jack: the old 6-tile grid also carried a "Mid-tier —
+      // hood, no cassette, fees after install" rung between low-end and
+      // our-tier. The current script (s22) only narrates 5 price points
+      // and has no beat for it, so it has no home in this rebuild and was
+      // dropped from the slide. Content kept here in case you want it
+      // folded back in somewhere:
+      //   label: "Mid-tier", sublabel: "Hood, no cassette · fees after install"
+      //   detail: "A decent-looking product — a hood but no full cassette,
+      //   1–5 year motor warranties, and trip charges and service-call
+      //   fees after the install."
+      rungs:[
+        {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"Shade sails / cheap manual overhead", detail:"Entry-level overhead fabric — no engineering, no wind rating, no real warranty to speak of."},
+        {n:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"Buy online + handyman install", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
+        {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: a buckled arm and the fabric on the railing."},
+        {n:4, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Professionally installed quality awning", athMarker:true, detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
+        {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
       ],
       script:"Walk the ladder low to high — their quote should feel positioned, not surprising. Reference competitor estimates and photos as they're available.\n\n(LOW END — verbatim): \"If anyone comes in here and asks for $X.00 for a motorized retractable awning — ask them a lot of questions… How is it so cheap? How long have you been in business? Where do you get your installers? This is almost certainly an awning that will fail sooner than you'd like, and you may have to replace it within a few years.\"\n\n(HIGH END): \"If anyone comes in here and asks for $X.00 —\"\n🕳 UNFINISHED IN SOURCE — the high-end rebuttal cuts off exactly here in Matt's notes. Needs Matt's ending — don't improvise it.\n\n(MID TO UPSCALE — verbatim): \"A professionally installed, high-quality awning with a legitimate company and warranty will cost somewhere between $X and $X. We're typically going to fall somewhere in between this range…\"",
       talkingPoints:["Position the market BEFORE your number lands","Low-end objection: ask a lot of questions — how is it so cheap?","Dollar figures stay verbal — nothing on the slide","Rungs 3–5 are where competitors live; we sit high-mid with lifetime arms + Smart Case standard","High-end rebuttal is unfinished — parked until Matt supplies the ending"],
-      coach:"Tier photos are in — CC-licensed finds plus our own Sunesta and Latitude shots (credits in js/data.js). Tap a card and the popup shows the photo big. Still waiting on Matt: competitor ESTIMATE photos for the training layer, and the high-end rebuttal ending. Sets up the Transition to Pricing (see the Close reference in the Coach)."
+      coach:"Tier photos are in — CC-licensed finds plus our own Sunesta and Latitude shots (credits in js/data.js). Tap a rung and the popup shows the photo big. Still waiting on Matt: competitor ESTIMATE photos for the training layer, and the high-end rebuttal ending. Sets up the Transition to Pricing (see the Close reference in the Coach). ⚠️ FLAG FOR JACK — rebuilt as a 5-rung cost scale (was a 2x3 photo grid); the old grid's 4th tile (\"Mid-tier — hood, no cassette, fees after install\") had no home in the current 5-price-point script and was dropped — see the code comment above `rungs` in data-sunesta.js if you want it folded back in somewhere."
     }
   ]
 };

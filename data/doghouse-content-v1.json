@@ -1,6 +1,6 @@
 {
   "meta": {
-    "content_version": "1.1.0",
+    "content_version": "1.2.0",
     "generated": "2026-07-31",
     "company": "Around The House Home Solutions",
     "product_line": "Sunesta Retractable Awnings",
@@ -1398,7 +1398,7 @@
           "script": [
             "“So we've got three models — Sunlight, Sunstyle, and Sunesta.”",
             "“Out here in Colorado… we almost always recommend our flagship product, the Sunesta (unless the site is better suited for the Sunstyle).",
-            "“The Sunlight option is a product that is more of an industry standard and comparable to a lot of our competitors but something we rarely install, so here in Colorado it's typically choosing between the Sunesta and Sunstyle.”"
+            "“The Sunlight is a solid, straightforward awning — it's the industry standard, and it's what a lot of our competitors are selling. It does the job. Out here though, between our wind and the UV at elevation, most folks end up wanting the stronger arms and the case, so it usually comes down to the Sunesta or the Sunstyle.”"
           ],
           "stage_directions": [
             "Lean in"
@@ -1527,6 +1527,7 @@
         },
         {
           "severity": "medium",
+          "resolved": true,
           "issue": "The Sunlight model is doing straw-man work — the only place an ATH-offered product is described as not worth buying.",
           "recommendation": "Add a sentence on when Sunlight IS the right call, or a sharp homeowner asks why you sell it at all."
         }
