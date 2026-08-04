@@ -70,7 +70,7 @@ function tcvRenderWalk(root){
         <button id="tcvNext" ${tcv.i===walk.length-1?"disabled":""}>Next ›</button>
       </div>
       ${m ? `<div class="tcv-drawer" id="tcvDrawer" ${tcv.drawer?"":"hidden"}>
-        <div class="tcv-drawer-head">If they ask… <button id="tcvDrawerClose">✕</button></div>
+        <div class="tcv-drawer-head">If they ask… <button id="tcvDrawerClose" class="dismiss-btn">${ICON.close} Close</button></div>
         ${tcReactiveHTML(m)}
       </div>` : ""}
     </div>`;
@@ -191,22 +191,28 @@ function tcvRenderSetup(root){
 // ------------------------------------------------------------ flags ------
 function tcvRenderFlags(root){
   const audit = tcAuditMapping({silent:true});
-  const flags = tcAllFlags().filter(f => tcv.sev === "all" || f.severity === tcv.sev);
+  // Resolved flags stay in the list (marking > deleting preserves the
+  // history), but sort to the bottom and read as closed rather than
+  // outstanding — severity counts and the header total only reflect what
+  // still needs a look.
+  const all = tcAllFlags();
+  const open = all.filter(f => !f.resolved), resolved = all.filter(f => f.resolved);
+  const flags = [...open, ...resolved].filter(f => tcv.sev === "all" || f.severity === tcv.sev);
   const items = tcOpenItems();
   const blocked = new Set(); items.forEach(o => (o.blocks || []).forEach(b => blocked.add(b)));
   const counts = {high:0, medium:0, low:0};
-  tcAllFlags().forEach(f => { if (counts[f.severity] != null) counts[f.severity]++; });
+  open.forEach(f => { if (counts[f.severity] != null) counts[f.severity]++; });
 
   root.innerHTML = `
     <div class="tcv-flags">
       ${audit.length ? `<div class="tcv-unset"><div class="tcv-unset-k">${ICON.warn} Mapping problems (live audit)</div>
         <ul>${audit.map(p => `<li>${tcEsc(p)}</li>`).join("")}</ul></div>` : ""}
-      <h3>Content flags <span class="tcv-count">${tcAllFlags().length}</span></h3>
+      <h3>Content flags <span class="tcv-count">${open.length}</span>${resolved.length ? ` <span class="tcv-count-note">+ ${resolved.length} resolved</span>` : ""}</h3>
       <div class="tcv-chips">${["all","high","medium","low"].map(s =>
         `<button class="tcv-chip${tcv.sev===s?" active":""}" data-sev="${s}">${s === "all" ? "All" : `${s} (${counts[s]})`}</button>`).join("")}</div>
       <div class="tcv-flaglist">${flags.map(f => `
-        <div class="tcv-flag sev-${f.severity}">
-          <div class="tcv-flag-head"><span class="tcv-sev ${f.severity}">${f.severity}</span>
+        <div class="tcv-flag sev-${f.severity}${f.resolved ? " resolved" : ""}">
+          <div class="tcv-flag-head">${f.resolved ? `<span class="tcv-sev resolved">resolved</span>` : `<span class="tcv-sev ${f.severity}">${f.severity}</span>`}
             <b>${tcEsc(f.on)}</b> · ${tcEsc(f.title)}</div>
           <div class="tcv-flag-issue">${tcEsc(f.issue)}</div>
           ${f.recommendation ? `<div class="tcv-flag-rec">→ ${tcEsc(f.recommendation)}</div>` : ""}

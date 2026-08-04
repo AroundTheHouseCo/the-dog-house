@@ -174,26 +174,96 @@ function initSwipeNav(){
   area.addEventListener("touchcancel", () => { tracking = false; axis = null; });
 }
 
-function awningSVG(c1="#1b5e3f", c2="#2e7d4f"){
-  let stripes = "";
-  const stripeW = 18;
-  for(let i=0;i<9;i++){
+// Model-card silhouette (slide 14, "models"). Three visible, data-driven
+// differences between the three cards — same viewBox/anchor points/fabric
+// treatment for all three, so the comparison stays honest and the only
+// things that change are the ones the model data says are actually
+// different:
+//
+//   caseType ("full"|"semi"|"open") -> housing over the roller tube.
+//     Maps directly to each model's already-shipped "Fabric protection"
+//     spec line (SmartCase standard / optional / not listed).
+//   armGauge (1-3) -> stroke-width of the diagonal support arm.
+//     No manufacturer number exists for this — it's a relative read of
+//     each model's "Arms" spec line, flagged in the slide's coach note.
+//   maxProjectionFt -> how many fabric panels are drawn, right-aligned
+//     against the wall mount. Same already-shipped number as "Projection
+//     options" below, just scaled here instead of restated as a chip.
+//
+// opts is optional so any other caller (none today — see comment above the
+// "models" call site) gets the old fixed-full-reach look by default.
+function awningSVG(c1="#1b5e3f", c2="#2e7d4f", opts={}){
+  const { caseType="full", armGauge=3, maxProjectionFt=null, overallMaxFt=null } = opts;
+  const stripeW = 18, TOTAL = 9;
+  // Reach: draw only the panels nearest the wall mount, so the far (loose)
+  // end is what shortens — a real awning's mounted edge doesn't move.
+  const count = maxProjectionFt && overallMaxFt
+    ? Math.max(3, Math.min(TOTAL, Math.round(TOTAL * maxProjectionFt / overallMaxFt)))
+    : TOTAL;
+  const istart = TOTAL - count;
+  const leftX = 20 + istart*stripeW;   // fabric's loose front edge, this model
+
+  let stripes = "", scallops = "";
+  for(let i=istart;i<TOTAL;i++){
     const x = 20 + i*stripeW;
     const color = i%2===0 ? c1 : c2;
     stripes += `<polygon points="${x},95 ${x+stripeW},95 ${x+stripeW-40},20 ${x-40},20" fill="${color}"/>`;
+    const cx = x + stripeW/2 - 20;
+    scallops += `<path d="M ${cx-9} 95 Q ${cx} 108 ${cx+9} 95 Z" fill="${color}"/>`;
   }
-  let scallops = "";
-  for(let i=0;i<9;i++){
-    const cx = 20 + i*stripeW + stripeW/2 - 40*0.5;
-    scallops += `<path d="M ${cx-9} 95 Q ${cx} 108 ${cx+9} 95 Z" fill="${i%2===0?c1:c2}"/>`;
-  }
+
+  // Diagonal support arm — real structural element (not a decorative line),
+  // gauge-thick, running from the fabric's front edge to the wall plate.
+  // Mount point is fixed regardless of case type (see housing comment
+  // below), so the arm always plugs cleanly into the hardware above it —
+  // no per-type geometry to keep back in sync.
+  const MOUNT_X = 206, MOUNT_Y = 32;
+  const armW = {1:3.5, 2:5, 3:7}[armGauge] ?? 7;
+  const arm = `
+    <line x1="${leftX}" y1="93" x2="${MOUNT_X}" y2="${MOUNT_Y}" stroke="#6f6f6f" stroke-width="${armW}" stroke-linecap="round"/>
+    <line x1="${leftX}" y1="93" x2="${MOUNT_X}" y2="${MOUNT_Y}" stroke="#fff" stroke-width="1" opacity=".3" stroke-linecap="round"/>`;
+
+  // Housing over the roller tube. Same fixed footprint (x:172-232, y:4-32)
+  // for all three case types — ONLY the fill within that footprint changes
+  // — so the wall-plate/arm attachment point never has to move or risk a
+  // gap: full case = the footprint solid; semi = just its top half solid,
+  // tube visible in the bottom half; open = no case fill at all, tube sits
+  // alone in the same footprint. That graduated "how much of the same box
+  // is covered" reads as more/less enclosed at a glance, and reuses one
+  // set of anchor points instead of three different silhouettes to keep
+  // aligned with the wall plate below.
+  const wallPlate = `<rect x="${MOUNT_X-7}" y="${MOUNT_Y-4}" width="14" height="8" rx="2" fill="#a8a8a8"/>`;
+  const housing = caseType === "full"
+    ? `<rect x="172" y="4" width="60" height="28" rx="6" fill="#8f8f8f"/>
+       <rect x="172" y="23" width="60" height="5" fill="#7c7c7c"/>`
+    : caseType === "semi"
+    ? `<rect x="172" y="4" width="60" height="14" rx="6" fill="#8f8f8f"/>
+       <ellipse cx="202" cy="24" rx="17" ry="8" fill="#6b6b6b"/>`
+    : `<ellipse cx="202" cy="22" rx="18" ry="9" fill="#6b6b6b"/>
+       <circle cx="186" cy="22" r="3.5" fill="#565656"/>
+       <circle cx="218" cy="22" r="3.5" fill="#565656"/>`;
+
+  // Crop the viewBox to the drawn content and render each card's graphic at
+  // a WIDTH proportional to that crop, wall-mount edge pinned to the card's
+  // right side (margin-left:auto). Pixels-per-foot stays identical across
+  // all three cards either way — this step is what makes that honest scale
+  // actually visible: without it, a shorter reach just left blank padding
+  // inside an identically-sized box, which the eye doesn't register as
+  // "shorter" at a glance. With it, the whole graphic — hardware included,
+  // since hardware isn't touched by the crop — sits in a visibly smaller
+  // box, which is the "under two seconds" legibility the slide needs.
+  const FULL_VB_W = 234;                     // Sunesta's (count=9) crop width
+  const minX = leftX - 14;
+  const vbW = 240 - minX;
+  const pct = Math.round((vbW / FULL_VB_W) * 100);
+
   return `
-  <svg viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-    <rect x="180" y="8" width="50" height="15" rx="2" fill="#9a9a9a"/>
-    <rect x="205" y="20" width="8" height="14" fill="#b5b5b5"/>
+  <svg viewBox="${minX} 0 ${vbW} 130" xmlns="http://www.w3.org/2000/svg" style="width:${pct}%;height:auto;margin-left:auto;display:block;">
+    ${housing}
+    ${wallPlate}
+    ${arm}
     ${stripes}
     ${scallops}
-    <line x1="20" y1="95" x2="230" y2="23" stroke="#fff" stroke-width="1" opacity=".25"/>
   </svg>`;
 }
 
@@ -326,7 +396,7 @@ function renderSlide(){
     if(lightboxIndex!==null){
       const lb = document.createElement("div");
       lb.className="lightbox";
-      lb.innerHTML = `<button class="lightbox-close">${ICON.close}</button><img src="${s.photos[lightboxIndex]}">`;
+      lb.innerHTML = `<button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button><img src="${s.photos[lightboxIndex]}">`;
       lb.onclick=(e)=>{ e.stopPropagation(); if(e.target===lb){ lightboxIndex=null; renderSlide(); } };
       lb.querySelector(".lightbox-close").onclick=(e)=>{ e.stopPropagation(); lightboxIndex=null; renderSlide(); };
       area.appendChild(lb);
@@ -359,7 +429,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -430,7 +500,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
       pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
       area.appendChild(pop);
@@ -474,9 +544,54 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
         ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}
         ${r.logo?`<img class="popover-logo" src="${r.logo}">`:""}
+        <h3>${r.label}</h3><p>${r.detail}</p></div>`;
+      pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
+      pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
+      area.appendChild(pop);
+    }
+    addNavZones(area);
+  }
+
+  // Horizontal least-expensive-to-most-expensive scale (price-conditioning
+  // slide only). Deliberately a separate type from "productcards" — that
+  // renderer (and its .dense/.grid-2x2 CSS) is shared with Eclipse's
+  // product-lineup slide, which keeps its plain grid untouched.
+  if(s.type==="costscale"){
+    const panel = document.createElement("div");
+    panel.className="costscale-panel";
+    const pos = [10,30,50,70,90]; // even spacing — the "not at either end" read comes from position, not styling
+    const nodesHTML = s.rungs.map((r,i)=>`
+      <button class="cs-node${r.athMarker?" cs-node-ath":""}" data-i="${i}" style="left:${pos[i]}%">
+        ${r.athMarker?`<div class="cs-ath-pin">ATH</div>`:""}
+        <div class="cs-dollars">${"$".repeat(r.n)}</div>
+        <div class="cs-thumb"><img src="${r.photo}" alt=""></div>
+        <div class="cs-label">${r.label}</div>
+      </button>`).join("");
+    panel.innerHTML = `
+      <div class="products-head">
+        <div class="products-eyebrow">${s.eyebrow||"Around The House · Home Solutions"}</div>
+        <h2>${s.title}</h2>
+        ${s.paragraph?`<p>${s.paragraph}</p>`:""}
+      </div>
+      <div class="cs-track-wrap">
+        <div class="cs-track"></div>
+        ${nodesHTML}
+      </div>
+    `;
+    area.appendChild(panel);
+    panel.querySelectorAll(".cs-node").forEach(el=>{
+      el.onclick=(e)=>{ e.stopPropagation(); openHotspot=parseInt(el.dataset.i); renderSlide(); };
+    });
+    if(openHotspot!==null && s.rungs[openHotspot]){
+      const r = s.rungs[openHotspot];
+      const pop = document.createElement("div");
+      pop.className="popover";
+      pop.style.zIndex=20;
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
+        ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}
         <h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
       pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
@@ -541,7 +656,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">${ICON.close}</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -615,7 +730,7 @@ function renderSlide(){
       dv.innerHTML = `
         <div class="doc-viewer-head">
           <div class="doc-viewer-title">${docViewer.title}</div>
-          <button class="doc-viewer-close" aria-label="Close">${ICON.close}</button>
+          <button class="dismiss-btn on-dark doc-viewer-close" aria-label="Close">${ICON.close} Close</button>
         </div>
         <div class="doc-viewer-scroll">
           ${docViewer.pages.map((p,i)=>`<img src="${p}" alt="Page ${i+1}"${i<2?'':' loading="lazy"'}>`).join("")}
@@ -676,7 +791,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="popover-close">${ICON.close}</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -826,7 +941,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="popover-close">${ICON.close}</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -845,15 +960,15 @@ function renderSlide(){
         <div class="mv2-sub">${s.sub || 'Every unit custom-built to the inch. All three: lifetime frame · 10-yr fabric · 10-yr motor — <b>the arm warranty is the difference.</b>'}</div>
       </div>
       <div class="mv2-cards">
-        ${s.models.map((mo,i)=>`
+        ${(()=>{ const overallMaxFt = Math.max(...s.models.map(m=>m.maxProjectionFt||0)) || null; return s.models.map((mo,i)=>`
           <div class="mv2-card" data-i="${i}">
-            ${s.cardGraphic==="screen" ? screenSVG(mo.c1,mo.c2) : awningSVG(mo.c1,mo.c2)}
+            ${s.cardGraphic==="screen" ? screenSVG(mo.c1,mo.c2) : awningSVG(mo.c1,mo.c2,{caseType:mo.caseType, armGauge:mo.armGauge, maxProjectionFt:mo.maxProjectionFt, overallMaxFt})}
             <div class="mv2-name">${mo.name}</div>
             <div class="mv2-tag">${mo.tag}</div>
             <div class="mv2-chips">${mo.chips.map(c=>`<span>${c}</span>`).join("")}</div>
             <div class="mv2-arm ${(mo.chipHero!==undefined ? mo.chipHero : i===0)?'hero':''}">${mo.heroChip || ((mo.armYears==="Lifetime"?"LIFETIME":mo.armYears.toUpperCase().replace(" YEARS","-YEAR"))+" ARM WARRANTY")}</div>
             <div class="mv2-more">Tap for full specs ›</div>
-          </div>`).join("")}
+          </div>`).join(""); })()}
       </div>
       <div class="mv2-actions">
         <button id="btnModelCompare">${ICON.compare} Compare all three</button>
@@ -882,7 +997,7 @@ function renderSlide(){
             <div class="spec-name" style="color:${mo.c1};">${mo.name}</div>
             <div class="spec-tag">${mo.tag}</div>
           </div>
-          <button class="spec-close" id="specClose">${ICON.close}</button>
+          <button class="dismiss-btn spec-close" id="specClose">${ICON.close} Close</button>
         </div>
         <div class="spec-body">
           <div class="warranty-tiles">
@@ -917,7 +1032,7 @@ function renderSlide(){
             <div class="spec-name">${mc.title || 'Sunesta · Sunstyle · Sunlight'}</div>
             <div class="spec-tag">Tap a category chip to show or hide it</div>
           </div>
-          <button class="spec-close" id="mcClose">${ICON.close}</button>
+          <button class="dismiss-btn spec-close" id="mcClose">${ICON.close} Close</button>
         </div>
         <div class="mc-toggles">
           ${mc.cats.map(c=>`<button class="mc-chip ${cmpCats[c.key]?'on':''}" data-k="${c.key}">${c.label}</button>`).join("")}
@@ -961,7 +1076,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card">
-          <div class="gallery-head">Options <button id="gClose">${ICON.close}</button></div>
+          <div class="gallery-head">Options <button id="gClose" class="dismiss-btn">${ICON.close} Close</button></div>
           <div class="gallery-body">
             <button class="gallery-nav prev">‹</button>
             ${bodyContent}
@@ -984,7 +1099,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card compare-card">
-          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose">${ICON.close}</button></div>
+          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose" class="dismiss-btn">${ICON.close} Close</button></div>
           <div class="compare-scroll">
             <table class="compare-table3">
               <tr>
@@ -1332,7 +1447,7 @@ function renderCenter(){
       const lb = document.createElement("div");
       lb.className = "lib-lightbox";
       lb.innerHTML = `
-        <button class="lightbox-close">${ICON.close}</button>
+        <button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button>
         <button class="lib-nav prev">‹</button>
         <figure><img src="${ph.f}"><figcaption>${ph.c}</figcaption></figure>
         <button class="lib-nav next">›</button>
