@@ -16,28 +16,10 @@ const PRODUCTS = [
 ];
 
 // Shared rep training — ATH / Profectus method, true for every product.
-// Product-specific rules live in each product's training.doDont ({dont:[],do:[]})
-// and are appended to these lists in the Do & Don't view.
-const TRAINING_SHARED = {
-  doDont: {
-    dont: [
-      "Don't read slides — know the slides",
-      "Don't info dump",
-      "Don't skip tying back to their goals"
-    ],
-    do: [
-      "Always relate back to THEIR situation",
-      "Build emotion → then logic → then close"
-    ],
-    fourSales: {
-      intro: "Per the ATH / Profectus framework — the customer needs to be sold on all four before they commit:",
-      items: [
-        "Do the project — they believe the problem is worth solving",
-        "Do it right — they believe the quality justifies the investment",
-        "Do it with ATH — they trust you and the company",
-        "Do it now — they have a reason to move forward today"
-      ],
-      footer: "If you lose the sale, trace it back to which of these four was not fully closed. That is your gap."
-    }
-  }
-};
+// Used to be a static TRAINING_SHARED const here (do_dont core + four_sales
+// framework), migrated into data/training-content-shared.json's
+// `reference` block so it's tap-to-edit like everything else the content
+// editor covers (js/training-content.js's tcSharedRef()). Product-specific
+// additions still live in each product's own content file
+// (ref_dodont.training_notes) and get appended to these lists in the Do &
+// Don't view (js/app.js trainingBodyHTML).

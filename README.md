@@ -123,4 +123,8 @@ badge overlaps them.
   Service" stays coach-only until confirmed; minor copy picks (Front Range vs Southern
   Colorado, customer-count phrasing) flagged for Jack's on-sight correction.
 - Gutter Helmet / Pergola decks + coaches: shells only.
-- Someday: in-app Edit Mode; offline wrap (Capacitor or service worker).
+- Cross-device training content sync — edits currently save to localStorage per device;
+  sync requires a Cockpit-proxy write-back to the content JSON files, scoped as a future
+  round. "Export Content" (Training Coach, Edit Mode) is the bridge until then: download
+  the merged file and commit it by hand.
+- Someday: native app wrap (Capacitor).

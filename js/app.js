@@ -1163,37 +1163,42 @@ function trainingBodyHTML(view){
   // / ECLIPSE_TRAINING const, rendered as raw unescaped innerHTML with no
   // {{TOKEN}} support. That content is now migrated into each product's
   // training content JSON (ref_dodont / ref_faq / ref_close / ref_predemo
-  // entries, looked up via tcEntry()) or, for the 10-step process, the
-  // shared content file (tcSequence — see js/training-content.js for why
-  // that one moved instead of staying a per-product entry). Every
-  // interpolated string below now goes through tcField(), which resolves
-  // (escapes + {{TOKENS}}) AND tags the field with its content path for
-  // Edit Mode — closing the raw-innerHTML gap while reproducing the exact
-  // same HTML shape/CSS classes as before, so this is a data-source
-  // change, not a redesign. joinFields renders an array field as one
-  // flowing block (matching this page's pre-existing look) while keeping
-  // each array element its OWN editable span, same schema-honest approach
-  // tcBlockHTML uses on the walk screen.
+  // entries, looked up via tcEntry()) or, for genuinely shared content —
+  // the 10-step process and the ATH/Profectus core (do_dont, four_sales,
+  // formerly registry.js's TRAINING_SHARED const) — the shared content
+  // file via tcSequence()/tcSharedRef() (see js/training-content.js for
+  // why those moved instead of staying static code). Every interpolated
+  // string below now goes through tcField(), which resolves (escapes +
+  // {{TOKENS}}) AND tags the field with its content path for Edit Mode —
+  // closing the raw-innerHTML gap while reproducing the exact same HTML
+  // shape/CSS classes as before, so this is a data-source change, not a
+  // redesign. joinFields renders an array field as one flowing block
+  // (matching this page's pre-existing look) while keeping each array
+  // element its OWN editable span, same schema-honest approach
+  // tcBlockHTML uses on the walk screen; liFields does the same for a
+  // field that renders as separate <li> items instead of one block.
   const joinFields = (id, pathPrefix, arr) =>
     (arr || []).map((_, i) => tcField(id, `${pathPrefix}.${i}`)).join("\n\n");
+  const liFields = (id, pathPrefix, arr) =>
+    (arr || []).map((_, i) => `<li>${tcField(id, `${pathPrefix}.${i}`)}</li>`).join("");
   if(view==="dodont"){
-    // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js — not
-    // migrated, see the Phase 1 report's scope note) + this product's own
-    // additions, migrated into ref_dodont.training_notes and editable.
-    const shared = TRAINING_SHARED.doDont;
+    // Shared ATH/Profectus core (tcSharedRef — every product falls back to
+    // the same committed copy, editable from any product's Coach) + this
+    // product's own additions (ref_dodont.training_notes).
+    const shared = tcSharedRef("do_dont") || {do_not:[], do:[]};
+    const fourSales = tcSharedRef("four_sales") || {intro:"", items:[], footer:""};
     const ownEntry = typeof tcEntry === "function" ? tcEntry("ref_dodont") : null;
     const own = (ownEntry && ownEntry.training_notes) || {};
-    const dontHTML = shared.dont.map(t=>`<li>${tcResolve(t)}</li>`).join("")
-      + (own.do_not||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do_not.${i}`)}</li>`).join("");
-    const dosHTML = shared.do.map(t=>`<li>${tcResolve(t)}</li>`).join("")
-      + (own.do||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do.${i}`)}</li>`).join("");
-    const fs = shared.fourSales;
+    const dontHTML = liFields("ref:do_dont", "do_not", shared.do_not)
+      + liFields("ref_dodont", "training_notes.do_not", own.do_not);
+    const dosHTML = liFields("ref:do_dont", "do", shared.do)
+      + liFields("ref_dodont", "training_notes.do", own.do);
     return `
       <div class="eyebrow">Reference — every call</div>
       <h2>Do & Don't</h2>
       <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dontHTML}</ul></div>
       <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dosHTML}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${tcResolve(fs.intro)}</div><ul class="talking-points">${fs.items.map(t=>`<li>${tcResolve(t)}</li>`).join("")}</ul><div class="coach-note">${ICON.bulb} ${tcResolve(fs.footer)}</div></div>
+      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${tcField("ref:four_sales", "intro")}</div><ul class="talking-points">${liFields("ref:four_sales", "items", fourSales.items)}</ul><div class="coach-note">${ICON.bulb} ${tcField("ref:four_sales", "footer")}</div></div>
     `;
   }
   if(view==="faq"){

@@ -150,6 +150,21 @@ function tcSequence(key){
   return (TC_SHARED && TC_SHARED.sequences && TC_SHARED.sequences[key]) || null;
 }
 
+// A named shared reference block (do_dont, four_sales — the ATH/Profectus
+// core that used to be the TRAINING_SHARED const in js/registry.js). Same
+// override shape as tcSequence(): a product's own content may define
+// reference.<key> to override; absent that, every product falls back to
+// the shared file. Split into its own function rather than overloading
+// tcSequence() because "sequence" (an ordered step list) and "reference
+// block" (do_dont's two lists, four_sales's intro/items/footer) are
+// different shapes — same resolution mechanics, different data.
+function tcSharedRef(key){
+  const a = tcActive();
+  const own = a && a.content.reference && a.content.reference[key];
+  if (own) return own;
+  return (TC_SHARED && TC_SHARED.reference && TC_SHARED.reference[key]) || null;
+}
+
 // The full ordered training walk. Order and section labels come from the
 // DECK (authority rule); prep items (declared per-product via
 // content.prep_ids — Sunesta has 2, Eclipse has none) lead, and the pricing
@@ -301,12 +316,13 @@ function tcSetByPath(obj, fieldPath, value){
   cur[keys[keys.length - 1]] = value;
   return true;
 }
-// The object an entryId resolves against for read/write-back — same two
-// lookup mechanisms tcEntry()/tcSequence() already use, unified here so a
-// content path never needs to know which one applies.
+// The object an entryId resolves against for read/write-back — same three
+// lookup mechanisms tcEntry()/tcSequence()/tcSharedRef() already use,
+// unified here so a content path never needs to know which one applies.
 function tcPathRoot(entryId){
   if (!entryId) return null;
   if (entryId.startsWith("seq:")) return tcSequence(entryId.slice(4));
+  if (entryId.startsWith("ref:")) return tcSharedRef(entryId.slice(4));
   return tcEntry(entryId);
 }
 function tcRawFieldValue(entryId, fieldPath){
@@ -375,10 +391,11 @@ function tcField(entryId, fieldPath){
 // Deep-merges every local edit for the ACTIVE product onto a fresh copy of
 // its committed content file — this is the "Export Content" action's data
 // step (js/training-coach.js does the download). Edits targeting a shared
-// sequence (seq:<key>) materialize as that product's own sequences.<key>
-// override in the exported file, which is the correct, intended effect of
-// editing nominally-shared content from one product's Coach: it's no
-// longer aliased, it's now this product's explicit copy.
+// sequence or reference block (seq:<key> / ref:<key>) materialize as that
+// product's own sequences.<key> / reference.<key> override in the exported
+// file, which is the correct, intended effect of editing nominally-shared
+// content from one product's Coach: it's no longer aliased, it's now this
+// product's explicit copy.
 function tcExportContent(){
   const a = tcActive();
   if (!a) return null;
@@ -393,6 +410,13 @@ function tcExportContent(){
       tcSetByPath(merged.sequences[seqKey], fieldPath, value);
       continue;
     }
+    if (entryId.startsWith("ref:")) {
+      const refKey = entryId.slice(4);
+      merged.reference = merged.reference || {};
+      merged.reference[refKey] = merged.reference[refKey] || JSON.parse(JSON.stringify(tcSharedRef(refKey) || {}));
+      tcSetByPath(merged.reference[refKey], fieldPath, value);
+      continue;
+    }
     const entry = (merged.slides || []).find((s) => s.slide_id === entryId)
       || (merged.modules || []).find((m) => m.module_id === entryId);
     if (entry) tcSetByPath(entry, fieldPath, value);
@@ -403,23 +427,36 @@ function tcExportContent(){
 // ------------------------------------------------------------- search ----
 // title + every script paragraph + the module's reactive_scripts questions
 // (spec, Navigation §4).
+// Searches the same merged view rendering uses — local edit overlay first,
+// else committed text (tcFieldValue) — never the raw committed JSON
+// directly, so a rep who retitles a beat or rewords a line can find it by
+// the NEW wording, and the OLD pre-edit wording stops matching. Walks the
+// exact same three field categories (title, blocks/phases script lines,
+// reactive_scripts questions) via the same entryId + path scheme every
+// other resolved read in this file uses, rather than a second, divergent
+// traversal of the raw entry object.
 function tcSearch(q){
   if (!tcReady() || !q || q.trim().length < 2) return [];
   const needle = q.trim().toLowerCase();
   const hits = [];
   for (const node of tcWalk()) {
     const e = node.entry;
+    const id = e.slide_id || e.module_id;
     const found = [];
-    if ((e.title || "").toLowerCase().includes(needle)) found.push({ where:"Title", text:e.title });
-    const groups = e.blocks || e.phases || [];
-    for (const g of groups) {
-      for (const line of g.script || []) {
-        if (line.toLowerCase().includes(needle)) found.push({ where:g.label || "Script", text:line });
-      }
-    }
-    for (const r of e.reactive_scripts || []) {
-      if ((r.question || "").toLowerCase().includes(needle)) found.push({ where:"Q&A", text:r.question });
-    }
+    const title = tcFieldValue(id, "title");
+    if ((title || "").toLowerCase().includes(needle)) found.push({ where:"Title", text:title });
+    const groupKey = e.blocks ? "blocks" : e.phases ? "phases" : null;
+    const groups = (groupKey && e[groupKey]) || [];
+    groups.forEach((g, gi) => {
+      (g.script || []).forEach((_, si) => {
+        const line = tcFieldValue(id, `${groupKey}.${gi}.script.${si}`);
+        if ((line || "").toLowerCase().includes(needle)) found.push({ where:g.label || "Script", text:line });
+      });
+    });
+    (e.reactive_scripts || []).forEach((r, ri) => {
+      const question = tcFieldValue(id, `reactive_scripts.${ri}.question`);
+      if ((question || "").toLowerCase().includes(needle)) found.push({ where:"Q&A", text:question });
+    });
     if (found.length) hits.push({ node, matches:found });
   }
   return hits;
