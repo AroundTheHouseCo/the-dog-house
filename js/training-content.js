@@ -1,128 +1,181 @@
-// Training content adapter — data/doghouse-content-v1.json.
+// Training content adapter — one JSON file per product, plus one small
+// shared file for content that's genuinely ATH-wide (see tcSequence below).
 //
-// THE ONE RULE (DOGHOUSE_BUILD_SPEC.md): that JSON is the single source of
-// truth and is rendered VERBATIM. Nothing in this file paraphrases,
-// summarises, truncates, reflows or "improves" any string value. The only
-// transformation performed anywhere is {{TOKEN}} substitution, which the
-// spec explicitly asks for. Content changes happen in the JSON, never here.
+// THE ONE RULE (DOGHOUSE_BUILD_SPEC.md): the content files are the single
+// source of truth and are rendered VERBATIM. Nothing in this file
+// paraphrases, summarises, truncates, reflows or "improves" any string
+// value. The only transformation performed anywhere is {{TOKEN}}
+// substitution, which the spec explicitly asks for. Content changes happen
+// in the JSON, never here.
 //
 // AUTHORITY RULE (spec v1.1):
-//   The live deck (js/data-sunesta.js) owns slide ORDER and SECTION
-//   membership. This JSON owns CONTENT. They join by id.
+//   The live deck (js/data-<product>.js) owns slide ORDER and SECTION
+//   membership. A product's content JSON owns CONTENT. They join by id via
+//   that content file's own `deck_map` — an explicit hand-verified map
+//   rather than a positional or slide_number-based lookup, because a deck
+//   has been reordered before (Drop Screen moved AWNINGS -> SMART
+//   TECHNOLOGY) and will be again. An explicit map survives that; an index
+//   does not.
 //
-// That is why DECK_TO_CONTENT below is an explicit hand-verified map rather
-// than a positional or slide_number-based lookup. The JSON's slide_number
-// happens to match the deck's current order today, but the deck has been
-// reordered before (Drop Screen moved AWNINGS -> SMART TECHNOLOGY) and will
-// be again. An explicit map survives that; an index does not.
+// PRODUCT-AGNOSTIC ENGINE (training-mode-v2 Phase 2): this file used to
+// hardcode a single covered product (TC_PRODUCT = "sunesta") and a single
+// global TRAINING_CONTENT. Both products now ship a content file
+// (PROD.trainingContentFile, set in each js/data-<product>.js), loaded and
+// cached per product, so a future product (Gutter Helmet, Louvered
+// Pergolas) needs only its own deck file + its own content JSON + a
+// registry entry — no changes here.
 //
-// The JSON carries ZERO render keys — no type/image/hotspots/models. It
-// cannot and must not drive the customer-facing deck. It replaces only the
-// training slice of each slide.
+// A content JSON carries ZERO render keys — no type/image/hotspots/models.
+// It cannot and must not drive the customer-facing deck. It replaces only
+// the training slice of each slide.
 
-// undefined = still loading · null = not shipped/failed · object = loaded
-let TRAINING_CONTENT;
+// productKey -> {content, byId, varsByKey} once settled, or null if that
+// product has no trainingContentFile / it failed to load. Absent = never
+// requested yet.
+let TC_CACHE = {};
+let TC_INFLIGHT = {};
 
-// Which product's deck this content file covers. The mapping audit and the
-// rehearsal panel's "missing content" state apply ONLY to this product —
-// every other product (Eclipse today) legitimately has no JSON content and
-// keeps the legacy data-<product>.js training fields.
-const TC_PRODUCT = "sunesta";
-
-// deck slide id (js/data-sunesta.js)  ->  JSON slide_id
-// Verified 1:1 by title against all 22 in-deck slides.
-const DECK_TO_CONTENT = {
-  introvideo: "s01",  dealer:     "s02",  products:  "s03",  training:   "s04",
-  doypeople:  "s05",  local:      "s06",  difference:"s07",  badges:     "s08",
-  process:    "s09",  refmap:     "s10",  tenreasons:"s11",  reasons:    "s12",
-  scrub:      "s13",  models:     "s14",  fabrics:   "s15",  smarttitle: "s16",
-  dropscreen: "s17",  mylink:     "s18",  sensors:   "s19",  led:        "s20",
-  warrantyrecap: "s21", pricecond: "s22",
-};
-
-// Training-only items: real content with no Canva/deck counterpart
-// (in_deck:false). They exist only in the standalone Training Coach walk.
-const CONTENT_PREP_IDS = ["prep_recap", "preframe"];
-
-// ---------------------------------------------------------------- load ----
-function loadTrainingContent(){
-  // company settings are fetched in parallel; this awaits them so the first
-  // render already has the committed defaults resolved
-  return loadCompanySettings().then(() => fetch("data/doghouse-content-v1.json", {cache:"no-cache"}))
+// Genuinely cross-product content (e.g. the 10-step sales process) lives in
+// one shared file instead of being owned by one product and aliased by
+// another — see tcSequence(). undefined = not yet loaded, null = failed.
+let TC_SHARED;
+function loadSharedContent(){
+  return fetch("data/training-content-shared.json", {cache:"no-cache"})
     .then((r) => (r.ok ? r.json() : null))
-    .then((d) => {
-      TRAINING_CONTENT = (d && Array.isArray(d.slides) && d.slides.length) ? d : null;
-      if (TRAINING_CONTENT) { indexContent(); tcAuditMapping(); }
+    .then((d) => { TC_SHARED = d || null; })
+    .catch(() => { TC_SHARED = null; });
+}
+
+function indexContent(content){
+  const byId = {};
+  for (const s of content.slides || []) byId[s.slide_id] = s;
+  for (const m of content.modules || []) byId[m.module_id] = m;
+  const varsByKey = {};
+  for (const v of content.variables || []) varsByKey[v.key] = v;
+  return { content, byId, varsByKey };
+}
+
+// Fetches + indexes a product's content file if not already cached or in
+// flight; resolves to the cache entry (or null) either way. Safe to call
+// repeatedly — setProduct() calls this on every product switch.
+function tcEnsureProductContent(productKey){
+  if (productKey in TC_CACHE) return Promise.resolve(TC_CACHE[productKey]);
+  if (TC_INFLIGHT[productKey]) return TC_INFLIGHT[productKey];
+  const file = (PRODUCT_DATA[productKey] || {}).trainingContentFile;
+  if (!file) { TC_CACHE[productKey] = null; return Promise.resolve(null); }
+  const p = fetch(file, { cache: "no-cache" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((json) => {
+      const content = (json && Array.isArray(json.slides) && json.slides.length) ? json : null;
+      TC_CACHE[productKey] = content ? indexContent(content) : null;
+      delete TC_INFLIGHT[productKey];
+      if (content) tcAuditMapping(productKey);
       if (typeof onTrainingContentReady === "function") onTrainingContentReady();
+      return TC_CACHE[productKey];
     })
     .catch(() => {
-      TRAINING_CONTENT = null;
+      TC_CACHE[productKey] = null;
+      delete TC_INFLIGHT[productKey];
       if (typeof onTrainingContentReady === "function") onTrainingContentReady();
+      return null;
     });
+  TC_INFLIGHT[productKey] = p;
+  return p;
 }
 
-let _byId = {}, _varsByKey = {};
-function indexContent(){
-  _byId = {};
-  for (const s of TRAINING_CONTENT.slides) _byId[s.slide_id] = s;
-  for (const m of TRAINING_CONTENT.modules || []) _byId[m.module_id] = m;
-  _varsByKey = {};
-  for (const v of TRAINING_CONTENT.variables || []) _varsByKey[v.key] = v;
+function tcActive(){ return TC_CACHE[activeProduct] || null; }
+function tcReady(){ return !!tcActive(); }
+// Distinguishes "still loading" (key not yet in TC_CACHE) from "settled and
+// failed" (key present, value null) — used only for the legacy-fallback
+// warning banner, so a slow fetch doesn't briefly flash a false failure.
+function tcLoadFailed(){
+  return (activeProduct in TC_CACHE) && TC_CACHE[activeProduct] === null
+    && !!(PRODUCT_DATA[activeProduct] || {}).trainingContentFile;
 }
 
-function tcReady(){ return !!(TRAINING_CONTENT && TRAINING_CONTENT.slides); }
-
-// DECK_TO_CONTENT is a manual artifact, which means it can rot: a slide
-// added to the deck without a map entry would silently fall back to stale
-// pre-overhaul content — the worst failure mode for a training tool. This
-// audit runs once at load and screams to the console about (a) covered-deck
-// slides with no map entry, (b) map entries pointing at slide_ids that
-// don't exist in the content file, and (c) stale map keys for deck slides
-// that no longer exist. The admin Flags view surfaces the same list.
-function tcAuditMapping(opts){
+// DECK_TO_CONTENT (now each content file's own `deck_map`) is a manual
+// artifact, which means it can rot: a slide added to the deck without a map
+// entry would silently fall back to stale pre-overhaul content — the worst
+// failure mode for a training tool. This audit runs once per product, as
+// soon as that product's content settles, and screams to the console about
+// (a) covered-deck slides with no map entry, (b) map entries pointing at
+// ids that don't exist in the content file, and (c) stale map keys for
+// deck slides that no longer exist. The admin Flags view surfaces the same
+// list for the active product.
+function tcAuditMapping(productKey, opts){
+  productKey = productKey || activeProduct;
   const problems = [];
-  const prod = (typeof PRODUCT_DATA === "object") && PRODUCT_DATA[TC_PRODUCT];
-  if (prod && prod.deck) {
+  const cache = TC_CACHE[productKey];
+  const prod = (typeof PRODUCT_DATA === "object") && PRODUCT_DATA[productKey];
+  if (cache && prod && prod.deck) {
+    const deckMap = cache.content.deck_map || {};
     const deckIds = [];
     for (const tab of Object.keys(prod.deck)) for (const sl of prod.deck[tab]) {
       deckIds.push(sl.id);
-      if (!(sl.id in DECK_TO_CONTENT))
-        problems.push(`deck slide "${sl.id}" (${tab}) has no DECK_TO_CONTENT entry — reps see a visible gap, not stale content`);
-      else if (!_byId[DECK_TO_CONTENT[sl.id]])
-        problems.push(`deck slide "${sl.id}" maps to "${DECK_TO_CONTENT[sl.id]}", which does not exist in the content file`);
+      if (!(sl.id in deckMap))
+        problems.push(`deck slide "${sl.id}" (${tab}) has no deck_map entry — reps see a visible gap, not stale content`);
+      else if (!cache.byId[deckMap[sl.id]])
+        problems.push(`deck slide "${sl.id}" maps to "${deckMap[sl.id]}", which does not exist in the content file`);
     }
-    for (const k of Object.keys(DECK_TO_CONTENT))
+    for (const k of Object.keys(deckMap))
       if (!deckIds.includes(k))
-        problems.push(`DECK_TO_CONTENT has an entry for "${k}", which is no longer in the deck (stale after a slide removal?)`);
+        problems.push(`deck_map has an entry for "${k}", which is no longer in the deck (stale after a slide removal?)`);
   }
   if (problems.length && !(opts && opts.silent))
-    console.error("TRAINING CONTENT MAPPING PROBLEMS (js/training-content.js):\n  - " + problems.join("\n  - "));
+    console.error(`TRAINING CONTENT MAPPING PROBLEMS (${productKey}, js/training-content.js):\n  - ` + problems.join("\n  - "));
   return problems;
 }
-function tcEntry(id){ return _byId[id] || null; }
-function tcModule(){ return (TRAINING_CONTENT && TRAINING_CONTENT.modules && TRAINING_CONTENT.modules[0]) || null; }
-function tcForDeckSlide(deckId){ return tcReady() ? (_byId[DECK_TO_CONTENT[deckId]] || null) : null; }
+function tcEntry(id){ const a = tcActive(); return (a && a.byId[id]) || null; }
+function tcModule(){ const a = tcActive(); return (a && a.content.modules && a.content.modules[0]) || null; }
+function tcForDeckSlide(deckId){
+  const a = tcActive();
+  if (!a) return null;
+  const contentId = (a.content.deck_map || {})[deckId];
+  return contentId ? (a.byId[contentId] || null) : null;
+}
+
+// A named sequence (currently just "ten_steps"): the active product's own
+// content may define its own sequences.<key> to override; absent that,
+// every product falls back to the shared file. Same resolution shape as
+// tcValues() (committed default, then override) — applied to content
+// instead of variable values. This is what replaced Eclipse's old
+// `tenSteps: TRAINING_REFERENCE.tenSteps` object-reference alias: previously
+// editing "Sunesta's" copy silently changed Eclipse's too, because it was
+// the same JS object; now there is genuinely one committed resource, and
+// neither product can accidentally mutate the other's view of it.
+function tcSequence(key){
+  const a = tcActive();
+  const own = a && a.content.sequences && a.content.sequences[key];
+  if (own) return own;
+  return (TC_SHARED && TC_SHARED.sequences && TC_SHARED.sequences[key]) || null;
+}
 
 // The full ordered training walk. Order and section labels come from the
-// DECK (authority rule); the prep items lead, and the pricing module is
-// appended as an explicit special case — it lives in modules[], not
-// slides[], so no slide lookup can ever return it.
+// DECK (authority rule); prep items (declared per-product via
+// content.prep_ids — Sunesta has 2, Eclipse has none) lead, and the pricing
+// module is appended as an explicit special case — it lives in modules[],
+// not slides[], so no slide lookup can ever return it. Reference-only
+// entries (ref_dodont, ref_close, ref_predemo, ref_faq — in_deck:false,
+// NOT in prep_ids) are deliberately excluded: they're reached from their
+// own Training Center hub cards, not the sequential walk.
 function tcWalk(){
-  if (!tcReady()) return [];
-  const out = CONTENT_PREP_IDS
-    .filter((id) => _byId[id])
-    .map((id) => ({ kind:"slide", id, section:"Before You Start", entry:_byId[id], deckId:null }));
+  const a = tcActive();
+  if (!a) return [];
+  const prepIds = a.content.prep_ids || [];
+  const out = prepIds
+    .filter((id) => a.byId[id])
+    .map((id) => ({ kind: "slide", id, section: "Before You Start", entry: a.byId[id], deckId: null }));
 
   if (typeof PDECK === "object" && typeof tabs !== "undefined") {
     for (const tab of tabs) {
       for (const s of PDECK[tab]) {
         const e = tcForDeckSlide(s.id);
-        if (e) out.push({ kind:"slide", id:e.slide_id, section:tab, entry:e, deckId:s.id });
+        if (e) out.push({ kind: "slide", id: e.slide_id, section: tab, entry: e, deckId: s.id });
       }
     }
   }
   const m = tcModule();
-  if (m) out.push({ kind:"module", id:m.module_id, section:"Pricing & Close", entry:m, deckId:null });
+  if (m) out.push({ kind: "module", id: m.module_id, section: "Pricing & Close", entry: m, deckId: null });
   return out;
 }
 
@@ -136,7 +189,11 @@ function tcWalk(){
 //        same drift the authority rule exists to prevent.
 //
 //   rep_profile / discovery / measure / proposal -> localStorage, per device.
-//        Correctly per-person and per-appointment.
+//        Correctly per-person and per-appointment, and shared across
+//        whichever product is active in one appointment — a rep's name
+//        doesn't change between a Sunesta demo and an Eclipse demo on the
+//        same visit, so unlike content edits (see training-render.js /
+//        TC_CONTENT_EDITS_KEY) these are NOT namespaced per product.
 //
 // A rep may still override a company value locally for one appointment; the
 // setup form shows when a value differs from the committed default and
@@ -155,7 +212,8 @@ function tcCompanyDefault(key){
 }
 // True when the rep has set a local value that differs from the committed one.
 function tcIsOverridden(key){
-  if ((_varsByKey[key] || {}).source !== "company_settings") return false;
+  const a = tcActive();
+  if (!a || (a.varsByKey[key] || {}).source !== "company_settings") return false;
   const local = tcLocalValues()[key];
   return !!local && local !== tcCompanyDefault(key);
 }
@@ -179,18 +237,25 @@ function tcSetValue(key, val){
   localStorage.setItem(TC_VALUES_KEY, JSON.stringify(v));
 }
 function tcClearAppointment(){
+  const a = tcActive();
   const v = tcLocalValues(), keep = {};
   for (const [k, val] of Object.entries(v)) {
-    const src = (_varsByKey[k] || {}).source;
+    const src = a && (a.varsByKey[k] || {}).source;
     if (src === "rep_profile" || src === "company_settings") keep[k] = val;
   }
   localStorage.setItem(TC_VALUES_KEY, JSON.stringify(keep));
 }
-function tcVarsBySource(src){ return (TRAINING_CONTENT.variables || []).filter((v) => v.source === src); }
-// Declared NOT_SET in the JSON *and* still not filled in locally.
+function tcVarsBySource(src){
+  const a = tcActive();
+  return a ? Object.values(a.varsByKey).filter((v) => v.source === src) : [];
+}
+// Declared NOT_SET in the active product's content *and* still not filled
+// in locally.
 function tcUnsetVars(){
+  const a = tcActive();
+  if (!a) return [];
   const vals = tcValues();          // resolved: committed default + local
-  return (TRAINING_CONTENT.variables || []).filter((v) => v.status === "NOT_SET" && !vals[v.key]);
+  return Object.values(a.varsByKey).filter((v) => v.status === "NOT_SET" && !vals[v.key]);
 }
 
 // Resolve {{TOKEN}} against stored values. Unfilled tokens become a visible
@@ -200,11 +265,13 @@ const tcEsc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&":"&amp;","<":"&lt
 function tcResolve(text){
   if (typeof text !== "string") return "";
   const vals = tcValues();
+  const a = tcActive();
   return tcEsc(text).replace(/\{\{([A-Z_0-9]+)\}\}/g, (raw, key) => {
     const v = vals[key];
     if (v) return `<span class="tc-var-filled">${tcEsc(v)}</span>`;
-    const label = (_varsByKey[key] && _varsByKey[key].label) || key;
-    const unset = _varsByKey[key] && _varsByKey[key].status === "NOT_SET";
+    const varDef = a && a.varsByKey[key];
+    const label = (varDef && varDef.label) || key;
+    const unset = varDef && varDef.status === "NOT_SET";
     return `<span class="tc-var-chip${unset ? " unset" : ""}" title="${tcEsc(
       unset ? "Not set — admin needs to fill this in" : "Fill in during discovery")}">[${tcEsc(label)}]</span>`;
   });
@@ -237,13 +304,21 @@ function tcSearch(q){
 
 // -------------------------------------------------------------- admin ----
 function tcAllFlags(){
-  if (!tcReady()) return [];
+  const a = tcActive();
+  if (!a) return [];
   const rank = { high:0, medium:1, low:2 };
   const rows = [];
-  for (const s of TRAINING_CONTENT.slides) for (const f of s.flags || []) rows.push({ ...f, on:s.slide_id, title:s.title });
-  for (const m of TRAINING_CONTENT.modules || []) for (const f of m.flags || []) rows.push({ ...f, on:m.module_id, title:m.title });
-  return rows.sort((a, b) => (rank[a.severity] ?? 9) - (rank[b.severity] ?? 9));
+  for (const s of a.content.slides || []) for (const f of s.flags || []) rows.push({ ...f, on:s.slide_id, title:s.title });
+  for (const m of a.content.modules || []) for (const f of m.flags || []) rows.push({ ...f, on:m.module_id, title:m.title });
+  return rows.sort((a2, b2) => (rank[a2.severity] ?? 9) - (rank[b2.severity] ?? 9));
 }
-function tcOpenItems(){ return (tcReady() && TRAINING_CONTENT.open_items) || []; }
+function tcOpenItems(){ const a = tcActive(); return (a && a.content.open_items) || []; }
 
-loadTrainingContent();
+// activeProduct/setProduct() are declared in js/app.js, which loads AFTER
+// this file (see index.html) — this file must not reference activeProduct
+// at its own top level, only from inside functions called later. setProduct()
+// calls tcEnsureProductContent(key) itself on every product bind/rebind,
+// including the initial boot bind, so nothing needs to kick off here beyond
+// the two files that aren't product-specific.
+loadSharedContent();
+loadCompanySettings();

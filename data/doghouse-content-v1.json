@@ -12,6 +12,34 @@
     "revised": "2026-07-31",
     "authority_rule": "The live deck (data-sunesta.js) owns slide ORDER and SECTION membership. This file owns CONTENT. Join by slide_id. sections[] below is advisory only - do not use it for routing."
   },
+  "prep_ids": [
+    "prep_recap",
+    "preframe"
+  ],
+  "deck_map": {
+    "introvideo": "s01",
+    "dealer": "s02",
+    "products": "s03",
+    "training": "s04",
+    "doypeople": "s05",
+    "local": "s06",
+    "difference": "s07",
+    "badges": "s08",
+    "process": "s09",
+    "refmap": "s10",
+    "tenreasons": "s11",
+    "reasons": "s12",
+    "scrub": "s13",
+    "models": "s14",
+    "fabrics": "s15",
+    "smarttitle": "s16",
+    "dropscreen": "s17",
+    "mylink": "s18",
+    "sensors": "s19",
+    "led": "s20",
+    "warrantyrecap": "s21",
+    "pricecond": "s22"
+  },
   "variables": [
     {
       "key": "REP_NAME",
@@ -2488,6 +2516,7 @@
       "reactive_scripts": [
         {
           "script_id": "financing",
+          "tag": "FAQ",
           "label": "FINANCING SCRIPT",
           "trigger": "Only when asked, or after price. Never volunteer before price.",
           "question": "“Do you all offer any financing?”",
@@ -2505,6 +2534,7 @@
         },
         {
           "script_id": "subcontractor",
+          "tag": "FAQ",
           "label": "SUBCONTRACTOR SCRIPT",
           "trigger": "Reactive",
           "question": "“Will you all be doing this work, or do you use subcontractors?”",

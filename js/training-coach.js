@@ -16,10 +16,11 @@ const tcv = { i: 0, q: "", drawer: false, sev: "all" };
 
 function tcvIsView(v){ return v === "script" || v === "setup" || v === "cflags"; }
 
-// Hub cards for these views — only offered on the covered product once the
-// content file has actually loaded.
+// Hub cards for these views — only offered once the active product's
+// content file has actually loaded (every product is "covered" now, but a
+// slow or failed fetch still means there's nothing to show yet).
 function tcvHubCards(){
-  if (activeProduct !== TC_PRODUCT || !tcReady()) return [];
+  if (!tcReady()) return [];
   const unset = tcUnsetVars().length;
   return [
     {key:"script", icon:ICON.book, name:"Full Script & Coaching",

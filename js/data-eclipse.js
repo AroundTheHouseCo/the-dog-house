@@ -390,80 +390,20 @@ const ECLIPSE_DECK = {
 
 };
 
-// ── Training reference (rep-only) ────────────────────────────────────────────
-const ECLIPSE_TRAINING = {
-
-  doDont: {
-    // E-Zip-specific additions — appended to TRAINING_SHARED.doDont (js/registry.js).
-    dont: [
-      "Do not lead with cassette size or specs before confirming the customer's goals",
-      "Do not skip the fabric sample — let them look through it and feel it",
-      "Do not present the Super Duty as the default — it is an upgrade conversation",
-      "Do not use the word \"cage\" unless the customer brings it up first",
-      "Do not compare to glass sunrooms unless the customer raises it",
-      "Do not offer the 10% same-day incentive before the price has landed and been absorbed"
-    ],
-    do: [
-      "Bring fabric samples to every appointment — let them look through the 95% sample",
-      "Use the direction the space faces to anchor the sun-angle conversation",
-      "Use the zipper retention explanation every time — it is your clearest competitive differentiator",
-      "Present motorized as standard — never an option",
-      "Always confirm: standard duty, or does the situation call for Super Duty?",
-      "Present two options at pricing — always"
-    ]
-  },
-
-  faqs: [
-    {tag:"FAQ", q:"Will I still be able to see my view through the fabric?",
-     a:"Great question — and it's one of the most common things people ask.\n\nThe 95% fabric — which is what about 95% of our customers go with — lets you see through it from the inside. You get your view. The sun and wind are blocked, but you're not staring at a wall.\n\nHere's the bonus: from the outside, looking in at the screen, it creates almost a mirror effect during the day. Neighbors can't see in. You can see out. A lot of customers actually love that as much as the sun control.\n\nLet me show you the sample so you can actually look through it."},
-    {tag:"FAQ", q:"Will it hold up in Colorado wind?",
-     a:"That's actually one of the strongest selling points of this system.\n\nThe E-Zip is Class 6 wind resistance tested — rated to 80 miles per hour on the 4\" and 5\" systems. The zipper retention is what makes the difference. The fabric edge is physically locked into the side track — so instead of billowing and flapping like a generic roll-down screen, this system stays flat and taut even in high wind.\n\nIf you're in a particularly exposed location, that's when we'd talk about the Super Duty — it adds stainless steel spring clips in the tracks for even more side tension.\n\n⚠️ Do NOT quote \"performs well above 80 in practice\" or any 130-mph figure — no documentation exists for either."},
-    {tag:"FAQ", q:"Will it keep no-see-ums out?",
-     a:"Yes — and that's actually one of the things the Phifer fabric is specifically designed for. The weave is tight enough to stop no-see-ums, mosquitoes, and other small insects. When it's down and sealed at the bottom, you've got a real barrier. A lot of our customers tell us this alone changed how much they use their patio in the evenings."},
-    {tag:"FAQ", q:"How do I get in and out?",
-     a:"Simple — you run it up with the remote. Comes up in seconds.\n\nOne thing to note — this system doesn't have a built-in door panel. The way you enter and exit is by raising the screen. Most homeowners find they don't even think about it after the first week."},
-    {tag:"FAQ", q:"Do you all offer any financing?",
-     a:"Yes, absolutely. We have some great options available. Unlike credit cards with yearly fees and interest rates as high as 29%, we work with home-improvement lenders. There's no prepayment penalty, and everything extra you pay goes directly toward the principal. We have low monthly budget plans with rates as low as 10.99%, or a 12-month no-interest / same-as-cash option. These are popular either way you go because there's no money down, and the first payment isn't due until after the installation is complete.\n\nWe can look into getting you pre-approved with no impact on your credit score. Is that something you'd be interested in?"},
-    {tag:"FAQ", q:"Will you all be doing this work or do you use subcontractors?",
-     a:"Yes! We work with subcontractor partners. We train with them, critique, and perform final inspections. They work for us and only us. All of our partners install to the specifications required by the manufacturers and are trained directly as well. Around the House manages and warranties the work, and will perform a final walk-through to ensure quality and satisfaction."},
-    {tag:"Objection", q:"\"Is it going to feel like a cage or a sunroom?\"",
-     a:"It really doesn't — and that's an important distinction.\n\nUnlike a glass sunroom, this is a screen. Air moves through it. It doesn't trap heat the way an enclosed glass room does. You still feel like you're outside — just without the sun beating on you and without the wind pushing you back in.\n\nAnd because it's motorized, you control it completely. You can have it all the way down, partially down, or fully up in seconds. It's not a permanent enclosure. It's more like a wall you can make disappear whenever you want."},
-    {tag:"Objection", q:"\"We got a quote from someone else for a lot less.\"",
-     a:"That's worth understanding — because not all screen systems are the same, and the price difference usually comes down to a few specific things.\n\nThe biggest one is whether it uses a true zipper retention system. A generic roll-down screen with no zipper track will flap in the wind and eventually fail. The zipper is what keeps this system taut and functional in Colorado conditions.\n\nSecond is the warranty. Most cheaper systems have a limited warranty on components, shorter terms, and often require you to deal with a manufacturer directly rather than a local dealer.\n\nThird is the fabric — Phifer is a specific manufacturer with a documented track record.\n\nWe'd rather show you exactly what the difference is than just ask you to take our word for it."},
-    {tag:"Rep Ref", q:"E-Zip vs. Sunesta — the quick rep contrast",
-     a:"When both are on the table, or you're switching gears mid-appointment:\n\nPrimary benefit — Sunesta: overhead shade & sun projection. E-Zip: full opening control — sun, wind, and privacy.\n\nCustomer pain — Sunesta: can't use the space during the day. E-Zip: the elements push them off the patio entirely.\n\nWind story — Sunesta: arms tested to 98 mph. E-Zip: Class 6, tested to 80 mph, zipper retention keeps it taut.\n\nKey differentiator — Sunesta: Smart Case, strong arms, cable system. E-Zip: the zipper-retention track — no flapping, no gaps.\n\nFabric decision — Sunesta: color & pattern. E-Zip: openness factor — SunTex 95 is almost always right.\n\nThe two options — Sunesta: Sunesta vs Sunstyle. E-Zip: Standard vs Super Duty.\n\nCommon objection — Sunesta: will it block our view? E-Zip: will I still be able to see through it?\n\nCompetitor contrast — Sunesta: Frankenstein awnings. E-Zip: generic roll-downs and glass sunrooms.\n\nCross-sell — Sunesta: drop screen, LED lights. E-Zip: additional screens, louvered-roof pairing.\n\nInstall — Sunesta: one day typically. E-Zip: one day, sometimes two on larger enclosures."}
-  ],
-
-  close: {
-    note:"Urgency mechanic (Jack's call, 2026-07-15): the 10% SAME-DAY incentive — introduced calmly, once, AFTER the price lands and is absorbed. Never lead with it, never repeat it as a pressure tactic. Rep-only; it never appears on a customer slide.",
-    sections:[
-      {title:"Transition to pricing — outcome first, price second",
-       body:"Always revisit the Accomplish List before showing a number. This is not \"here's the price\" — it's \"here's the solution to what you asked for.\"\n\n\"So based on everything we talked through — and your goals of…\" (repeat their list, in their words) \"…this is what I put together for you. Each screen is custom made to your exact opening — nothing off the shelf.\""},
-      {title:"Micro-close — before the real close",
-       body:"\"Does this all make sense so far?\"\n\nStop talking. Wait. Do not fill the silence.\n\nIf they say yes and seem engaged — move to close. If they hesitate — something is unresolved. Find it before you ask for the decision."},
-      {title:"The close is a preference question",
-       body:"\"Between the two options we walked through — which one feels like the right fit for what you're trying to accomplish?\"\n\nNOT \"What do you think?\" and NOT \"Any questions?\" — give them a direction to move in, not a yes/no.\n\nMost customers: \"Let's go with the Standard — the warranty and wind rating are exactly what we need.\" If they ask what the Super Duty actually does for them — that's a buying question. Walk it again and let them decide."},
-      {title:"Two options, always",
-       body:"Option 1 is the ideal, full recommendation — presented first, never the lesser option. Option 2 is the alternative: the Super Duty upgrade or a scope adjustment. Each screen is priced per opening, custom to their exact dimensions.\n\nIf price pushback is about scope, adjust scope — never discount without adjusting scope first."},
-      {title:"The same-day incentive — once, after the price lands",
-       body:"After the first number has landed and been absorbed:\n\n\"And one more thing — we do offer a same-day incentive. If you decide to move forward today, we can take 10% off the total. No pressure on that — I just want to make sure you have the full picture.\"\n\nIntroduce it calmly, ONCE, after the price — never lead with it, never repeat it as pressure. It's one of the Four Sales (\"do it now\"): the incentive plus the 3–5 week install window are what support moving today."}
-    ]
-  },
-
-  preDemo: {
-    intro:"Pre-frame at the table — set expectations and take control of the room before Slide 1.",
-    body:"\"So what I'd like to do is take about 10 to 15 minutes and walk you through how these screen systems work, what makes them different from anything else out there, and how we'd design this specifically for your space. Then we'll look at some options together and figure out what actually makes the most sense for you. Every screen we do is custom made for the opening — so there's nothing off the shelf here. Sound good?\"\n\nMASTER E-ZIP ACCOMPLISH LIST — fill in during discovery, confirm before the demo begins (their words, not product names):\n\n☐ Use the outdoor space more — during peak sun hours, not just morning and evening\n☐ Block harsh sun from the west, south, or wherever it hits hardest\n☐ Cut the wind so the space is actually comfortable to sit in\n☐ Keep the view — see out without being blasted by sun or wind\n☐ Reduce heat and glare coming into the interior rooms behind the space\n☐ Add privacy from neighbors, the street, or adjacent properties\n☐ Keep no-see-ums and insects out so evenings are enjoyable\n☐ Extend usability into more months of the year — spring through fall\n☐ Have something easy and convenient to control with a button\n☐ Make the space feel finished and intentional — not temporary or pieced together\n☐ Enclose the full porch or pergola and create a true outdoor room\n☐ Have something that holds up in Colorado wind and weather long-term\n\nSun-angle cheat: West-facing = afternoon · South = midday · East = morning · North = usually wind or privacy."
-  },
-
-  // The 10-step visit structure is ATH-wide, not product-specific — reuse the
-  // Sunesta master copy (js/data-sunesta.js must load first; index.html enforces it).
-  tenSteps: TRAINING_REFERENCE.tenSteps
-};
-
 // ── Product registration ─────────────────────────────────────────────────────
+// Rep-only reference content (Do & Don't, FAQs & Objections, Pricing &
+// Close, Pre-Demo Recap — formerly an ECLIPSE_TRAINING const here) and the
+// 14 deck slides' script/talkingPoints/coach fields have been migrated into
+// data/training-content-eclipse.json, same schema as Sunesta's file — see
+// js/training-content.js. The old tenSteps: TRAINING_REFERENCE.tenSteps
+// line (a live object-reference into Sunesta's data, dependent on script
+// load order) is gone too: the 10-step process is genuinely ATH-wide, so it
+// now lives once in data/training-content-shared.json and both products
+// resolve it via tcSequence("ten_steps") instead of one product aliasing
+// the other's copy.
 PRODUCT_DATA.eclipse = {
   deck: ECLIPSE_DECK,
-  training: ECLIPSE_TRAINING,
+  trainingContentFile: "data/training-content-eclipse.json",
   logo: IMAGES.ezLogoEclipse,
   brandHTML: 'Around The House · <b>Eclipse® E-Zip Screens</b>',
   photoCats: ["screens"],

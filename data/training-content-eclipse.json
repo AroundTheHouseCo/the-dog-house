@@ -7,6 +7,7 @@
     "notes_for_engineers": "This file is the single source of truth for Eclipse Doghouse training mode. Do not paraphrase, summarize, rewrite, or 'improve' any value in this file. Render it. All content changes happen in this file, not in code.",
     "authority_rule": "The live deck (js/data-eclipse.js) owns slide ORDER and SECTION membership. This file owns CONTENT. Join by deck_map below."
   },
+  "prep_ids": [],
   "deck_map": {
     "ez-intro": "e01",
     "ez-lineup": "e02",

@@ -45,6 +45,16 @@ function tcPurposeHTML(entry){
   return `<div class="tc-purpose">${p.map((x) => `<p>${tcResolve(x)}</p>`).join("")}</div>`;
 }
 
+// Was a per-slide `personalTouch` field in js/data-sunesta.js, rendered
+// only in the legacy fallback branch — which meant it silently stopped
+// rendering the moment JSON content covered that slide (s02, always).
+// Reusing the same .personal-touch/.pt-label/.pt-body markup here restores
+// it, now genuinely visible in the walk it was written for.
+function tcPersonalTouchHTML(entry){
+  if (!entry.personal_touch) return "";
+  return `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep</div><div class="pt-body">${tcResolve(entry.personal_touch)}</div></div>`;
+}
+
 function tcBeatsHTML(entry){
   const b = entry.display_beats || [];
   if (!b.length) return "";
@@ -186,6 +196,7 @@ function tcEntryHTML(entry, opts){
     ${tcToneHTML(entry)}
     ${tcAccomplishHTML(entry)}
     ${tcPurposeHTML(entry)}
+    ${tcPersonalTouchHTML(entry)}
     <div class="tc-layer">
       ${hasBeats ? `<button class="tc-toggle" data-tc-toggle="${tcEsc(id)}" aria-expanded="${expanded}">
         ${expanded ? "Show beats" : "Show full script"}
