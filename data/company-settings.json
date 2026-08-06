@@ -1,8 +1,10 @@
 {
   "_comment": "Company-wide values for the training content merge fields. Committed on purpose: these are company values, not per-rep values -- if two reps enter two different price ranges, slide 22 teaches two different things at two different kitchen tables. This file is the default and the source of truth; a rep can still override locally for one appointment, and the setup form shows when they have. Empty string = not set yet, which renders as a visible placeholder chip (never raw braces, never blank).",
-  "_keys_are": "variables[].key from data/doghouse-content-v1.json where source == company_settings",
+  "_keys_are": "variables[].key from any product's training content file where source == company_settings (data/doghouse-content-v1.json, data/training-content-eclipse.json)",
+  "_shared_across_products": "This file is loaded once, not per product -- a key set here applies to EVERY product. LEAD_TIME_WEEKS is the live example: the Eclipse rebuild established six to eight weeks for screen projects, but Sunesta's awning lead time is still an open question (oi04 in doghouse-content-v1.json), so this stays empty rather than teaching a screens number at an awning appointment. Per-product company defaults are not supported by the current schema.",
   "values": {
     "LEAD_TIME_WEEKS": "",
+    "SAME_WEEK_SAVINGS": "",
     "PRICE_ONLINE_HANDYMAN": "",
     "PRICE_SUSPICION_THRESHOLD": "",
     "PRICE_PERGOLA_FLOOR": "",

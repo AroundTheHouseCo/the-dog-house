@@ -24,7 +24,41 @@
     "ez-process": "e13",
     "ez-viewstays": "e14"
   },
-  "variables": [],
+  "variables": [
+    {
+      "key": "SAME_WEEK_SAVINGS",
+      "label": "Same-week savings offer",
+      "type": "text",
+      "source": "company_settings",
+      "required": true,
+      "status": "NOT_SET",
+      "guidance": "Percentage or dollar amount for customers scheduling within the current week. Set company-wide, not per rep. Introduced once, after the price lands. Two things are still undecided (oi02): the figure itself (10% or 5%), and where the week boundary falls -- signed by Sunday, or seven days from the appointment?"
+    },
+    {
+      "key": "ACCOMPLISH_LIST",
+      "label": "Their Accomplish List",
+      "type": "list",
+      "source": "discovery",
+      "required": true,
+      "guidance": "Filled per appointment. Confirmed with the homeowner at e10 before any product is presented. Phrase as outcomes in their words, never product names."
+    },
+    {
+      "key": "REP_PERSONAL_STORY",
+      "label": "Rep personal story (why you work here)",
+      "type": "longtext",
+      "source": "rep_profile",
+      "guidance": "Editable per rep on e02. Where you came from, why you chose ATH, what you think of the people you work with. Under 60 seconds. Must be true."
+    },
+    {
+      "key": "LEAD_TIME_WEEKS",
+      "label": "Current install lead time",
+      "type": "text",
+      "source": "company_settings",
+      "required": true,
+      "status": "NOT_SET",
+      "guidance": "Six to eight weeks for all screen projects. NOT pre-filled: data/company-settings.json is shared across every product, so committing the screens figure there would also put it in front of Sunesta awning customers, whose lead time is a separate open question. Enter it per device until per-product company defaults exist (oi11)."
+    }
+  ],
   "slides": [
     {
       "slide_id": "e01",
@@ -589,5 +623,102 @@
     }
   ],
   "modules": [],
-  "open_items": []
+  "open_items": [
+    {
+      "id": "oi01",
+      "item": "System-level wind rating by cassette size and duty class — need current Eclipse engineering documentation. The published 130 MPH figure is a 2013 FABRIC test (Architectural Testing, York PA) on 120\"x84\" units, not a system rating by duty class, and must never appear in a spec table.",
+      "blocks": ["e07", "e12"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi02",
+      "item": "SAME_WEEK_SAVINGS percentage undecided (10% or 5%) and the week boundary is undefined — signed by Sunday, or seven days from appointment?",
+      "blocks": ["m_ezip_pricing_transition", "ref_close"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi03",
+      "item": "Real photo for e15 Smart Control — still images/eclipse/smart-control-placeholder.svg",
+      "blocks": ["e15"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi04",
+      "item": "Eclipse published review statistics (99.2% recommend, 4.9 product, 4.8 dealer) unverified — rep-only with attribution until confirmed",
+      "blocks": ["e07"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi05",
+      "item": "PPP downgrade dollar savings not quantified — reps need a figure before this is usable as a right-sizing lever",
+      "blocks": ["e18"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi06",
+      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate.",
+      "blocks": ["e09"],
+      "owner": "Maxx",
+      "status": "open",
+      "priority": "low"
+    },
+    {
+      "id": "oi07",
+      "item": "Legacy script/talkingPoints/coach fields stripped from js/data-eclipse.js. renderRehearsal() no longer reads them: it now splits into three states — unmapped slide shows the gap state, a failed content load shows the banner alone, and a load still in flight shows a loading placeholder.",
+      "blocks": [],
+      "owner": "Jack",
+      "status": "resolved_this_commit",
+      "priority": "high"
+    },
+    {
+      "id": "oi08",
+      "item": "Before/After/Inside photo set for e14 — extracted from slide 11 of the current Eclipse slide PDF into images/eclipse/transform-{before,after,inside}.jpg",
+      "blocks": ["e14"],
+      "owner": "Jack",
+      "status": "resolved_this_commit",
+      "priority": "high"
+    },
+    {
+      "id": "oi09",
+      "item": "Hero image needed for e06 Eclipse Authorized Dealer — currently a labelled placeholder (images/eclipse/eclipse-dealer-placeholder.svg)",
+      "blocks": ["e06"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi10",
+      "item": "myLink app screenshot for e16 — a Somfy stock shot is in place (images/eclipse/mylink-phone.jpg), but the handset shown is a dated model. Replace with a current phone-in-hand shot when one exists.",
+      "blocks": ["e16"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi11",
+      "item": "Per-product company settings are not supported — data/company-settings.json is loaded once for every product, so LEAD_TIME_WEEKS cannot hold six-to-eight weeks for screens and a different figure for awnings at the same time. Needs either a per-product block in that file or a product-scoped lookup in tcCompanyDefault().",
+      "blocks": ["e17", "m_ezip_pricing_transition"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi12",
+      "item": "Price-tier photos for e20 tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
+      "blocks": ["e20"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "low"
+    }
+  ]
 }
