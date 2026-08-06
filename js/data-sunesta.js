@@ -15,9 +15,8 @@ const DECK = {
       title:"Your Exclusive Sunesta Dealer",
       bullets:["Family-owned & operated — founded 2004, based in Monument","20+ years · thousands of projects across southern Colorado","Exclusive Sunesta dealer for Southern Colorado","You call us, you get us — local design, install & service"],
       script:"A quick background on us —\n\nWe are Around the House Home Solutions. We're a local, family-owned company based right up in Monument. We've been in business since 2004 — a little over 20 years — and in that time we've completed thousands of projects throughout southern Colorado, so this isn't something we just picked up last year.\n\nOur focus is the exterior of the house — high-quality shade solutions so homeowners can enjoy their outdoor living space, and living in Colorado, to the fullest.\n\nSomething our clients really appreciate — we're not some big corporation out of Denver… you call us, you get us. As a company we care deeply about our customers, our employees, and the local communities we serve.\n\n👉 INSERT PERSONAL TOUCH — why YOU work here (see the editable block below; swap it for your own story)\n\nTransition: \"Outside of family, your home is typically your largest investment — so we only install quality products, to the highest standards, with great warranties to back them up.\"",
-      personalTouch:"Myself, I've actually been in the home remodeling industry since I graduated from college in 2014. I've worked with organizations ranging from large national remodeling companies to small owner-operated contractors, helping design and deliver projects from full home additions to interior remodels and outdoor improvements like decks and concrete patios. Over the years I realized I have to be happy and love where I work — so when I met Jack and his brother Maxx, I couldn't pass up the opportunity to work with good people who have integrity and communicate well. I'm really happy to have found my home here at Around the House.",
       talkingPoints:["Founded 2004 · family-owned · based in Monument","Thousands of projects — 20+ years, not picked up last year","Not a Denver corporation: you call us, you get us","Founded by Kirt & Vicki, now led with sons Maxx & Jack","End on the largest-investment transition — it sets up Our Products"],
-      coach:"Keep this warm and personal — don't sound like a commercial. The Personal Touch block below is Matt's version: each rep should replace it with their own story (edit personalTouch in js/data.js)."
+      coach:"Keep this warm and personal — don't sound like a commercial. The Personal Touch block is Matt's version: each rep should replace it with their own story (now editable in Training Mode — see the personal_touch field on s02 in data/doghouse-content-v1.json, or use the in-app editor once it ships)."
     },
     {
       id:"products", type:"productcards",
@@ -383,91 +382,21 @@ const DECK = {
   ]
 };
 
-// ── Training Mode reference library ─────────────────────────────────────────
-// Rep-facing only. Rendered in the Training Mode side panel (never on slides).
-// Edit freely — same rule as the deck: content lives here, engine in app.js.
-
-const TRAINING_REFERENCE = {
-
-  doDont: {
-    // Sunesta-specific additions only — the shared Do & Don't core + Four Sales
-    // live in TRAINING_SHARED (js/registry.js) and render on every product.
-    dont: [],
-    do: [
-      "Slow down at the money slide (Models) — that's the whole game"
-    ]
-  },
-
-  faqs: [
-    {tag:"FAQ", q:"Do you all offer any financing?",
-     a:"Yes, absolutely. We have some great options available. Unlike credit cards with yearly fees and interest rates as high as 29%, we work with home-improvement lenders. There's no prepayment penalty, and everything extra you pay goes directly toward the principal. We have low monthly budget plans with rates as low as 10.99%, or a 12-month no-interest / same-as-cash option. These are popular either way you go because there's no money down, and the first payment isn't due until after the installation is complete.\n\nWe can look into getting you pre-approved with no impact on your credit score. Is that something you'd be interested in?"},
-    {tag:"FAQ", q:"Will you all be doing this work or do you use subcontractors?",
-     a:"Yes! We work with subcontractor partners. We train with them, critique, and perform final inspections. They work for us and only us. All of our partners install to the specifications required by the manufacturers and are trained directly as well. Around the House manages and warranties the work, and will perform a final walk-through to ensure quality and satisfaction."},
-    {tag:"Objection", q:"\"We want to think about it.\"",
-     a:"What it usually means: something is unresolved — price, value, trust, or a missing decision-maker.\n\n\"Totally fair — help me understand where you're at. On a scale of 1 to 10, how close does this feel to being the right move?\"\n\n(If 7 or above — find what's holding them back and address it directly.)\n(If below 7 — something bigger is unresolved. Deeper escalation scripts are pending the official Profectus material.)"},
-    {tag:"Objection", q:"\"We want to get another quote.\"",
-     a:"\"Completely reasonable — I'd do the same thing. When you're comparing, a few things worth checking: What cassette system are they using? What is the warranty — is it one warranty or multiple? And do they use a steel cable or a chain system inside the arms? Those three things tell you a lot about what you're actually buying.\""},
-    {tag:"Objection", q:"\"It's more than we expected to spend.\"",
-     a:"\"I hear you — let's look at this together. Of everything we've walked through, what feels most important to keep and what could we potentially revisit? We can always right-size this so it fits where you're at.\"\n\n👉 Remove items the homeowner chooses to remove — do not discount blindly."},
-    {tag:"Objection", q:"\"We need to talk to our spouse / partner.\"",
-     a:"\"Of course. Is there anything you feel like we haven't covered that would help them understand the value when you talk it through? And is there any chance we could get them on a quick call so I can answer any questions directly?\""},
-    {tag:"Objection", q:"\"We're thinking about doing a pergola instead.\"",
-     a:"\"That makes sense — and honestly, the two work really well together. A lot of our customers end up doing an awning first and adding a pergola later, or vice versa. We actually do both. If you want, I can show you how that could look combined.\""},
-    {tag:"Objection", q:"\"I'm worried about the wind.\"",
-     a:"\"Great question — and it's one of the most common things we hear in Colorado. The arms are tested to 98 miles per hour before they break. The system is 30 mph wind rated for continuous operation. And the wind sensor — which comes standard on every motorized unit we install — retracts it automatically before conditions get serious. Wind is actually one of the reasons we recommend the Sunesta over the lighter models.\""},
-    {tag:"Objection", q:"\"Will it block our view?\"",
-     a:"\"It actually won't — and that's one of the things people are always pleasantly surprised by. The awning shades the space from above without blocking your sightline outward. And if you add a drop screen, you can choose a lighter mesh that blocks the sun glare while still letting you see through it.\""},
-    {tag:"Objection", q:"\"What if it hails or storms?\"",
-     a:"\"Really windy — retract it. Rain — it's designed for it, just let it dry before storing for extended periods. Hail — if a significant storm is coming, retract it. The Smart Case protects the fabric when it's retracted, and the valance is inexpensive to replace if it ever takes a hit. For catastrophic weather events, that's typically a homeowners-insurance conversation.\""},
-    {tag:"Objection", q:"\"We might wait until next season.\"",
-     a:"\"Totally your call — and I want to be straight with you. We're typically three to five weeks out right now. As we get into the busy season, that stretches to eight to ten weeks and pricing often adjusts. If you're going to do this, sooner is usually better just from a logistics standpoint. But I'll never pressure you — whenever it's right for you is the right time.\""}
-  ],
-
-  close: {
-    note: "Rep-facing only — this is spoken over the live estimate. Per Jack: no customer-facing pricing slides.",
-    sections: [
-      {title:"🔥 Laying Off Pricing (Confident & Excited)",
-       body:"\"Are you all excited?\" (Get the homeowner to laugh or smile — you can even ask for a drum roll if the rapport is there.)\n\n\"So based on everything we talked about — and your goals of…\"\n👉 (repeat their Accomplish List — their words)\n\"…this is what I put together for you.\"\n\nBuild value as you present: \"These numbers include installing your new ______ with a ______ warranty.\" (If applicable) \"We will pull all necessary permits.\" \"We're ____ to ____ weeks out for installation, and your project is typically completed in about half a day. Most importantly — you'll get to enjoy your outdoor space year-round with all the features we covered.\"\n\n(Review Estimate)\n\nRebuild value and any real urgency during the estimate recap, then:\n\"Which option works best for you all?\""},
-      {title:"💰 Price Presentation Frame (Profectus)",
-       body:"Tie to the list FIRST: \"This option is designed to give you everything you said you wanted…\"\n\nThen show options:\n• Option 1 = Ideal — the full solution\n• Option 2 = Rightsized — never presented first, and built by removing what THEY choose to remove, not by discounting"},
-      {title:"🔥 Rebuild Excitement + The One-Year Price",
-       body:"\"And the good news is — you actually caught us at a great time…\"\n👉 Insert promo naturally — never lead with it.\n\nIndifference is key — avoid the homeowner sensing 'commission breath,' like you're only there to sell them.\n\nSelling the one-year price:\n\"This price is good for the next year, which is great. You can call me tomorrow, six months from now, 364 days from now — this price is locked in for you. It's very competitive with what you'll find in our industry.\""},
-      {title:"🧠 Micro-Close",
-       body:"\"Does this all make sense so far?\"\n\n👉 Stop talking. Wait. Do not fill the silence.\n\n\"Any questions about the one-year prices?\"\n\nIf yes and engaged — move to close. If they hesitate — something is unresolved. Find it before you ask for the decision."},
-      {title:"🟢 Close Transition",
-       body:"\"So between the two options we've narrowed down together, which stands out as an initial preference?\"\n\n*90% of customers: \"For the difference in cost between the Sunesta and Sunstyle, we'd rather have the stronger awning.\"\n*10% of customers: \"Whatever is cheapest is good for us — we don't plan to be out there when it's windy.\"\n\n👉 NOT: \"What do you think?\" · \"Any questions?\"\nThe close is a preference question, not a yes/no."}
-    ]
-  },
-
-  preDemo: {
-    intro: "Before the deck — recap at the table and confirm understanding of the offer (the awning vs. their outdoor space and logistics).",
-    body: "\"Before I show you the product — how long have you guys been in the home?\" (Or: \"You said you've been in the home X years, is that right?\")\n\n\"And this space here… is this where you spend most of your time outside?\"\n\n\"Is this something you've been thinking about for a while?\"\n\n👉 Tie back to the Accomplish List (subtle reminder): \"Perfect — so really making this usable, cooler, and protected is the goal.\"\n\nMEASUREMENT RECAP: \"To recap what we looked at outside — I measured X feet in width to cover the desired space, with an X projection away from the home. When we factor in some pitch, that places the end of your new awning near the end of the deck. During installation our technicians will work with you to dial in pitch versus head clearance.\"\n\nCABLE MANAGEMENT: \"These awnings require 110v power, so we'll plan to plug into this outlet here. The cords are outdoor-rated and typically stay plugged in year-round. They come in X and X colors, but we can also paint them to match your siding or stucco if you have paint available. We typically run the wiring as discreetly as possible down your window or door trim.\"\n\n\"Do you have a preference on painting the cord versus the cord color options?\"\n\nSUN ORIENTATION: \"Based on your orientation versus the sun (reference Lumos photos if possible), this will provide great coverage from X to X hours and make this space much more usable and cooler throughout the year.\"\n\nDROP SCREEN (if it's essential for them): explain why and build value here. You can add it later with both models you'll be priced on (not available on the Sunlight).\n\n\"Based on what I went over, do you feel this is the right option for you and your home?\"\n\n👉 GET A YES!!!!!! If it's a no, a maybe, or anything short of a yes — ask more questions, uncover the objection, and handle it during the presentation."
-  },
-
-  tenSteps: {
-    intro: "The 10-step sales process — the full arc of every in-home visit. The deck covers steps 4–6; everything around it is you.",
-    steps: [
-      {n:1,  title:"Introduction / Warm Up & Set Agenda", stage:"At the door / table"},
-      {n:2,  title:"Discovery Q & A / Needs Analysis", stage:"At the table"},
-      {n:3,  title:"Recap at Table & Confirm Understanding of the Offer", stage:"At the table", detail:"Awnings/screens etc. vs. their outdoor space and logistics — see the Pre-Demo Recap reference."},
-      {n:4,  title:"Company Story through Installation & Manufacturer Info", stage:"Presentation"},
-      {n:5,  title:"Product Options & Product Demo — Problem / Feature / Benefit", stage:"Presentation"},
-      {n:6,  title:"Warranties & Price Conditioning", stage:"Presentation"},
-      {n:7,  title:"First Visit Discount through Laying Off Price", stage:"Pricing", detail:"Rebuild value, pricing & financing / payment options — see the Pricing & Close reference."},
-      {n:8,  title:"Ask For the Business / Next Steps", stage:"Close"},
-      {n:9,  title:"Uncover, Manage & Overcome Objections", stage:"Close", detail:"See FAQs & Objections for the response scripts."},
-      {n:10, title:"Ask for Referrals · Close / Reset Agenda (If no sale)", stage:"Close"}
-    ]
-  }
-};
-
 // ── Product registration ────────────────────────────────────────────────────
 // THE DOGHOUSE registry (js/registry.js). app.js binds the active product via
-// setProduct(key) and reads everything from this object — the consts above are
-// just how this file builds it.
+// setProduct(key) and reads everything from this object.
+//
+// Rep-only reference content (Do & Don't, FAQs & Objections, Pricing &
+// Close, Pre-Demo Recap) used to live here as a TRAINING_REFERENCE const,
+// rendered via raw unescaped innerHTML with no {{TOKEN}} support. It's been
+// migrated into data/doghouse-content-v1.json (ref_dodont / ref_faq /
+// ref_close / ref_predemo entries — see js/training-content.js's tcEntry())
+// so there's one editable content schema instead of two, consistent with
+// how the per-slide training content already worked. Content changes now
+// happen in that JSON file, never here.
 PRODUCT_DATA.sunesta = {
   deck: DECK,
-  training: TRAINING_REFERENCE,
+  trainingContentFile: "data/doghouse-content-v1.json",
   logo: IMAGES.sunestaLogo,                                // brand node in videoloop / triangle / warrantyrecap
   brandHTML: 'Around The House · <b>Sunesta® Awnings</b>', // present-mode topbar (customers see this, never DOGHOUSE)
   photoCats: ["sunesta","sunstyle","sunlight","awnings","screens"], // Photo Library pill order

@@ -17,6 +17,12 @@ function setProduct(key){
   activeTab = tabs[0];
   activeIndex = 0;
   libCat = (PROD.photoCats && PROD.photoCats[0]) || Object.keys(PHOTO_LIBRARY)[0];
+  // Fire-and-forget: fetches + indexes this product's training content JSON
+  // if not already cached (js/training-content.js). Async and non-blocking,
+  // same pattern as the service worker registration below — the content
+  // isn't ready on this same tick, but tcEnsureProductContent() re-renders
+  // via onTrainingContentReady() once it settles.
+  if (typeof tcEnsureProductContent === "function") tcEnsureProductContent(key);
 }
 function globalSlideNumber(){
   return FLAT_SLIDES.indexOf(currentSlide()) + 1;
@@ -1153,65 +1159,102 @@ function renderSlide(){
 // and the Training Center's full-page resource views.
 function trainingBodyHTML(view){
   if(typeof tcvIsView === "function" && tcvIsView(view)) return tcvBodyHTML(view);
+  // dodont/faq/close/recap/tensteps used to read a per-product TRAINING_REFERENCE
+  // / ECLIPSE_TRAINING const, rendered as raw unescaped innerHTML with no
+  // {{TOKEN}} support. That content is now migrated into each product's
+  // training content JSON (ref_dodont / ref_faq / ref_close / ref_predemo
+  // entries, looked up via tcEntry()) or, for the 10-step process, the
+  // shared content file (tcSequence — see js/training-content.js for why
+  // that one moved instead of staying a per-product entry). Every
+  // interpolated string below now goes through tcField(), which resolves
+  // (escapes + {{TOKENS}}) AND tags the field with its content path for
+  // Edit Mode — closing the raw-innerHTML gap while reproducing the exact
+  // same HTML shape/CSS classes as before, so this is a data-source
+  // change, not a redesign. joinFields renders an array field as one
+  // flowing block (matching this page's pre-existing look) while keeping
+  // each array element its OWN editable span, same schema-honest approach
+  // tcBlockHTML uses on the walk screen.
+  const joinFields = (id, pathPrefix, arr) =>
+    (arr || []).map((_, i) => tcField(id, `${pathPrefix}.${i}`)).join("\n\n");
   if(view==="dodont"){
-    // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js) + this
-    // product's own additions appended to each list.
+    // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js — not
+    // migrated, see the Phase 1 report's scope note) + this product's own
+    // additions, migrated into ref_dodont.training_notes and editable.
     const shared = TRAINING_SHARED.doDont;
-    const own = (PROD.training && PROD.training.doDont) || {};
-    const dont = shared.dont.concat(own.dont || []);
-    const dos  = shared.do.concat(own.do || []);
+    const ownEntry = typeof tcEntry === "function" ? tcEntry("ref_dodont") : null;
+    const own = (ownEntry && ownEntry.training_notes) || {};
+    const dontHTML = shared.dont.map(t=>`<li>${tcResolve(t)}</li>`).join("")
+      + (own.do_not||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do_not.${i}`)}</li>`).join("");
+    const dosHTML = shared.do.map(t=>`<li>${tcResolve(t)}</li>`).join("")
+      + (own.do||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do.${i}`)}</li>`).join("");
     const fs = shared.fourSales;
     return `
       <div class="eyebrow">Reference — every call</div>
       <h2>Do & Don't</h2>
-      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dont.map(t=>`<li>${t}</li>`).join("")}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dos.map(t=>`<li>${t}</li>`).join("")}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${fs.intro}</div><ul class="talking-points">${fs.items.map(t=>`<li>${t}</li>`).join("")}</ul><div class="coach-note">${ICON.bulb} ${fs.footer}</div></div>
+      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dontHTML}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dosHTML}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${tcResolve(fs.intro)}</div><ul class="talking-points">${fs.items.map(t=>`<li>${tcResolve(t)}</li>`).join("")}</ul><div class="coach-note">${ICON.bulb} ${tcResolve(fs.footer)}</div></div>
     `;
   }
   if(view==="faq"){
+    // The pricing module's own reactive_scripts (the "If they ask…" drawer
+    // content, financing/subcontractors) are the SAME data as this page's
+    // matching entries, not a duplicate copy — concatenated here rather
+    // than repeated in ref_faq, so there's exactly one place to edit each
+    // answer. Eclipse has no module, so its list is ref_faq alone. Each
+    // source keeps its own entryId + in-source index for correct paths.
+    const m = typeof tcModule === "function" ? tcModule() : null;
+    const refFaq = typeof tcEntry === "function" ? tcEntry("ref_faq") : null;
+    const sources = [
+      ...((m && m.reactive_scripts) || []).map((f,i) => ({f, id:m.module_id, i})),
+      ...((refFaq && refFaq.reactive_scripts) || []).map((f,i) => ({f, id:"ref_faq", i})),
+    ];
     return `
       <div class="eyebrow">Reference — any slide, any time</div>
       <h2>FAQs & Objections</h2>
-      ${PROD.training.faqs.map(f=>`
+      ${sources.map(({f,id,i})=>`
         <div class="faq-item">
-          <div class="faq-q"><span class="faq-tag${f.tag==='Objection'?' obj':''}">${f.tag}</span>${f.q}</div>
-          <div class="script-block faq-a">${f.a}</div>
+          <div class="faq-q"><span class="faq-tag${f.tag==='Objection'?' obj':''}">${tcEsc(f.tag||"FAQ")}</span>${tcField(id, `reactive_scripts.${i}.question`)}</div>
+          <div class="script-block faq-a">${joinFields(id, `reactive_scripts.${i}.answer`, f.answer)}</div>
         </div>`).join("")}
     `;
   }
   if(view==="close"){
-    const c = PROD.training.close;
+    const c = typeof tcEntry === "function" ? tcEntry("ref_close") : null;
+    if(!c) return `<div class="tc-empty">No Pricing & Close reference loaded for this product.</div>`;
     return `
       <div class="eyebrow">Reference — the pricing moment</div>
       <h2>Pricing & Close</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${c.note}</div>
-      ${c.sections.map(sec=>`<div class="tref-section"><h3 class="tref-h3">${sec.title}</h3><div class="script-block">${sec.body}</div></div>`).join("")}
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_close", "coaching_note")}</div>
+      ${(c.blocks||[]).map((b,bi)=>`<div class="tref-section"><h3 class="tref-h3">${tcField("ref_close", `blocks.${bi}.label`)}</h3><div class="script-block">${joinFields("ref_close", `blocks.${bi}.script`, b.script)}</div></div>`).join("")}
     `;
   }
   if(view==="recap"){
-    const p = PROD.training.preDemo;
+    const p = typeof tcEntry === "function" ? tcEntry("ref_predemo") : null;
+    if(!p) return `<div class="tc-empty">No Pre-Demo Recap reference loaded for this product.</div>`;
     return `
       <div class="eyebrow">Reference — before slide 1</div>
       <h2>Pre-Demo Recap at the Table</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${p.intro}</div>
-      <div class="script-block">${p.body}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_predemo", "coaching_note")}</div>
+      <div class="script-block">${joinFields("ref_predemo", "blocks.0.script", p.blocks && p.blocks[0] && p.blocks[0].script)}</div>
     `;
   }
   if(view==="tensteps"){
-    const t = PROD.training.tenSteps;
+    const t = typeof tcSequence === "function" ? tcSequence("ten_steps") : null;
+    if(!t) return `<div class="tc-empty">10-step process not loaded.</div>`;
+    const seqId = "seq:ten_steps";
     return `
       <div class="eyebrow">Reference — the whole visit</div>
       <h2>Our 10-Step Sales Process</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${t.intro}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField(seqId, "intro")}</div>
       <ol class="ten-steps">
-        ${t.steps.map(st=>`
+        ${t.steps.map((st,sti)=>`
           <li class="ten-step">
             <div class="ten-step-num">${st.n}</div>
             <div class="ten-step-body">
-              <div class="ten-step-title">${st.title}</div>
-              <div class="ten-step-stage">${st.stage}</div>
-              ${st.detail?`<div class="ten-step-detail">${st.detail}</div>`:""}
+              <div class="ten-step-title">${tcField(seqId, `steps.${sti}.title`)}</div>
+              <div class="ten-step-stage">${tcField(seqId, `steps.${sti}.stage`)}</div>
+              ${st.detail?`<div class="ten-step-detail">${tcField(seqId, `steps.${sti}.detail`)}</div>`:""}
             </div>
           </li>`).join("")}
       </ol>
@@ -1236,9 +1279,12 @@ function renderRehearsal(){
     //     startup audit (tcAuditMapping) has already flagged it loudly.
     //   · Covered product, content file failed to load -> legacy fields
     //     WITH a warning banner (different failure, still never silent).
-    //   · Any other product (Eclipse) or content still loading -> legacy
-    //     fields, unchanged.
-    const covered = (typeof TC_PRODUCT !== "undefined") && activeProduct === TC_PRODUCT;
+    //   · Content still loading -> legacy fields, unchanged, no banner.
+    // Both products carry a trainingContentFile now (training-mode-v2 Phase
+    // 2 migration), so "covered" is no longer a per-product distinction —
+    // it's just "does this product declare a content file at all", which
+    // only a hypothetical future uncovered product would fail.
+    const covered = !!(PROD && PROD.trainingContentFile);
     const tc = covered && (typeof tcForDeckSlide === "function") ? tcForDeckSlide(s.id) : null;
     if(tc){
       body = `<div class="tc-panel">${tcEntryHTML(tc, {section: activeTab})}</div>`;
@@ -1247,17 +1293,16 @@ function renderRehearsal(){
         <div class="tc-missing">
           <div class="tc-missing-k">${ICON.warn} No training content for this slide</div>
           <p>Deck slide <code>${s.id}</code> has no entry in the training content file.
-          Nothing stale is shown in its place — add a <code>DECK_TO_CONTENT</code> entry in
-          <code>js/training-content.js</code> (the console lists every gap at load).</p>
+          Nothing stale is shown in its place — add a <code>deck_map</code> entry in
+          this product's content JSON (the console lists every gap at load).</p>
         </div>`;
     } else {
-      const loadFailed = covered && typeof TRAINING_CONTENT !== "undefined" && TRAINING_CONTENT === null;
+      const loadFailed = covered && typeof tcLoadFailed === "function" && tcLoadFailed();
       body = `
         ${loadFailed ? `<div class="tc-loadfail">${ICON.warn} Training content file failed to load — showing legacy notes. Reconnect or reinstall the app.</div>` : ""}
         <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
         <h2>${s.title}</h2>
         ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
-        ${s.personalTouch ? `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep (js/data-*.js → personalTouch)</div><div class="pt-body">${s.personalTouch}</div></div>` : ""}
         ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
         ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
       `;
@@ -1480,13 +1525,29 @@ function renderCenter(){
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
     el.scrollTop = 0;
   } else {
+    // Edit Mode + Export live in this one shared header because every
+    // dodont/faq/close/recap/tensteps/script/setup/cflags view routes
+    // through here — one place to wire instead of eight. Both are inert
+    // no-ops on views with no editable text (setup/cflags), so there's no
+    // need to special-case them out.
+    const showEditControls = typeof tcReady === "function" && tcReady();
     el.innerHTML = `
       <div class="center-head resource">
         <button class="back-btn" id="resourceBack">‹ ${productInfo().coach} Coach</button>
+        ${showEditControls ? `<div class="resource-actions">${tcEditToggleHTML()}${tcExportButtonHTML()}</div>` : ""}
       </div>
+      ${(typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${ICON.pencil} Edit Mode is on — tap any highlighted text to edit it. Enter saves, Shift+Enter for a new line, Esc cancels.</div>` : ""}
       <div class="resource-page">${trainingBodyHTML(centerView)}</div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
+    if(showEditControls){
+      const rerender = () => renderCenter();
+      // The 'script' view's editable spans live inside #tcvRoot, filled in
+      // by tcvBind()/tcvRenderWalk() below (a separate render pass) — bind
+      // only the header controls here and let that pass bind its own spans.
+      const editRoot = centerView === "script" ? null : el.querySelector(".resource-page");
+      tcvBindEditControls(el.querySelector(".center-head.resource"), editRoot, rerender);
+    }
     if(typeof tcvIsView === "function" && tcvIsView(centerView)) tcvBind(el, centerView);
     el.scrollTop = 0;
   }

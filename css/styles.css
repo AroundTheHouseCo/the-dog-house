@@ -2387,3 +2387,31 @@
   .tcv-flag.resolved{opacity:.55;}
   .tcv-flag.resolved .tcv-flag-issue{text-decoration:line-through;text-decoration-color:#bbb;}
   .tcv-sev.resolved{background:#eef6ee;color:var(--green-dark);}
+
+  /* ---- content editor (training-mode-v2 Phase 2) ---- */
+  /* Edit Mode is off by default everywhere — .tc-editable spans render
+     completely inert until the toolbar toggle turns tc-edit-on on. Only
+     reachable from the standalone Training Coach (js/app.js renderCenter's
+     shared resource-page header); never bound in the in-appointment
+     rehearsal side-panel, so a live customer demo can never accidentally
+     sprout an edit affordance. */
+  .tcv-edit-toggle,.tcv-export-btn{flex:0 0 auto;border:1px solid #d8d5cc;background:#fff;border-radius:999px;
+    padding:8px 14px;font-size:12.5px;font-weight:800;color:var(--green-dark);cursor:pointer;}
+  .tcv-edit-toggle:hover,.tcv-export-btn:hover{border-color:var(--green);background:#f4faf5;}
+  .tcv-edit-toggle.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+  .center-head.resource{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+  .center-head.resource .resource-actions{display:flex;gap:8px;}
+
+  .tc-edit-on .tc-editable{cursor:text;border-radius:4px;outline:1px dashed transparent;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;transition:background .1s,outline-color .1s;}
+  .tc-edit-on .tc-editable:hover{background:rgba(245,166,35,.13);outline-color:rgba(245,166,35,.55);}
+  .tc-editable.tc-editing{display:block;background:#fff;color:var(--charcoal);
+    outline:2px solid var(--orange);outline-offset:2px;border-radius:4px;
+    white-space:pre-wrap;cursor:text;}
+  /* Marks a field with a saved local override, visible even when Edit Mode
+     is off — same transparency principle as the Setup form's "overridden
+     on this device" badge, so a rep never wonders later why some line
+     reads differently than they remember. */
+  .tc-editable.tc-edited{box-shadow:inset 2px 0 0 var(--orange);padding-left:6px;margin-left:-6px;}
+  .tcv-edit-hint{font-size:11px;color:#a06b10;background:#fdf3e2;border:1px solid #f0dcae;
+    border-radius:8px;padding:6px 10px;margin-bottom:10px;}
