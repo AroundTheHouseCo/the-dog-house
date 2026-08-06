@@ -277,6 +277,129 @@ function tcResolve(text){
   });
 }
 
+// -------------------------------------------------- content editing ----
+// training-mode-v2 Phase 2. A "content path" identifies one editable text
+// field as `${entryId}::${dotted.path}` — entryId is a slide_id/module_id
+// (tcEntry() resolves either) or the synthetic id `seq:<key>` for a shared
+// sequence (tcSequence() — see below), so the SAME path scheme covers both
+// lookup mechanisms. dotted.path descends the entry with plain numeric
+// indices for arrays (e.g. "blocks.1.script.0"), so it can also be used
+// directly to write the edit back into a full copy of the content file on
+// export — same path in, same path out, no separate manifest to keep in
+// sync with what the renderers actually walk.
+function tcGetByPath(obj, fieldPath){
+  return fieldPath.split(".").reduce((o, k) => (o == null ? undefined : o[k]), obj);
+}
+function tcSetByPath(obj, fieldPath, value){
+  const keys = fieldPath.split(".");
+  let cur = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    if (cur == null || cur[keys[i]] == null) return false; // path stale (schema changed under it) — drop silently, never throw on export
+    cur = cur[keys[i]];
+  }
+  if (cur == null) return false;
+  cur[keys[keys.length - 1]] = value;
+  return true;
+}
+// The object an entryId resolves against for read/write-back — same two
+// lookup mechanisms tcEntry()/tcSequence() already use, unified here so a
+// content path never needs to know which one applies.
+function tcPathRoot(entryId){
+  if (!entryId) return null;
+  if (entryId.startsWith("seq:")) return tcSequence(entryId.slice(4));
+  return tcEntry(entryId);
+}
+function tcRawFieldValue(entryId, fieldPath){
+  const root = tcPathRoot(entryId);
+  return root ? tcGetByPath(root, fieldPath) : undefined;
+}
+
+const TC_EDITS_KEY = "doghouse.training.contentEdits";
+// {[productKey]: {"<entryId>::<fieldPath>": "edited text", ...}} — namespaced
+// per product (not just per device) because a local edit to nominally
+// shared content (e.g. the ten-step sequence, viewed from one product's
+// Coach) must NOT leak into the other product's view. See training-content.js's
+// tcSequence() comment for why the committed layer is shared but the edit
+// layer deliberately is not.
+function tcAllContentEdits(){
+  try { return JSON.parse(localStorage.getItem(TC_EDITS_KEY) || "{}"); }
+  catch { return {}; }
+}
+function tcContentEdits(){ return tcAllContentEdits()[activeProduct] || {}; }
+function tcContentPath(entryId, fieldPath){ return `${entryId}::${fieldPath}`; }
+function tcIsFieldEdited(entryId, fieldPath){
+  return tcContentPath(entryId, fieldPath) in tcContentEdits();
+}
+// The value actually shown: this device's local edit for this product, if
+// any, else whatever's in the committed content file. Same resolution
+// order as tcValues() (local override -> committed default), same reason.
+function tcFieldValue(entryId, fieldPath){
+  const key = tcContentPath(entryId, fieldPath);
+  const edits = tcContentEdits();
+  return (key in edits) ? edits[key] : tcRawFieldValue(entryId, fieldPath);
+}
+function tcSetContentEdit(entryId, fieldPath, value){
+  const all = tcAllContentEdits();
+  const key = tcContentPath(entryId, fieldPath);
+  const original = tcRawFieldValue(entryId, fieldPath);
+  if (!all[activeProduct]) all[activeProduct] = {};
+  if (value == null || value === original) delete all[activeProduct][key];
+  else all[activeProduct][key] = value;
+  if (!Object.keys(all[activeProduct]).length) delete all[activeProduct];
+  localStorage.setItem(TC_EDITS_KEY, JSON.stringify(all));
+}
+// Resolved display HTML for one field — escaped, {{TOKEN}}-aware, same as
+// tcResolve — WITHOUT the editable wrapper. Exists as its own step only
+// for the rare field (coaching_note) that needs to post-process the
+// resolved HTML (split it into paragraphs) before the editable span goes
+// around the outside; every other call site should use tcField() below.
+function tcFieldHTML(entryId, fieldPath){
+  const val = tcFieldValue(entryId, fieldPath);
+  return (val == null || val === "") ? "" : tcResolve(String(val));
+}
+// Tags innerHTML with the content path so the edit-mode UI
+// (js/training-coach.js) can find, focus and persist it on tap.
+function tcEditWrap(entryId, fieldPath, innerHTML){
+  const edited = tcIsFieldEdited(entryId, fieldPath) ? " tc-edited" : "";
+  return `<span class="tc-editable${edited}" data-tc-path="${tcEsc(tcContentPath(entryId, fieldPath))}">${innerHTML}</span>`;
+}
+// Renders one editable text field end to end: resolve + wrap. Every call
+// site that used to read tcResolve(x) directly reads
+// tcField(entryId, "field.path") instead — the only behavioural difference
+// when not in edit mode is the wrapping <span>.
+function tcField(entryId, fieldPath){
+  const html = tcFieldHTML(entryId, fieldPath);
+  return html ? tcEditWrap(entryId, fieldPath, html) : "";
+}
+
+// Deep-merges every local edit for the ACTIVE product onto a fresh copy of
+// its committed content file — this is the "Export Content" action's data
+// step (js/training-coach.js does the download). Edits targeting a shared
+// sequence (seq:<key>) materialize as that product's own sequences.<key>
+// override in the exported file, which is the correct, intended effect of
+// editing nominally-shared content from one product's Coach: it's no
+// longer aliased, it's now this product's explicit copy.
+function tcExportContent(){
+  const a = tcActive();
+  if (!a) return null;
+  const merged = JSON.parse(JSON.stringify(a.content));
+  for (const [key, value] of Object.entries(tcContentEdits())) {
+    const sep = key.indexOf("::");
+    const entryId = key.slice(0, sep), fieldPath = key.slice(sep + 2);
+    if (entryId.startsWith("seq:")) {
+      const seqKey = entryId.slice(4);
+      merged.sequences = merged.sequences || {};
+      merged.sequences[seqKey] = merged.sequences[seqKey] || JSON.parse(JSON.stringify(tcSequence(seqKey) || {}));
+      tcSetByPath(merged.sequences[seqKey], fieldPath, value);
+      continue;
+    }
+    const entry = (merged.slides || []).find((s) => s.slide_id === entryId)
+      || (merged.modules || []).find((m) => m.module_id === entryId);
+    if (entry) tcSetByPath(entry, fieldPath, value);
+  }
+  return merged;
+}
+
 // ------------------------------------------------------------- search ----
 // title + every script paragraph + the module's reactive_scripts questions
 // (spec, Navigation §4).

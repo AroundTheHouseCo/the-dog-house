@@ -16,6 +16,101 @@ const tcv = { i: 0, q: "", drawer: false, sev: "all" };
 
 function tcvIsView(v){ return v === "script" || v === "setup" || v === "cflags"; }
 
+// ---------------------------------------------------------- edit mode ----
+// training-mode-v2 Phase 2: tap-to-edit any script/coaching text block. Off
+// by default (tcEditOn) so ordinary viewing never looks or behaves any
+// differently — turning it on is what makes .tc-editable spans (see
+// js/training-render.js / js/training-content.js's tcField) interactive.
+// Deliberately reachable ONLY from the standalone Training Coach's shared
+// resource-page header (js/app.js renderCenter) — never bound in the
+// in-appointment rehearsal side-panel, so a live customer demo can never
+// accidentally sprout an edit affordance next to the customer.
+let tcEditOn = false;
+
+function tcEditToggleHTML(){
+  return `<button class="tcv-edit-toggle${tcEditOn ? " active" : ""}" id="tcEditToggle" title="Tap-to-edit script and coaching text">
+    ${ICON.pencil} ${tcEditOn ? "Editing" : "Edit"}</button>`;
+}
+function tcExportButtonHTML(){
+  return `<button class="tcv-export-btn" id="tcExportBtn" title="Download this product's content, edits merged in">${ICON.doc} Export</button>`;
+}
+// Binds the toggle + export controls found under `container` (the shared
+// resource-page header) and, if provided, the editable spans under
+// `editRoot` (the view body). Call after every render of either.
+function tcvBindEditControls(container, editRoot, rerender){
+  const toggle = container.querySelector("#tcEditToggle");
+  if (toggle) toggle.onclick = () => { tcEditOn = !tcEditOn; rerender(); };
+  const exportBtn = container.querySelector("#tcExportBtn");
+  if (exportBtn) exportBtn.onclick = () => tcDownloadExport();
+  if (editRoot) tcBindEditables(editRoot, rerender);
+}
+
+function tcBindEditables(root, rerender){
+  root.classList.toggle("tc-edit-on", tcEditOn);
+  root.querySelectorAll(".tc-editable").forEach((span) => {
+    span.onclick = (e) => {
+      if (!tcEditOn || span.classList.contains("tc-editing")) return;
+      e.stopPropagation();
+      tcActivateEdit(span, rerender);
+    };
+  });
+}
+
+function tcActivateEdit(span, rerender){
+  const path = span.dataset.tcPath;
+  const sep = path.indexOf("::");
+  const entryId = path.slice(0, sep), fieldPath = path.slice(sep + 2);
+  const raw = tcFieldValue(entryId, fieldPath) ?? "";
+  let done = false;
+  span.classList.add("tc-editing");
+  span.contentEditable = "true";
+  span.textContent = raw;               // raw, unresolved — a literal {{TOKEN}} edits as typed text, not the rendered chip
+  span.focus();
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  const range = document.createRange();
+  range.selectNodeContents(span);
+  sel.addRange(range);
+
+  const commit = () => {
+    if (done) return; done = true;
+    span.removeEventListener("blur", commit);
+    span.removeEventListener("keydown", onKey);
+    const next = span.textContent;
+    if (next !== raw) { tcSetContentEdit(entryId, fieldPath, next); rerender(); }
+    else { span.contentEditable = "false"; span.classList.remove("tc-editing"); span.innerHTML = tcFieldHTML(entryId, fieldPath); }
+  };
+  // Enter commits (most fields read as one line/paragraph); shift+Enter
+  // inserts a real line break for the few genuinely multi-paragraph fields
+  // (coaching_note, personal_touch). Escape discards the in-progress edit.
+  const onKey = (e) => {
+    if (e.key === "Escape"){ span.textContent = raw; span.blur(); }
+    else if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); span.blur(); }
+  };
+  span.addEventListener("blur", commit);
+  span.addEventListener("keydown", onKey);
+}
+
+// Deep-merges local edits onto the active product's committed content
+// (js/training-content.js tcExportContent) and offers the result as a
+// download — the bridge to making edits durable/shared: review the file
+// and commit it as the new source of truth. No GitHub API write from this
+// static site — see the Phase 2 report for why, and the ATH Cockpit-proxy
+// follow-up that would be needed to remove this manual step.
+function tcDownloadExport(){
+  const merged = tcExportContent();
+  if (!merged) return;
+  const file = (PROD && PROD.trainingContentFile || "content.json").split("/").pop();
+  const stamp = new Date().toISOString().slice(0, 10);
+  const name = file.replace(/\.json$/, `.edited-${stamp}.json`);
+  const blob = new Blob([JSON.stringify(merged, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // Hub cards for these views — only offered once the active product's
 // content file has actually loaded (every product is "covered" now, but a
 // slow or failed fetch still means there's nothing to show yet).
@@ -72,12 +167,13 @@ function tcvRenderWalk(root){
       </div>
       ${m ? `<div class="tcv-drawer" id="tcvDrawer" ${tcv.drawer?"":"hidden"}>
         <div class="tcv-drawer-head">If they ask… <button id="tcvDrawerClose" class="dismiss-btn">${ICON.close} Close</button></div>
-        ${tcReactiveHTML(m)}
+        ${tcReactiveHTML(m, m.module_id)}
       </div>` : ""}
     </div>`;
 
   const rerender = () => tcvRenderWalk(root);
   tcBindToggles(root, rerender);
+  tcBindEditables(root, rerender);
   root.querySelector("#tcvPrev").onclick = () => { tcv.i--; tcv.drawer = false; rerender(); root.scrollIntoView(); };
   root.querySelector("#tcvNext").onclick = () => { tcv.i++; tcv.drawer = false; rerender(); root.scrollIntoView(); };
   root.querySelectorAll(".tcv-chip").forEach(c => {

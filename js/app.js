@@ -1166,24 +1166,33 @@ function trainingBodyHTML(view){
   // entries, looked up via tcEntry()) or, for the 10-step process, the
   // shared content file (tcSequence — see js/training-content.js for why
   // that one moved instead of staying a per-product entry). Every
-  // interpolated string below now goes through tcResolve(), which escapes
-  // and resolves {{TOKENS}} — closing that gap — while reproducing the
-  // exact same HTML shape/CSS classes as before, so this is a data-source
-  // change, not a redesign.
+  // interpolated string below now goes through tcField(), which resolves
+  // (escapes + {{TOKENS}}) AND tags the field with its content path for
+  // Edit Mode — closing the raw-innerHTML gap while reproducing the exact
+  // same HTML shape/CSS classes as before, so this is a data-source
+  // change, not a redesign. joinFields renders an array field as one
+  // flowing block (matching this page's pre-existing look) while keeping
+  // each array element its OWN editable span, same schema-honest approach
+  // tcBlockHTML uses on the walk screen.
+  const joinFields = (id, pathPrefix, arr) =>
+    (arr || []).map((_, i) => tcField(id, `${pathPrefix}.${i}`)).join("\n\n");
   if(view==="dodont"){
-    // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js) + this
-    // product's own additions, migrated into ref_dodont.training_notes.
+    // Shared ATH/Profectus core (TRAINING_SHARED, js/registry.js — not
+    // migrated, see the Phase 1 report's scope note) + this product's own
+    // additions, migrated into ref_dodont.training_notes and editable.
     const shared = TRAINING_SHARED.doDont;
     const ownEntry = typeof tcEntry === "function" ? tcEntry("ref_dodont") : null;
     const own = (ownEntry && ownEntry.training_notes) || {};
-    const dont = shared.dont.concat(own.do_not || []);
-    const dos  = shared.do.concat(own.do || []);
+    const dontHTML = shared.dont.map(t=>`<li>${tcResolve(t)}</li>`).join("")
+      + (own.do_not||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do_not.${i}`)}</li>`).join("");
+    const dosHTML = shared.do.map(t=>`<li>${tcResolve(t)}</li>`).join("")
+      + (own.do||[]).map((_,i)=>`<li>${tcField("ref_dodont", `training_notes.do.${i}`)}</li>`).join("");
     const fs = shared.fourSales;
     return `
       <div class="eyebrow">Reference — every call</div>
       <h2>Do & Don't</h2>
-      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dont.map(t=>`<li>${tcResolve(t)}</li>`).join("")}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dos.map(t=>`<li>${tcResolve(t)}</li>`).join("")}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dontHTML}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dosHTML}</ul></div>
       <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${tcResolve(fs.intro)}</div><ul class="talking-points">${fs.items.map(t=>`<li>${tcResolve(t)}</li>`).join("")}</ul><div class="coach-note">${ICON.bulb} ${tcResolve(fs.footer)}</div></div>
     `;
   }
@@ -1192,17 +1201,21 @@ function trainingBodyHTML(view){
     // content, financing/subcontractors) are the SAME data as this page's
     // matching entries, not a duplicate copy — concatenated here rather
     // than repeated in ref_faq, so there's exactly one place to edit each
-    // answer. Eclipse has no module, so its list is ref_faq alone.
+    // answer. Eclipse has no module, so its list is ref_faq alone. Each
+    // source keeps its own entryId + in-source index for correct paths.
     const m = typeof tcModule === "function" ? tcModule() : null;
     const refFaq = typeof tcEntry === "function" ? tcEntry("ref_faq") : null;
-    const faqs = [...((m && m.reactive_scripts) || []), ...((refFaq && refFaq.reactive_scripts) || [])];
+    const sources = [
+      ...((m && m.reactive_scripts) || []).map((f,i) => ({f, id:m.module_id, i})),
+      ...((refFaq && refFaq.reactive_scripts) || []).map((f,i) => ({f, id:"ref_faq", i})),
+    ];
     return `
       <div class="eyebrow">Reference — any slide, any time</div>
       <h2>FAQs & Objections</h2>
-      ${faqs.map(f=>`
+      ${sources.map(({f,id,i})=>`
         <div class="faq-item">
-          <div class="faq-q"><span class="faq-tag${f.tag==='Objection'?' obj':''}">${tcEsc(f.tag||"FAQ")}</span>${tcResolve(f.question)}</div>
-          <div class="script-block faq-a">${tcResolve((f.answer||[]).join("\n\n"))}</div>
+          <div class="faq-q"><span class="faq-tag${f.tag==='Objection'?' obj':''}">${tcEsc(f.tag||"FAQ")}</span>${tcField(id, `reactive_scripts.${i}.question`)}</div>
+          <div class="script-block faq-a">${joinFields(id, `reactive_scripts.${i}.answer`, f.answer)}</div>
         </div>`).join("")}
     `;
   }
@@ -1212,8 +1225,8 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — the pricing moment</div>
       <h2>Pricing & Close</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcResolve(c.coaching_note)}</div>
-      ${(c.blocks||[]).map(b=>`<div class="tref-section"><h3 class="tref-h3">${tcResolve(b.label)}</h3><div class="script-block">${tcResolve((b.script||[]).join("\n\n"))}</div></div>`).join("")}
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_close", "coaching_note")}</div>
+      ${(c.blocks||[]).map((b,bi)=>`<div class="tref-section"><h3 class="tref-h3">${tcField("ref_close", `blocks.${bi}.label`)}</h3><div class="script-block">${joinFields("ref_close", `blocks.${bi}.script`, b.script)}</div></div>`).join("")}
     `;
   }
   if(view==="recap"){
@@ -1222,25 +1235,26 @@ function trainingBodyHTML(view){
     return `
       <div class="eyebrow">Reference — before slide 1</div>
       <h2>Pre-Demo Recap at the Table</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcResolve(p.coaching_note)}</div>
-      <div class="script-block">${tcResolve((p.blocks && p.blocks[0] && p.blocks[0].script || []).join("\n\n"))}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_predemo", "coaching_note")}</div>
+      <div class="script-block">${joinFields("ref_predemo", "blocks.0.script", p.blocks && p.blocks[0] && p.blocks[0].script)}</div>
     `;
   }
   if(view==="tensteps"){
     const t = typeof tcSequence === "function" ? tcSequence("ten_steps") : null;
     if(!t) return `<div class="tc-empty">10-step process not loaded.</div>`;
+    const seqId = "seq:ten_steps";
     return `
       <div class="eyebrow">Reference — the whole visit</div>
       <h2>Our 10-Step Sales Process</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcResolve(t.intro)}</div>
+      <div class="coach-note tref-gap">${ICON.bulb} ${tcField(seqId, "intro")}</div>
       <ol class="ten-steps">
-        ${t.steps.map(st=>`
+        ${t.steps.map((st,sti)=>`
           <li class="ten-step">
             <div class="ten-step-num">${st.n}</div>
             <div class="ten-step-body">
-              <div class="ten-step-title">${tcResolve(st.title)}</div>
-              <div class="ten-step-stage">${tcResolve(st.stage)}</div>
-              ${st.detail?`<div class="ten-step-detail">${tcResolve(st.detail)}</div>`:""}
+              <div class="ten-step-title">${tcField(seqId, `steps.${sti}.title`)}</div>
+              <div class="ten-step-stage">${tcField(seqId, `steps.${sti}.stage`)}</div>
+              ${st.detail?`<div class="ten-step-detail">${tcField(seqId, `steps.${sti}.detail`)}</div>`:""}
             </div>
           </li>`).join("")}
       </ol>
@@ -1511,13 +1525,29 @@ function renderCenter(){
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
     el.scrollTop = 0;
   } else {
+    // Edit Mode + Export live in this one shared header because every
+    // dodont/faq/close/recap/tensteps/script/setup/cflags view routes
+    // through here — one place to wire instead of eight. Both are inert
+    // no-ops on views with no editable text (setup/cflags), so there's no
+    // need to special-case them out.
+    const showEditControls = typeof tcReady === "function" && tcReady();
     el.innerHTML = `
       <div class="center-head resource">
         <button class="back-btn" id="resourceBack">‹ ${productInfo().coach} Coach</button>
+        ${showEditControls ? `<div class="resource-actions">${tcEditToggleHTML()}${tcExportButtonHTML()}</div>` : ""}
       </div>
+      ${(typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${ICON.pencil} Edit Mode is on — tap any highlighted text to edit it. Enter saves, Shift+Enter for a new line, Esc cancels.</div>` : ""}
       <div class="resource-page">${trainingBodyHTML(centerView)}</div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
+    if(showEditControls){
+      const rerender = () => renderCenter();
+      // The 'script' view's editable spans live inside #tcvRoot, filled in
+      // by tcvBind()/tcvRenderWalk() below (a separate render pass) — bind
+      // only the header controls here and let that pass bind its own spans.
+      const editRoot = centerView === "script" ? null : el.querySelector(".resource-page");
+      tcvBindEditControls(el.querySelector(".center-head.resource"), editRoot, rerender);
+    }
     if(typeof tcvIsView === "function" && tcvIsView(centerView)) tcvBind(el, centerView);
     el.scrollTop = 0;
   }
