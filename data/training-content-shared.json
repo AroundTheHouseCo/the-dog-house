@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "content_version": "1.0.0",
+    "company": "Around The House Home Solutions",
+    "source": "Split out of js/data-sunesta.js TRAINING_REFERENCE.tenSteps during training-mode-v2 Phase 2 migration — was a live object-reference from js/data-eclipse.js (load-order dependent). Genuinely ATH-wide, not product-specific, so it now lives here once instead of being aliased.",
+    "notes_for_engineers": "This file holds content shared across ALL products. Do not paraphrase, summarize, rewrite, or 'improve' any value. A product's own content file may define the same sequence key to override this; absent that, every product falls back to the copy here."
+  },
+  "sequences": {
+    "ten_steps": {
+      "intro": "The 10-step sales process — the full arc of every in-home visit. The deck covers steps 4–6; everything around it is you.",
+      "steps": [
+        {
+          "n": 1,
+          "title": "Introduction / Warm Up & Set Agenda",
+          "stage": "At the door / table"
+        },
+        {
+          "n": 2,
+          "title": "Discovery Q & A / Needs Analysis",
+          "stage": "At the table"
+        },
+        {
+          "n": 3,
+          "title": "Recap at Table & Confirm Understanding of the Offer",
+          "stage": "At the table",
+          "detail": "Awnings/screens etc. vs. their outdoor space and logistics — see the Pre-Demo Recap reference."
+        },
+        {
+          "n": 4,
+          "title": "Company Story through Installation & Manufacturer Info",
+          "stage": "Presentation"
+        },
+        {
+          "n": 5,
+          "title": "Product Options & Product Demo — Problem / Feature / Benefit",
+          "stage": "Presentation"
+        },
+        {
+          "n": 6,
+          "title": "Warranties & Price Conditioning",
+          "stage": "Presentation"
+        },
+        {
+          "n": 7,
+          "title": "First Visit Discount through Laying Off Price",
+          "stage": "Pricing",
+          "detail": "Rebuild value, pricing & financing / payment options — see the Pricing & Close reference."
+        },
+        {
+          "n": 8,
+          "title": "Ask For the Business / Next Steps",
+          "stage": "Close"
+        },
+        {
+          "n": 9,
+          "title": "Uncover, Manage & Overcome Objections",
+          "stage": "Close",
+          "detail": "See FAQs & Objections for the response scripts."
+        },
+        {
+          "n": 10,
+          "title": "Ask for Referrals · Close / Reset Agenda (If no sale)",
+          "stage": "Close"
+        }
+      ]
+    }
+  }
+}

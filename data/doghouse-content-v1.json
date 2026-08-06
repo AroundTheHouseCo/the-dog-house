@@ -1,6 +1,6 @@
 {
   "meta": {
-    "content_version": "1.3.0",
+    "content_version": "1.4.0",
     "generated": "2026-07-31",
     "company": "Around The House Home Solutions",
     "product_line": "Sunesta Retractable Awnings",
@@ -403,7 +403,8 @@
         "Exterior focus, shade solutions",
         "Not a Denver corporation — you call us, you get us",
         "YOUR personal story"
-      ]
+      ],
+      "personal_touch": "Myself, I've actually been in the home remodeling industry since I graduated from college in 2014. I've worked with organizations ranging from large national remodeling companies to small owner-operated contractors, helping design and deliver projects from full home additions to interior remodels and outdoor improvements like decks and concrete patios. Over the years I realized I have to be happy and love where I work — so when I met Jack and his brother Maxx, I couldn't pass up the opportunity to work with good people who have integrity and communicate well. I'm really happy to have found my home here at Around the House."
     },
     {
       "slide_id": "s03",
@@ -2165,6 +2166,177 @@
         "Middle: where quality lands — and where we are",
         "Not the cheapest, and I'd worry if we were",
         "GO STRAIGHT INTO PRICING"
+      ]
+    },
+    {
+      "slide_id": "ref_dodont",
+      "in_deck": false,
+      "section": "reference",
+      "status": "final",
+      "title": "Do & Don't",
+      "training_notes": {
+        "do_not": [],
+        "do": [
+          "Slow down at the money slide (Models) — that's the whole game"
+        ]
+      }
+    },
+    {
+      "slide_id": "ref_close",
+      "in_deck": false,
+      "section": "reference",
+      "status": "final",
+      "title": "Pricing & Close",
+      "coaching_note": "Rep-facing only — this is spoken over the live estimate. Per Jack: no customer-facing pricing slides.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "🔥 Laying Off Pricing (Confident & Excited)",
+          "script": [
+            "\"Are you all excited?\" (Get the homeowner to laugh or smile — you can even ask for a drum roll if the rapport is there.)",
+            "\"So based on everything we talked about — and your goals of…\"\n👉 (repeat their Accomplish List — their words)\n\"…this is what I put together for you.\"",
+            "Build value as you present: \"These numbers include installing your new ______ with a ______ warranty.\" (If applicable) \"We will pull all necessary permits.\" \"We're ____ to ____ weeks out for installation, and your project is typically completed in about half a day. Most importantly — you'll get to enjoy your outdoor space year-round with all the features we covered.\"",
+            "(Review Estimate)",
+            "Rebuild value and any real urgency during the estimate recap, then:\n\"Which option works best for you all?\""
+          ]
+        },
+        {
+          "block_id": "b2",
+          "label": "💰 Price Presentation Frame (Profectus)",
+          "script": [
+            "Tie to the list FIRST: \"This option is designed to give you everything you said you wanted…\"",
+            "Then show options:\n• Option 1 = Ideal — the full solution\n• Option 2 = Rightsized — never presented first, and built by removing what THEY choose to remove, not by discounting"
+          ]
+        },
+        {
+          "block_id": "b3",
+          "label": "🔥 Rebuild Excitement + The One-Year Price",
+          "script": [
+            "\"And the good news is — you actually caught us at a great time…\"\n👉 Insert promo naturally — never lead with it.",
+            "Indifference is key — avoid the homeowner sensing 'commission breath,' like you're only there to sell them.",
+            "Selling the one-year price:\n\"This price is good for the next year, which is great. You can call me tomorrow, six months from now, 364 days from now — this price is locked in for you. It's very competitive with what you'll find in our industry.\""
+          ]
+        },
+        {
+          "block_id": "b4",
+          "label": "🧠 Micro-Close",
+          "script": [
+            "\"Does this all make sense so far?\"",
+            "👉 Stop talking. Wait. Do not fill the silence.",
+            "\"Any questions about the one-year prices?\"",
+            "If yes and engaged — move to close. If they hesitate — something is unresolved. Find it before you ask for the decision."
+          ]
+        },
+        {
+          "block_id": "b5",
+          "label": "🟢 Close Transition",
+          "script": [
+            "\"So between the two options we've narrowed down together, which stands out as an initial preference?\"",
+            "*90% of customers: \"For the difference in cost between the Sunesta and Sunstyle, we'd rather have the stronger awning.\"\n*10% of customers: \"Whatever is cheapest is good for us — we don't plan to be out there when it's windy.\"",
+            "👉 NOT: \"What do you think?\" · \"Any questions?\"\nThe close is a preference question, not a yes/no."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_id": "ref_predemo",
+      "in_deck": false,
+      "section": "reference",
+      "status": "final",
+      "title": "Pre-Demo Recap at the Table",
+      "coaching_note": "Before the deck — recap at the table and confirm understanding of the offer (the awning vs. their outdoor space and logistics).",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "script": [
+            "\"Before I show you the product — how long have you guys been in the home?\" (Or: \"You said you've been in the home X years, is that right?\")",
+            "\"And this space here… is this where you spend most of your time outside?\"",
+            "\"Is this something you've been thinking about for a while?\"",
+            "👉 Tie back to the Accomplish List (subtle reminder): \"Perfect — so really making this usable, cooler, and protected is the goal.\"",
+            "MEASUREMENT RECAP: \"To recap what we looked at outside — I measured X feet in width to cover the desired space, with an X projection away from the home. When we factor in some pitch, that places the end of your new awning near the end of the deck. During installation our technicians will work with you to dial in pitch versus head clearance.\"",
+            "CABLE MANAGEMENT: \"These awnings require 110v power, so we'll plan to plug into this outlet here. The cords are outdoor-rated and typically stay plugged in year-round. They come in X and X colors, but we can also paint them to match your siding or stucco if you have paint available. We typically run the wiring as discreetly as possible down your window or door trim.\"",
+            "\"Do you have a preference on painting the cord versus the cord color options?\"",
+            "SUN ORIENTATION: \"Based on your orientation versus the sun (reference Lumos photos if possible), this will provide great coverage from X to X hours and make this space much more usable and cooler throughout the year.\"",
+            "DROP SCREEN (if it's essential for them): explain why and build value here. You can add it later with both models you'll be priced on (not available on the Sunlight).",
+            "\"Based on what I went over, do you feel this is the right option for you and your home?\"",
+            "👉 GET A YES!!!!!! If it's a no, a maybe, or anything short of a yes — ask more questions, uncover the objection, and handle it during the presentation."
+          ]
+        }
+      ]
+    },
+    {
+      "slide_id": "ref_faq",
+      "in_deck": false,
+      "section": "reference",
+      "status": "final",
+      "title": "FAQs & Objections",
+      "reactive_scripts": [
+        {
+          "tag": "Objection",
+          "question": "\"We want to think about it.\"",
+          "answer": [
+            "What it usually means: something is unresolved — price, value, trust, or a missing decision-maker.",
+            "\"Totally fair — help me understand where you're at. On a scale of 1 to 10, how close does this feel to being the right move?\"",
+            "(If 7 or above — find what's holding them back and address it directly.)\n(If below 7 — something bigger is unresolved. Deeper escalation scripts are pending the official Profectus material.)"
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"We want to get another quote.\"",
+          "answer": [
+            "\"Completely reasonable — I'd do the same thing. When you're comparing, a few things worth checking: What cassette system are they using? What is the warranty — is it one warranty or multiple? And do they use a steel cable or a chain system inside the arms? Those three things tell you a lot about what you're actually buying.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"It's more than we expected to spend.\"",
+          "answer": [
+            "\"I hear you — let's look at this together. Of everything we've walked through, what feels most important to keep and what could we potentially revisit? We can always right-size this so it fits where you're at.\"",
+            "👉 Remove items the homeowner chooses to remove — do not discount blindly."
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"We need to talk to our spouse / partner.\"",
+          "answer": [
+            "\"Of course. Is there anything you feel like we haven't covered that would help them understand the value when you talk it through? And is there any chance we could get them on a quick call so I can answer any questions directly?\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"We're thinking about doing a pergola instead.\"",
+          "answer": [
+            "\"That makes sense — and honestly, the two work really well together. A lot of our customers end up doing an awning first and adding a pergola later, or vice versa. We actually do both. If you want, I can show you how that could look combined.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"I'm worried about the wind.\"",
+          "answer": [
+            "\"Great question — and it's one of the most common things we hear in Colorado. The arms are tested to 98 miles per hour before they break. The system is 30 mph wind rated for continuous operation. And the wind sensor — which comes standard on every motorized unit we install — retracts it automatically before conditions get serious. Wind is actually one of the reasons we recommend the Sunesta over the lighter models.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"Will it block our view?\"",
+          "answer": [
+            "\"It actually won't — and that's one of the things people are always pleasantly surprised by. The awning shades the space from above without blocking your sightline outward. And if you add a drop screen, you can choose a lighter mesh that blocks the sun glare while still letting you see through it.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"What if it hails or storms?\"",
+          "answer": [
+            "\"Really windy — retract it. Rain — it's designed for it, just let it dry before storing for extended periods. Hail — if a significant storm is coming, retract it. The Smart Case protects the fabric when it's retracted, and the valance is inexpensive to replace if it ever takes a hit. For catastrophic weather events, that's typically a homeowners-insurance conversation.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "\"We might wait until next season.\"",
+          "answer": [
+            "\"Totally your call — and I want to be straight with you. We're typically three to five weeks out right now. As we get into the busy season, that stretches to eight to ten weeks and pricing often adjusts. If you're going to do this, sooner is usually better just from a logistics standpoint. But I'll never pressure you — whenever it's right for you is the right time.\""
+          ]
+        }
       ]
     }
   ],
