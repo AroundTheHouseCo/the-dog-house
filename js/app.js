@@ -385,14 +385,22 @@ function renderSlide(){
     // grid-template-rows:1fr 1fr left the extra items in an implicit auto
     // row sized by content, which could collapse the explicit rows and push
     // photos past the visible card edge depending on viewport aspect ratio.
-    const gridCols = s.photos.length > 4 ? 3 : 2;
-    const gridRows = Math.ceil(s.photos.length / gridCols);
+    // A photo is either a bare path (the common case) or {src, caption} when
+    // the set needs labelling — e.g. the Eclipse Before/After/Inside slide,
+    // where the caption IS the content. Normalised once so everything below
+    // reads the same shape.
+    const photos = s.photos.map(p => typeof p === "string" ? {src:p} : p);
+    // Exactly three reads as one row of three, not a 2x2 with a hole in it.
+    // 4 -> 2 cols and 6 -> 3 cols are unchanged.
+    const gridCols = (photos.length === 3 || photos.length > 4) ? 3 : 2;
+    const gridRows = Math.ceil(photos.length / gridCols);
     grid.style.gridTemplateColumns = `repeat(${gridCols},1fr)`;
     grid.style.gridTemplateRows = `repeat(${gridRows},1fr)`;
-    s.photos.forEach((p,i)=>{
+    photos.forEach((p,i)=>{
       const cell = document.createElement("div");
       cell.className="photogrid-cell";
-      cell.innerHTML = `<img src="${p}"><div class="expand-ring"></div>`;
+      cell.innerHTML = `<img src="${p.src}"><div class="expand-ring"></div>${
+        p.caption?`<div class="photogrid-caption">${p.caption}</div>`:""}`;
       cell.onclick=(e)=>{ e.stopPropagation(); lightboxIndex=i; renderSlide(); };
       grid.appendChild(cell);
     });
@@ -402,7 +410,7 @@ function renderSlide(){
     if(lightboxIndex!==null){
       const lb = document.createElement("div");
       lb.className="lightbox";
-      lb.innerHTML = `<button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button><img src="${s.photos[lightboxIndex]}">`;
+      lb.innerHTML = `<button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button><img src="${photos[lightboxIndex].src}">`;
       lb.onclick=(e)=>{ e.stopPropagation(); if(e.target===lb){ lightboxIndex=null; renderSlide(); } };
       lb.querySelector(".lightbox-close").onclick=(e)=>{ e.stopPropagation(); lightboxIndex=null; renderSlide(); };
       area.appendChild(lb);
@@ -446,23 +454,61 @@ function renderSlide(){
 
   if(s.type==="difference"){
     const panel = document.createElement("div");
-    panel.className="difference-panel";
-    const rowsHTML = s.rows.map(r=>{
-      if(r.style==="banner"){
-        return `<div class="diff-row banner"><div class="diff-banner"><img src="${r.icon}"><div class="diff-label">${r.label}</div></div></div>`;
-      }
-      return `<div class="diff-row plain"><div class="diff-logo"><img src="${r.icon}"></div><div><div class="diff-label">${r.label}</div>${r.sublabel?`<div class="diff-sublabel">${r.sublabel}</div>`:""}</div></div>`;
-    }).join("");
-    panel.innerHTML = `
-      <div class="diff-left">${rowsHTML}</div>
-      <svg class="diff-chevron" viewBox="0 0 100 500" preserveAspectRatio="none">
-        <polygon points="0,0 55,0 100,250 55,500 0,500 38,250" fill="#2e7d4f"/>
-      </svg>
-      <div class="diff-right">
-        <h2>${s.title}</h2>
-        <p>${s.paragraph}</p>
-      </div>
-    `;
+    if(s.comparison){
+      // Table variant. Same job as the badge-row layout below — "here is how
+      // we actually stack up" — but the payload is a side-by-side comparison,
+      // shown inline on the slide rather than behind the modal the models
+      // slide uses for its own comparison. Reuses .compare-table3, which is
+      // table-layout:fixed and so takes any column count.
+      const cmp = s.comparison;
+      const iconFor = st => st==="check" ? '<span class="ct-icon ct-check">✓</span>'
+        : st==="warn" ? '<span class="ct-icon ct-warn">!</span>'
+        : '<span class="ct-icon ct-x">✕</span>';
+      panel.className="cmp-panel";
+      panel.innerHTML = `
+        <div class="cmp-head">
+          <h2>${s.title}</h2>
+          ${s.paragraph?`<p>${s.paragraph}</p>`:""}
+        </div>
+        <div class="cmp-scroll">
+          <table class="compare-table3">
+            <tr>
+              <th class="ct-label"></th>
+              ${cmp.columns.map(c=>`
+                <th class="${c.badge?'ct-hero':''}">
+                  ${c.badge?`<div class="ct-badge">${c.badge}</div>`:""}
+                  <div class="ct-colname">${c.name}</div>
+                  <div class="ct-colsub">${c.sub}</div>
+                </th>`).join("")}
+            </tr>
+            ${cmp.rows.map(row=>`
+              <tr>
+                <td class="ct-label">${row.label}</td>
+                ${row.cells.map(c=>`<td class="${c.s==='check'?'ct-hero-cell':''}">${iconFor(c.s)}<span class="ct-text">${c.t}</span></td>`).join("")}
+              </tr>`).join("")}
+          </table>
+        </div>
+        ${cmp.footer?`<div class="compare-footer">${cmp.footer}</div>`:""}
+      `;
+    } else {
+      panel.className="difference-panel";
+      const rowsHTML = (s.rows||[]).map(r=>{
+        if(r.style==="banner"){
+          return `<div class="diff-row banner"><div class="diff-banner"><img src="${r.icon}"><div class="diff-label">${r.label}</div></div></div>`;
+        }
+        return `<div class="diff-row plain"><div class="diff-logo"><img src="${r.icon}"></div><div><div class="diff-label">${r.label}</div>${r.sublabel?`<div class="diff-sublabel">${r.sublabel}</div>`:""}</div></div>`;
+      }).join("");
+      panel.innerHTML = `
+        <div class="diff-left">${rowsHTML}</div>
+        <svg class="diff-chevron" viewBox="0 0 100 500" preserveAspectRatio="none">
+          <polygon points="0,0 55,0 100,250 55,500 0,500 38,250" fill="#2e7d4f"/>
+        </svg>
+        <div class="diff-right">
+          <h2>${s.title}</h2>
+          ${s.paragraph?`<p>${s.paragraph}</p>`:""}
+        </div>
+      `;
+    }
     area.appendChild(panel);
     addNavZones(area);
   }
@@ -568,12 +614,17 @@ function renderSlide(){
   if(s.type==="costscale"){
     const panel = document.createElement("div");
     panel.className="costscale-panel";
-    const pos = [10,30,50,70,90]; // even spacing — the "not at either end" read comes from position, not styling
+    // Even spacing across the track — the "not at either end" read comes from
+    // position, not styling. Computed from the rung count rather than a fixed
+    // list so a 4-tier scale doesn't leave a gap at the right; for the 5-rung
+    // Sunesta scale this yields exactly the previous 10/30/50/70/90.
+    const n = s.rungs.length;
+    const pos = s.rungs.map((_,i)=> n === 1 ? 50 : 10 + i * (80 / (n - 1)));
     const nodesHTML = s.rungs.map((r,i)=>`
       <button class="cs-node${r.athMarker?" cs-node-ath":""}" data-i="${i}" style="left:${pos[i]}%">
         ${r.athMarker?`<div class="cs-ath-pin">ATH</div>`:""}
         <div class="cs-dollars">${"$".repeat(r.n)}</div>
-        <div class="cs-thumb"><img src="${r.photo}" alt=""></div>
+        <div class="cs-thumb${r.photo?"":" cs-thumb-empty"}">${r.photo?`<img src="${r.photo}" alt="">`:""}</div>
         <div class="cs-label">${r.label}</div>
       </button>`).join("");
     panel.innerHTML = `
@@ -1301,16 +1352,25 @@ function renderRehearsal(){
           Nothing stale is shown in its place — add a <code>deck_map</code> entry in
           this product's content JSON (the console lists every gap at load).</p>
         </div>`;
-    } else {
-      const loadFailed = covered && typeof tcLoadFailed === "function" && tcLoadFailed();
+    } else if(covered && typeof tcLoadFailed === "function" && tcLoadFailed()){
+      // Settled and failed. The legacy per-slide script/talkingPoints/coach
+      // fields used to render here, but they're gone from js/data-eclipse.js
+      // (and were already stale on Sunesta — 0 of 22 still matched the content
+      // JSON). Showing a rep pre-rewrite script is worse than showing nothing,
+      // so this state is now the banner alone.
       body = `
-        ${loadFailed ? `<div class="tc-loadfail">${ICON.warn} Training content file failed to load — showing legacy notes. Reconnect or reinstall the app.</div>` : ""}
+        <div class="tc-loadfail">${ICON.warn} Training content file failed to load — no script available for this slide. Reconnect or reinstall the app.</div>
+        <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
+        <h2>${s.title}</h2>`;
+    } else {
+      // Still in flight. Deliberately NOT the unmapped gap state — that reads
+      // as "this slide has no content", which is wrong and alarming during a
+      // perfectly normal fetch. tcEnsureProductContent() calls
+      // onTrainingContentReady() when it settles, which re-renders this panel.
+      body = `
         <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
         <h2>${s.title}</h2>
-        ${s.script.trim()==="" ? '<span class="visual-only-tag">Visual only — no script yet</span>' : `<div class="script-block">${s.script}</div>`}
-        ${s.talkingPoints ? `<ul class="talking-points">${s.talkingPoints.map(t=>`<li>${t}</li>`).join("")}</ul>` : ""}
-        ${s.coach ? `<div class="coach-note">${ICON.bulb} ${s.coach}</div>` : ""}
-      `;
+        <div class="tc-empty">Loading training content…</div>`;
     }
   } else {
     body = trainingBodyHTML(trainingView);
