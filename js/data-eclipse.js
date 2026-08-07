@@ -365,6 +365,13 @@ const ECLIPSE_DECK = {
         {label:"Bug & no-see-um seal", cells:[{s:"check",t:"Tight SunTex + brush seal"},{s:"warn",t:"Depends on fit"},{s:"check",t:"Sealed"},{s:"check",t:"Yes"}]},
         {label:"Retracts out of sight", cells:[{s:"check",t:"Into the cassette"},{s:"warn",t:"Basic housing"},{s:"x",t:"Permanent"},{s:"check",t:"Yes"}]},
         {label:"Warranty", cells:[{s:"check",t:"Lifetime via PPP"},{s:"x",t:"Limited / by component"},{s:"warn",t:"Varies by builder"},{s:"check",t:"Varies"}]},
+        // Sits directly above Investment on purpose: it's the row that carries
+        // the actual argument, and it lands right before price. It's also what
+        // makes the table read correctly — every check cell gets the same green
+        // tint, so without this row the hurricane-rated column looks nearly as
+        // strong as ours. Here its one non-check falls on exactly the point the
+        // rep is making.
+        {label:"Right-sized for Front Range weather", cells:[{s:"check",t:"Built for our wind and sun"},{s:"x",t:"Fails in real wind"},{s:"x",t:"Solves a different problem"},{s:"warn",t:"Engineered for coastal storms"}]},
         {label:"Investment", cells:[{s:"check",t:"A fraction of a glass room"},{s:"check",t:"Low — but short-lived"},{s:"x",t:"$50,000+"},{s:"x",t:"$20,000+"}]}
       ],
       footer:"Glass sunrooms commonly run $50,000 and up and trap heat by design. Generic roll-downs without a zipper track flap in the wind and fail. Hurricane-rated systems are excellent engineering for coastal storm zones — and overkill on the Front Range. Always ask what's actually behind the price."

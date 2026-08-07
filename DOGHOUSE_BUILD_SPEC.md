@@ -119,7 +119,7 @@ global_conventions object  — never-say list, product naming, contacts
 Three sources:
 
 - `rep_profile` — set once per rep (`REP_NAME`, `REP_PERSONAL_STORY`)
-- `company_settings` — set once, admin-editable (`LEAD_TIME_WEEKS`, all five `PRICE_*` fields, `CURRENT_PROMO`)
+- `company_settings` — set once, admin-editable (`LEAD_TIME_WEEKS_SCREENS` / `LEAD_TIME_WEEKS_AWNINGS`, all five `PRICE_*` fields, `CURRENT_PROMO`, `SAME_WEEK_SAVINGS`). Lead time is per-product: this file is loaded once for every product, so a value that genuinely differs by product needs its own key rather than a shared one.
 - `discovery` / `measure` / `proposal` — entered per appointment (`ACCOMPLISH_LIST`, `THEIR_AREA`, etc.)
 
 **Requirements:**

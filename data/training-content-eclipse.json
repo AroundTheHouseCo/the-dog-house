@@ -50,13 +50,13 @@
       "guidance": "Editable per rep on e02. Where you came from, why you chose ATH, what you think of the people you work with. Under 60 seconds. Must be true."
     },
     {
-      "key": "LEAD_TIME_WEEKS",
-      "label": "Current install lead time",
-      "type": "text",
+      "key": "LEAD_TIME_WEEKS_SCREENS",
+      "label": "Current install lead time — screens (weeks)",
+      "type": "range",
       "source": "company_settings",
       "required": true,
       "status": "NOT_SET",
-      "guidance": "Six to eight weeks for all screen projects. NOT pre-filled: data/company-settings.json is shared across every product, so committing the screens figure there would also put it in front of Sunesta awning customers, whose lead time is a separate open question. Enter it per device until per-product company defaults exist (oi11)."
+      "guidance": "Six to eight weeks for all screen projects. Enter as a range only -- the script supplies the word \"weeks\" around the token. Awnings run a different figure and now have their own key (LEAD_TIME_WEEKS_AWNINGS); the two were one shared key until this rebuild, which could never be right for both products at once."
     }
   ],
   "slides": [
@@ -706,7 +706,7 @@
     },
     {
       "id": "oi11",
-      "item": "Per-product company settings are not supported — data/company-settings.json is loaded once for every product, so LEAD_TIME_WEEKS cannot hold six-to-eight weeks for screens and a different figure for awnings at the same time. Needs either a per-product block in that file or a product-scoped lookup in tcCompanyDefault().",
+      "item": "Install lead time is split into LEAD_TIME_WEEKS_SCREENS and LEAD_TIME_WEEKS_AWNINGS. data/company-settings.json is loaded once for every product, so the single LEAD_TIME_WEEKS it replaced could never hold six-to-eight weeks for screens and a different figure for awnings at the same time. Both keys ship NOT_SET: screens is six to eight per this rebuild, and Jack sets the awning figure.",
       "blocks": ["e17", "m_ezip_pricing_transition"],
       "owner": "Jack",
       "status": "open",
