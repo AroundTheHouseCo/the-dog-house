@@ -23,7 +23,7 @@
 // but an edit to an *existing* file's content does. The two versions are
 // independent on purpose: a Tier 1 content change shouldn't force every
 // installed client to re-download 80MB of Tier 2, and vice versa.
-const TIER1_VERSION = "2026-08-06.3";
+const TIER1_VERSION = "2026-08-06.4";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -178,6 +178,7 @@ const TIER1_URLS = [
   "images/eclipse/badge-class6-wind.svg",
   "images/eclipse/smart-control-placeholder.svg",
   "images/eclipse/eclipse-dealer-placeholder.svg",
+  "images/eclipse/people-placeholder.svg",
   "images/eclipse/arched-deck.jpg",
   "images/eclipse/mylink-phone.jpg",
   "images/eclipse/transform-before.jpg",

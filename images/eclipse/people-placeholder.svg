@@ -1,0 +1,22 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clearly-labeled placeholder: no team or install-crew photo exists yet (oi13).
+       The obvious candidate, the group shot on p2 of the Eclipse slide PDF, is a
+       SUNESTA dealer-awards ceremony at a costume party: Sunesta backdrop, Sunesta
+       award plaque, Sunesta leaderboard on screen. Wrong manufacturer's branding for
+       the Eclipse deck, and the wrong register for a slide about certified crews.
+       Same treatment as smart-control-placeholder.svg / eclipse-dealer-placeholder.svg. -->
+  <rect x="0" y="0" width="800" height="600" fill="#f4f4f2"/>
+  <rect x="24" y="24" width="752" height="552" rx="14" fill="#fbfaf6" stroke="#c9c4b4" stroke-width="3" stroke-dasharray="14,10"/>
+  <!-- three-crew-figures glyph -->
+  <g fill="#2e7d4f" transform="translate(400,232)">
+    <circle cx="-104" cy="-46" r="27"/>
+    <path d="M-104 -12 c-30 0 -50 20 -54 52 l0 42 108 0 0 -42 c-4 -32 -24 -52 -54 -52 z"/>
+    <circle cx="0" cy="-60" r="33"/>
+    <path d="M0 -20 c-36 0 -60 24 -64 62 l0 40 128 0 0 -40 c-4 -38 -28 -62 -64 -62 z"/>
+    <circle cx="104" cy="-46" r="27"/>
+    <path d="M104 -12 c-30 0 -50 20 -54 52 l0 42 108 0 0 -42 c-4 -32 -24 -52 -54 -52 z"/>
+  </g>
+  <text x="400" y="392" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="34" font-weight="900" letter-spacing="4" fill="#3d3d3d">OUR PEOPLE</text>
+  <text x="400" y="432" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="17" font-weight="700" fill="#999">Photo pending — ATH team or install crew on a real job</text>
+  <text x="400" y="462" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Arial,sans-serif" font-size="13" font-weight="700" fill="#bbb">Placeholder · swap images/eclipse/people-placeholder.svg when the real photo is ready</text>
+</svg>

@@ -390,9 +390,11 @@ function renderSlide(){
     // where the caption IS the content. Normalised once so everything below
     // reads the same shape.
     const photos = s.photos.map(p => typeof p === "string" ? {src:p} : p);
-    // Exactly three reads as one row of three, not a 2x2 with a hole in it.
-    // 4 -> 2 cols and 6 -> 3 cols are unchanged.
-    const gridCols = (photos.length === 3 || photos.length > 4) ? 3 : 2;
+    // Column count is chosen so the photos actually fill the rows: 3 reads as
+    // one row of three rather than a 2x2 with a hole, and 7-8 go four wide so
+    // eight lands as a clean 4x2 instead of a 3x3 missing its last two cells.
+    // The counts already in use are unchanged -- 4 stays 2x2, 6 stays 3x2.
+    const gridCols = photos.length > 6 ? 4 : (photos.length === 3 || photos.length > 4) ? 3 : 2;
     const gridRows = Math.ceil(photos.length / gridCols);
     grid.style.gridTemplateColumns = `repeat(${gridCols},1fr)`;
     grid.style.gridTemplateRows = `repeat(${gridRows},1fr)`;

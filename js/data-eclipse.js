@@ -72,8 +72,12 @@ const ECLIPSE_DECK = {
     image: IMAGES.ezRecessedStone
   },
   {
-    // NEW (spec §3.1). Image is the previously-orphaned arched-deck.jpg used as
-    // a stand-in — swap for a real team or install-crew photo when one exists.
+    // NEW (spec §3.1). Labelled placeholder until a real team / install-crew
+    // photo exists (oi13). The obvious candidate -- the group shot on p2 of the
+    // Eclipse slide PDF -- is a SUNESTA dealer-awards ceremony at a costume
+    // party, so it would put another manufacturer's branding across the Eclipse
+    // deck and undercut a slide about certified crews. arched-deck.jpg, which
+    // stood in here, moved to the gallery where a real local install belongs.
     id:"ez-people", type:"splittext",
     title:"Our People — Who Actually Shows Up",
     bullets:[
@@ -82,7 +86,7 @@ const ECLIPSE_DECK = {
       "Trained to Eclipse specification — and to our standards on top of that",
       "A full operations team on every project, so nothing depends on one person remembering"
     ],
-    image: IMAGES.ezArchedDeck
+    image: IMAGES.ezPeoplePlaceholder
   }
 ],
 
@@ -116,9 +120,16 @@ const ECLIPSE_DECK = {
     ]
   },
   {
+    // The first two are the SAME 18-foot Monument opening, up then down --
+    // they're the before/after pair the coaching note leans on, so they stay
+    // adjacent and first. arched-deck and part-way-up were both sitting in the
+    // IMAGES map unreferenced; they're real local installs, which is exactly
+    // what this slide is for, and part-way-up also shows the stop-at-any-height
+    // point. Eight photos tile as a clean 4x2.
     id:"ez-gallery", type:"photogrid",
     title:"Real Projects — Right Here on the Front Range",
-    photos:[ IMAGES.ezMonUp, IMAGES.ezMonDown, IMAGES.ezThreePorch, IMAGES.ezNight, IMAGES.ezSunroom, IMAGES.ezWithAwning ]
+    photos:[ IMAGES.ezMonUp, IMAGES.ezMonDown, IMAGES.ezThreePorch, IMAGES.ezNight,
+             IMAGES.ezSunroom, IMAGES.ezWithAwning, IMAGES.ezArchedDeck, IMAGES.ezPartWayUp ]
   },
   {
     // NEW (spec §3.3). Shape mirrors Sunesta's refmap slide (s10) exactly.

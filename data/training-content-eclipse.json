@@ -713,6 +713,14 @@
       "priority": "medium"
     },
     {
+      "id": "oi13",
+      "item": "Team or install-crew photo for e05 \"Our People\" — currently a labelled placeholder. The group shot on p2 of the Eclipse slide PDF is NOT usable here: it is a Sunesta dealer-awards ceremony at a costume party, so it would put another manufacturer's branding across the Eclipse deck and undercut a slide about certified crews. Wanted: ATH technicians or an install crew on a real job.",
+      "blocks": ["e05"],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
       "id": "oi12",
       "item": "Price-tier photos for e20 tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
       "blocks": ["e20"],

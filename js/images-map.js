@@ -79,6 +79,7 @@ const IMAGES = {
   ezBadgeClass6Wind: "images/eclipse/badge-class6-wind.svg",
   ezSmartControlPlaceholder: "images/eclipse/smart-control-placeholder.svg",
   ezDealerPlaceholder: "images/eclipse/eclipse-dealer-placeholder.svg",
+  ezPeoplePlaceholder: "images/eclipse/people-placeholder.svg",
   ezArchedDeck: "images/eclipse/arched-deck.jpg",
   ezMylinkPhone: "images/eclipse/mylink-phone.jpg",
   // Before/After/Inside — one project, three views. Cropped from slide 11 of
