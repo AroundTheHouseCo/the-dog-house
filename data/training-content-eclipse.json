@@ -714,7 +714,7 @@
     },
     {
       "id": "oi13",
-      "item": "Team or install-crew photo for e05 \"Our People\" — currently a labelled placeholder. The group shot on p2 of the Eclipse slide PDF is NOT usable here: it is a Sunesta dealer-awards ceremony at a costume party, so it would put another manufacturer's branding across the Eclipse deck and undercut a slide about certified crews. Wanted: ATH technicians or an install crew on a real job.",
+      "item": "Team or install-crew photo for e05 \"Our People\" — currently a labelled placeholder. The group shot on p2 of the Eclipse slide PDF is NOT usable here: it is a Sunesta dealer-awards ceremony at a costume party, so it would put another manufacturer's branding across the Eclipse deck and undercut a slide about certified crews. Wanted: ATH technicians or an install crew on a real job. CHECKED and clear: e02 ez-dealer uses dealer-family.jpg (the four family owners, professional attire, no manufacturer branding) and needs no change. CARRY FORWARD: the customer-facing Eclipse slide PDF still runs that same Sunesta awards photo on its own slide 2 under \"WHO WE ARE\" — same two problems, competitor-manufacturer branding plus costume attire under a company-credibility headline. Fix it when that deck is rebuilt rather than importing it here. One crew photo solves the app slide and the PDF slide together.",
       "blocks": ["e05"],
       "owner": "Jack",
       "status": "open",
