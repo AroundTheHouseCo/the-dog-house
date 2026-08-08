@@ -92,7 +92,7 @@ the highest-leverage single addition in the whole proposal.
 | Install lead time | **6 to 8 weeks**, all screen projects |
 | Motor delta | **$500** over manual crank |
 | Fabric naming | **UV blockage** — SunTex 80 / 90 / 95 / 97. "Openness factor" retired. |
-| Miami-Dade | Covers **all cassette sizes and both duty levels** |
+| Miami-Dade | Approval stated **without a scope claim** — Notice of Acceptance pending (`oi14`) |
 | 7-inch mounting | **Any mount** — surface or inside |
 | Same-week incentive | `{{SAME_WEEK_SAVINGS}}` variable, `status: NOT_SET` |
 | Glass sunroom | **$50,000 and up** |
@@ -104,8 +104,8 @@ the highest-leverage single addition in the whole proposal.
 
 This is the one place I've deliberately written narrower than the deck.
 
-**Certified, say freely:** Class 6 wind rating, 80 MPH, Miami-Dade County approved across all
-sizes and both duty levels.
+**Certified, say freely:** Class 6 wind rating, 80 MPH, Miami-Dade County approval — stated
+without a scope claim until the Notice of Acceptance is on file (`oi14`).
 
 **Tested, say with attribution:** At Architectural Testing in York, Pennsylvania, E-Zip units
 were subjected to a dynamic wind test at speeds up to 130 MPH. SunTex fabric showed no damage
@@ -671,8 +671,8 @@ homeowner should be touching things, not just watching.
 > electronics. That doesn't change either way you go.
 >
 > **The Standard** is what we put on most residential projects. Class 6 wind rating, eighty miles
-> per hour, Miami-Dade County approved. Fixed side tracks, the fabric edge locks in, the hem bar
-> seals at the bottom. For most homes out here, that's the right call and it handles our wind
+> per hour, with Miami-Dade County approval. Fixed side tracks, the fabric edge locks in, the hem
+> bar seals at the bottom. For most homes out here, that's the right call and it handles our wind
 > extremely well.
 >
 > **The Super Duty** is a step up. Spring-retention tracks instead of fixed."
@@ -746,8 +746,10 @@ recommendation, and a homeowner who later learns that will remember you sold it 
   integrity, not system rating. SunTex confirmed by Jack as the tested fabric. **Say it as a
   fabric test with attribution. Do not present it as a Super Duty system spec by duty class.**
   Blocked on `oi01`.
-- ⚠️ **Miami-Dade scope.** Confirmed by Jack as covering all cassette sizes and both duty levels.
-  Pending a copy of the approval document for the file.
+- ⚠️ **Miami-Dade scope.** Unconfirmed — the script states approval without a scope claim pending
+  the document. Obtain the Notice of Acceptance from Eclipse showing which cassette sizes and duty
+  levels are covered, then restore scope language if supported. Tracked as `oi14` (owner Jack,
+  priority high, blocks `e07` and `e12`).
 
 **Flags:**
 - 🔴 *high* — The deck's `modelCompare` Engineering row currently shows the 7-inch wind rating as

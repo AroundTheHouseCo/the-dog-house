@@ -117,8 +117,7 @@ homeowner has personally watched happen in their own backyard.
 > "And this is the one that matters most out here.
 >
 > The four and five inch systems carry a Class 6 wind rating, tested to eighty miles per hour, and
-> they're Miami-Dade County approved — that's the hurricane standard. Miami-Dade covers all our
-> sizes and both duty levels."
+> they carry Miami-Dade County approval — that's the hurricane standard."
 
 *(Localize. Use their house.)*
 
@@ -135,7 +134,7 @@ homeowner has personally watched happen in their own backyard.
 - E-Zip since 2013 — refined, not a first attempt
 - Somfy motor STANDARD — the part that has to work 10,000 times
 - Phifer SunTex, GREENGUARD Gold — plus Phifer's own 10-year fabric warranty
-- Class 6, 80 MPH, Miami-Dade approved — all sizes, both duty levels
+- Class 6, 80 MPH, Miami-Dade approval
 - LOCALIZE the wind line to their house, every time
 - Zipper retention = flat and taut, not flapping
 

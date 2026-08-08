@@ -640,7 +640,7 @@
           "label": "Wind",
           "script": [
             "\"And this is the one that matters most out here.",
-            "The four and five inch systems carry a Class 6 wind rating, tested to eighty miles per hour, and they're Miami-Dade County approved — that's the hurricane standard. Miami-Dade covers all our sizes and both duty levels.\"",
+            "The four and five inch systems carry a Class 6 wind rating, tested to eighty miles per hour, and they carry Miami-Dade County approval — that's the hurricane standard.\"",
             "(Localize. Use their house.)",
             "\"You mentioned the wind rips through here in the afternoon — that's exactly what that rating is about.",
             "What makes it work is the zipper retention. The fabric edge is physically locked into the side track, so instead of billowing and flapping like a generic roll-down screen, it stays flat and taut.\""
@@ -653,7 +653,7 @@
         "E-Zip since 2013 — refined, not a first attempt",
         "Somfy motor STANDARD — the part that has to work 10,000 times",
         "Phifer SunTex, GREENGUARD Gold — plus Phifer's own 10-year fabric warranty",
-        "Class 6, 80 MPH, Miami-Dade approved — all sizes, both duty levels",
+        "Class 6, 80 MPH, Miami-Dade approval",
         "LOCALIZE the wind line to their house, every time",
         "Zipper retention = flat and taut, not flapping"
       ],
@@ -979,7 +979,7 @@
             "(Hand them both track sections. Standard first, then Super Duty. Let them feel the difference before you explain it.)",
             "\"Now here's the actual choice.",
             "Both versions carry the same warranty — lifetime on the frame, the fabric, the motor, and the electronics. That doesn't change either way you go.",
-            "The Standard is what we put on most residential projects. Class 6 wind rating, eighty miles per hour, Miami-Dade County approved. Fixed side tracks, the fabric edge locks in, the hem bar seals at the bottom. For most homes out here, that's the right call and it handles our wind extremely well.",
+            "The Standard is what we put on most residential projects. Class 6 wind rating, eighty miles per hour, with Miami-Dade County approval. Fixed side tracks, the fabric edge locks in, the hem bar seals at the bottom. For most homes out here, that's the right call and it handles our wind extremely well.",
             "The Super Duty is a step up. Spring-retention tracks instead of fixed.\"",
             "(Point at the two samples in their hands.)",
             "\"You can feel it — the Standard track holds the fabric edge. The Super Duty track holds it and keeps tension on it under load. The hem bar's heavier too, with an internal steel channel.",
@@ -1032,11 +1032,6 @@
           "claim": "130 MPH figure",
           "status": "verified_as_fabric_test",
           "note": "Source is Eclipse's published test writeup (Architectural Testing, York PA, April 2013). Test units were 120\" × 84\" mounted in wooden frames, and the finding was fabric integrity, not system rating. SunTex confirmed by Jack as the tested fabric. Say it as a fabric test with attribution. Do not present it as a Super Duty system spec by duty class. Blocked on oi01."
-        },
-        {
-          "claim": "Miami-Dade scope",
-          "status": "confirmed_pending_document",
-          "note": "Confirmed by Jack as covering all cassette sizes and both duty levels. Pending a copy of the approval document for the file."
         }
       ],
       "flags": [
@@ -2197,6 +2192,17 @@
       "owner": "Jack",
       "status": "open",
       "priority": "low"
+    },
+    {
+      "id": "oi14",
+      "item": "Miami-Dade approval scope unconfirmed. Script states approval without scope claim pending the document. Obtain the Notice of Acceptance from Eclipse showing which cassette sizes and duty levels are covered, then restore scope language if supported.",
+      "blocks": [
+        "e07",
+        "e12"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
     }
   ]
 }
