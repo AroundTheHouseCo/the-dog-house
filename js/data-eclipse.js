@@ -40,7 +40,10 @@ const ECLIPSE_DECK = {
   },
   {
     id:"ez-dealer", type:"splittext",
-    title:"Your Eclipse Dealer — Local & Family-Owned",
+    // Retitled per the e02 content flag (Jack, 2026-08-07): the slide's content
+    // is entirely ATH — the script never mentions Eclipse, which gets its own
+    // moment at ez-eclipse/e06.
+    title:"Who We Are — Local & Family-Owned",
     bullets:[
       "Founded in 2004 — over 20 years, family-owned, based in Monument",
       "Thousands of installations across the Front Range",

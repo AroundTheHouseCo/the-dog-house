@@ -341,7 +341,8 @@
         {
           "severity": "medium",
           "issue": "Slide title in the deck currently reads \"Your Eclipse Dealer — Local & Family-Owned,\" but the script never mentions Eclipse.",
-          "recommendation": "Retitle to \"Who We Are.\" Eclipse gets its own slide at e06."
+          "recommendation": "Retitle to \"Who We Are.\" Eclipse gets its own slide at e06.",
+          "resolved": "Resolved — js/data-eclipse.js retitled to \"Who We Are — Local & Family-Owned\" per this flag's recommendation (Jack, 2026-08-07, same commit as this annotation). Eclipse's own moment is e06."
         }
       ]
     },
