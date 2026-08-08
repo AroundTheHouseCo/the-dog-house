@@ -154,7 +154,12 @@ function tcvRenderWalk(root){
   const refAt = walk.findIndex(n => n.entry.is_reference_slide);
   const refEntry = refAt >= 0 ? walk[refAt].entry : null;
   const refLabel = refEntry ? (refEntry.bookmark_label || refEntry.title) : "";
-  const m = tcModule();
+  // The quick-access drawer shows the MODULE's reactive scripts. A module
+  // with none (Eclipse's — its FAQ answers live in ref_faq only, so the FAQ
+  // page can't double-render them) must not offer a button that opens an
+  // empty drawer.
+  const mod = tcModule();
+  const m = mod && (mod.reactive_scripts || []).length ? mod : null;
 
   root.innerHTML = `
     <div class="tcv-wrap">
