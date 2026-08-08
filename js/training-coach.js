@@ -146,14 +146,26 @@ function tcvRenderWalk(root){
   tcv.i = Math.max(0, Math.min(tcv.i, walk.length - 1));
   const node = walk[tcv.i];
   const sections = [...new Set(walk.map(n => n.section))];
-  const s11At = walk.findIndex(n => n.entry.is_reference_slide);
-  const m = tcModule();
+  // The one-tap bookmark. Which entry it points at is per-product data
+  // (is_reference_slide), and so is its button text: bookmark_label when the
+  // entry sets one, else the entry's own title. Previously the label was
+  // hardcoded "10 Reasons", which is Sunesta's slide — any other product with
+  // a reference slide got a button naming the wrong deck.
+  const refAt = walk.findIndex(n => n.entry.is_reference_slide);
+  const refEntry = refAt >= 0 ? walk[refAt].entry : null;
+  const refLabel = refEntry ? (refEntry.bookmark_label || refEntry.title) : "";
+  // The quick-access drawer shows the MODULE's reactive scripts. A module
+  // with none (Eclipse's — its FAQ answers live in ref_faq only, so the FAQ
+  // page can't double-render them) must not offer a button that opens an
+  // empty drawer.
+  const mod = tcModule();
+  const m = mod && (mod.reactive_scripts || []).length ? mod : null;
 
   root.innerHTML = `
     <div class="tcv-wrap">
       <div class="tcv-bar">
         <input id="tcvSearch" class="tcv-search" type="search" placeholder="Search titles, script, Q&A…" value="${tcEsc(tcv.q)}">
-        ${s11At >= 0 ? `<button class="tcv-mark${tcv.i===s11At?" here":""}" id="tcvMark" title="10 Reasons — the reference slide">★ 10 Reasons</button>` : ""}
+        ${refAt >= 0 ? `<button class="tcv-mark${tcv.i===refAt?" here":""}" id="tcvMark" title="${tcEsc(refLabel)} — the reference slide">★ ${tcEsc(refLabel)}</button>` : ""}
         ${m ? `<button class="tcv-drawer-btn" id="tcvDrawerBtn">If they ask…</button>` : ""}
       </div>
       <div id="tcvResults"></div>
@@ -180,7 +192,7 @@ function tcvRenderWalk(root){
     c.onclick = () => { tcv.i = walk.findIndex(n => n.section === c.dataset.sec); tcv.drawer = false; rerender(); };
   });
   const mark = root.querySelector("#tcvMark");
-  if (mark) mark.onclick = () => { tcv.i = s11At; tcv.drawer = false; rerender(); };
+  if (mark) mark.onclick = () => { tcv.i = refAt; tcv.drawer = false; rerender(); };
   const db = root.querySelector("#tcvDrawerBtn");
   if (db) db.onclick = () => { tcv.drawer = !tcv.drawer; rerender(); };
   const dc = root.querySelector("#tcvDrawerClose");

@@ -99,12 +99,13 @@
       "source": "measure"
     },
     {
-      "key": "LEAD_TIME_WEEKS",
-      "label": "Current install lead time (weeks)",
+      "key": "LEAD_TIME_WEEKS_AWNINGS",
+      "label": "Current install lead time — awnings (weeks)",
       "type": "range",
       "source": "company_settings",
       "required": true,
-      "status": "NOT_SET"
+      "status": "NOT_SET",
+      "guidance": "Enter as a range only — the script supplies the word \"weeks\" around the token. Screens run their own figure under LEAD_TIME_WEEKS_SCREENS; the two shared one key until the Eclipse rebuild, which could never be right for both products at once."
     },
     {
       "key": "PRICE_ONLINE_HANDYMAN",
@@ -1128,6 +1129,7 @@
       "status": "final",
       "in_deck": true,
       "is_reference_slide": true,
+      "bookmark_label": "10 Reasons",
       "purpose": [
         "Burner slide — closes the Why Sunesta section and hands into the product",
         "Primary value is as a callback asset: return here during price presentation or objection handling to rebuild value fast"
@@ -2396,7 +2398,7 @@
             "“So based on everything we talked about — and your goals of {{ACCOMPLISH_LIST}} — this is what I put together for you.”",
             "These numbers include installing your new {{PRODUCT_NAME}} with a {{WARRANTY_TERM}} warranty.",
             "(If applicable) We will pull all necessary permits for your new {{PRODUCT_NAME}}.",
-            "We are {{LEAD_TIME_WEEKS}} weeks out for installation, and your project will typically be completed in half a day. Of course, most importantly, you'll get to enjoy and take advantage of your deck and outdoor space year-round with all the great features we covered."
+            "We are {{LEAD_TIME_WEEKS_AWNINGS}} weeks out for installation, and your project will typically be completed in half a day. Of course, most importantly, you'll get to enjoy and take advantage of your deck and outdoor space year-round with all the great features we covered."
           ]
         },
         {
@@ -2472,7 +2474,7 @@
       "variables_used": [
         "ACCOMPLISH_LIST",
         "CURRENT_PROMO",
-        "LEAD_TIME_WEEKS",
+        "LEAD_TIME_WEEKS_AWNINGS",
         "PRODUCT_NAME",
         "WARRANTY_TERM"
       ],

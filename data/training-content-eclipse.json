@@ -1,593 +1,2208 @@
 {
   "meta": {
-    "content_version": "1.0.0",
+    "content_version": "2.0.0",
+    "generated": "2026-08-07",
     "company": "Around The House Home Solutions",
     "product_line": "Eclipse E-Zip Motorized Screens",
-    "source": "Migrated from js/data-eclipse.js (ECLIPSE_TRAINING + per-slide script/talkingPoints/coach fields), training-mode-v2 Phase 2 migration. Source doc: \"E-Zip Script (1).docx\", blessed by Jack 2026-07-15.",
+    "presentation_name": "Eclipse E-Zip In-Home Presentation",
+    "source": "Rebuilt from ATH_EZip_Master_Script_v3 Parts 1-3 + ATH_EZip_Deck_Build_Spec v1.0 (docs/ezip-rebuild/), 2026-08-07. Supersedes the v1.0.0 content migrated from \"E-Zip Script (1).docx\".",
     "notes_for_engineers": "This file is the single source of truth for Eclipse Doghouse training mode. Do not paraphrase, summarize, rewrite, or 'improve' any value in this file. Render it. All content changes happen in this file, not in code.",
     "authority_rule": "The live deck (js/data-eclipse.js) owns slide ORDER and SECTION membership. This file owns CONTENT. Join by deck_map below."
   },
-  "prep_ids": [],
+  "prep_ids": [
+    "prep_recap",
+    "preframe"
+  ],
   "deck_map": {
     "ez-intro": "e01",
-    "ez-lineup": "e02",
-    "ez-dealer": "e03",
+    "ez-dealer": "e02",
+    "ez-lineup": "e03",
     "ez-install": "e04",
-    "ez-credibility": "e05",
-    "ez-reasons": "e06",
-    "ez-how": "e07",
-    "ez-systems": "e08",
-    "ez-fabric": "e09",
-    "ez-smart": "e10",
-    "ez-gallery": "e11",
-    "ez-warranty": "e12",
-    "ez-process": "e13",
-    "ez-viewstays": "e14"
+    "ez-people": "e05",
+    "ez-eclipse": "e06",
+    "ez-credibility": "e07",
+    "ez-gallery": "e08",
+    "ez-refmap": "e09",
+    "ez-reasons": "e10",
+    "ez-how": "e11",
+    "ez-systems": "e12",
+    "ez-fabric": "e13",
+    "ez-transform": "e14",
+    "ez-smart": "e15",
+    "ez-mylink": "e16",
+    "ez-process": "e17",
+    "ez-warranty": "e18",
+    "ez-options": "e19",
+    "ez-pricecond": "e20",
+    "ez-viewstays": "e21"
   },
-  "variables": [],
+  "variables": [
+    {
+      "key": "SAME_WEEK_SAVINGS",
+      "label": "Same-week savings offer",
+      "type": "text",
+      "source": "company_settings",
+      "required": true,
+      "status": "NOT_SET",
+      "guidance": "Percentage or dollar amount for customers scheduling within the current week. Set company-wide, not per rep. Introduced once, after the price lands. Two things are still undecided (oi02): the figure itself (10% or 5%), and where the week boundary falls -- signed by Sunday, or seven days from the appointment?"
+    },
+    {
+      "key": "ACCOMPLISH_LIST",
+      "label": "Their Accomplish List",
+      "type": "list",
+      "source": "discovery",
+      "required": true,
+      "guidance": "Filled per appointment. Confirmed with the homeowner at e10 before any product is presented. Phrase as outcomes in their words, never product names."
+    },
+    {
+      "key": "REP_PERSONAL_STORY",
+      "label": "Rep personal story (why you work here)",
+      "type": "longtext",
+      "source": "rep_profile",
+      "guidance": "Editable per rep on e02. Where you came from, why you chose ATH, what you think of the people you work with. Under 60 seconds. Must be true."
+    },
+    {
+      "key": "LEAD_TIME_WEEKS_SCREENS",
+      "label": "Current install lead time — screens (weeks)",
+      "type": "range",
+      "source": "company_settings",
+      "required": true,
+      "status": "NOT_SET",
+      "guidance": "Six to eight weeks for all screen projects. Enter as a range only -- the script supplies the word \"weeks\" around the token. Awnings run a different figure and now have their own key (LEAD_TIME_WEEKS_AWNINGS); the two were one shared key until this rebuild, which could never be right for both products at once."
+    }
+  ],
   "slides": [
     {
-      "slide_id": "e01",
-      "slide_number": 1,
-      "section": "why_eclipse",
-      "title": "Eclipse® E-Zip Motorized Screens",
-      "status": "final",
-      "in_deck": true,
+      "slide_id": "prep_recap",
+      "section": "prep",
+      "title": "Table Recap on the iPad",
+      "subtitle": "Confirm the Scope Before You Sell Anything",
+      "status": "final_new",
+      "in_deck": false,
+      "purpose": [
+        "Confirm you and the homeowner are looking at the same project",
+        "Surfaces install realities early, when they're a design conversation and not a surprise"
+      ],
+      "duration": {
+        "min_sec": 180,
+        "max_sec": 240,
+        "display": "3:00 – 4:00"
+      },
+      "tone_mood": "Businesslike and unhurried. This is the one part of the appointment where the rep sounds like a tradesman rather than a presenter. Reading measurements back is not exciting and it isn't supposed to be. It's the moment the homeowner decides you're competent.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Re-open the conversation",
           "script": [
-            "\"So what I'd like to do is take about 10 to 15 minutes and walk you through how these screen systems work, what makes them different from anything else out there, and how we'd design this specifically for your space. Then we'll look at some options together and figure out what actually makes the most sense for you. Sound good?\"",
-            "\"Before we jump in — when you're out here trying to enjoy this space, what's the thing that pushes you back inside most often?\"",
-            "(Let them answer. Listen for sun angle, wind, heat, or privacy.)",
-            "\"And what time of day is it usually the worst?\"",
-            "\"So really the goal here is to make this space actually usable — on your terms, when you want to be out here — without fighting the elements every time. That's exactly what we're going to walk through.\""
-          ]
+            "\"Before I show you anything — you all said you've been in the home about [X] years, is that right?",
+            "And this space back here, is this where you spend most of your time outside, or is it more where you'd like to be spending it?\"",
+            "(Let them answer. This is a genuine question and the answer usually adds an Accomplish List item.)",
+            "\"Is this something you've been thinking about for a while?\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Recap the openings",
+          "script": [
+            "\"So let me walk you through what I measured, and you tell me if I've got it right.",
+            "You've got [X] openings back here. The main one across the back is [X] feet wide with about a [X] foot drop. The one on the [side] is [X] by [X].",
+            "Every screen is built to the exact opening, so those numbers are what we order to. Nothing gets cut down on site.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Mount type and track surface",
+          "script": [
+            "\"For mounting, we'd be going [surface mount / inside mount] here, attaching into [wood framing / stucco / brick / pergola posts].",
+            "The part that matters most on a screen system is that the tracks are perfectly level and perfectly parallel to each other. If they're off even a little, the screen binds. That's why we take our time here and why we don't hand this to just anybody.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "Power",
+          "script": [
+            "\"These run on standard 110-volt power, so we'd plan to pull from [this outlet]. No panel work, no electrician in most cases.",
+            "We run the wire as discreetly as we can — down a post, along the trim, tucked into the soffit. If you've got paint on hand we can match it, or we can use one of the standard cover colors.\"",
+            "(Stage direction: point at the actual outlet and the actual wire path. Do not describe it abstractly.)"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b5",
+          "label": "Sun and orientation",
+          "script": [
+            "\"Based on the way this faces — [west/south/east/north] — the sun is going to be hardest on you roughly [X] to [X]. That lines up with what you told me earlier about [their words].",
+            "When the screen is down during those hours, that's the difference between sitting out here and going back inside.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b6",
+          "label": "Get the yes",
+          "script": [
+            "\"Based on everything I just walked through — does this feel like the right approach for your space?\"",
+            "👉 You need a yes here. If you get a maybe, stop and find out why. Something is unresolved and it will cost you at the close."
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b7",
+          "label": "Step out",
+          "script": [
+            "\"Great. I'm going to pop out to the truck and grab a few samples. While I'm out there I'll start putting your numbers together. Should I let myself back in, or would you rather I knock?\"",
+            "(Update the sales form and prepare the estimates outside. Do not transcribe onto paper yet — that happens at the table.)"
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "You are the guide, not a presenter — set the 10–15 minute frame before you sit down",
-        "Get them to verbalize the frustration: sun, wind, heat, bugs, or privacy",
-        "West-facing: afternoon · South: midday · East: morning · North: usually wind or privacy",
-        "Introduce the two-option approach now, so pricing later feels expected"
+      "display_beats": [
+        "How long in the home · is this where you spend time",
+        "Recap every opening: width × drop",
+        "Mount type and what we're attaching to",
+        "Tracks must be level and parallel — say why",
+        "110V, show the actual outlet and wire path",
+        "Sun orientation vs. their stated problem",
+        "Get the yes",
+        "Step outside for samples and numbers"
       ],
-      "coaching_note": "Do not rush this. Two to three minutes here anchors everything that follows. The clearer the pain, the easier the close."
+      "slow_down_on": {
+        "line": "If they're off even a little, the screen binds.",
+        "why": "this is the entire justification for your install premium, delivered before price exists. It's a mechanical fact, not a sales claim, which is exactly why it lands."
+      },
+      "coaching_note": "New reps skip this block because it feels like housekeeping and they're eager to get to the product. It is the opposite of housekeeping. Every install surprise you don't surface here becomes a change order, a bad review, or a lost sale later. The homeowner who watches you point at their actual outlet and their actual soffit has already decided you've done this before.\n\nNever recap measurements from memory. Have them on the screen. Reading them off confidently and being slightly boring here buys you enormous credibility for the next thirty minutes.",
+      "engagement_question": {
+        "text": "Is this where you spend most of your time outside, or where you'd like to be?",
+        "branches": [
+          "the second half of that question is what produces Accomplish List gold. Most people answer the second half."
+        ]
+      }
+    },
+    {
+      "slide_id": "preframe",
+      "section": "prep",
+      "title": "Pre-Frame",
+      "subtitle": "Set Expectations and Take the Room",
+      "status": "final_new",
+      "in_deck": false,
+      "purpose": [
+        "Position yourself as the guide, not a presenter",
+        "Introduce the two-option structure now so pricing later feels expected"
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 – 60 seconds"
+      },
+      "tone_mood": "Friendly and confident. Sitting, not standing. Relaxed body language. This is forty-five seconds of warmth before any content — the rep should sound like a guest who's glad to be there, because he is.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "\"Well — thanks again for having me out. Not everybody offers us water and puts up with us tracking through the yard, so I appreciate that.",
+            "Here's what I'd like to do. Take about fifteen minutes, walk you through how these screen systems actually work, what makes them different from the other things out there, and how we'd design this specifically for your space.",
+            "Then we'll look at a couple of options together and figure out what actually makes sense for you. Sound good?\"",
+            "(Get the yes.)"
+          ],
+          "stage_directions": []
+        }
+      ],
+      "display_beats": [
+        "Thank them, be human for ten seconds",
+        "Fifteen minutes, here's what we'll cover",
+        "Two options at the end — plant it now",
+        "\"Sound good?\" — get the yes"
+      ],
+      "slow_down_on": {
+        "line": "figure out what actually makes sense for you.",
+        "why": "it's the sentence that separates a consultation from a pitch, and it's the frame you'll lean on at every objection later."
+      },
+      "coaching_note": "Reps who skip the pre-frame end up fighting for control of the appointment for the next half hour. Forty-five seconds of \"here's what's about to happen\" means the homeowner stops wondering when the sales part starts, because you already told them.\n\nSay \"a couple of options\" out loud here. When two options appear at pricing, they'll feel like the plan instead of a tactic."
+    },
+    {
+      "slide_id": "e01",
+      "slide_number": 1,
+      "section": "why_ath",
+      "title": "Eclipse® E-Zip Motorized Screens",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Re-anchor the conversation on their problem, in their words",
+        "Last chance to add to the Accomplish List before the presentation starts"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 180,
+        "display": "2:00 – 3:00"
+      },
+      "tone_mood": "Conversational and curious. The rep is asking, not telling. If the homeowner isn't doing most of the talking during this slide, it's being run wrong.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "The frustration question",
+          "script": [
+            "\"Before we jump in — when you're out here trying to enjoy this space, what's the thing that pushes you back inside most often?\"",
+            "(Let them answer. Do not fill the silence. Listen for sun angle, wind, heat, bugs, or privacy.)",
+            "\"And what time of day is it usually the worst?\"",
+            "(West-facing: afternoon. South: midday. East: morning. North: usually wind or privacy.)"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Frame the goal",
+          "script": [
+            "\"So really, the whole goal here is to make this space usable on your terms — when you want to be out here — without fighting the elements every single time.",
+            "That's exactly what we're going to walk through.\""
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "Let me start with who we are, because honestly, who installs this matters just as much as what gets installed.",
+      "display_beats": [
+        "\"What pushes you back inside most often?\" — then stop talking",
+        "\"What time of day is worst?\" — anchors sun angle",
+        "Reflect it back: usable on your terms, without fighting the elements",
+        "Add anything new to the Accomplish List right now"
+      ],
+      "slow_down_on": {
+        "line": "on your terms.",
+        "why": "control is what this product actually sells. Not shade — control. Plant the word early and it pays off at the money slide when you explain the screen stops at any height."
+      },
+      "coaching_note": "Two to three minutes here anchors everything that follows. The clearer the pain, the easier the close. Reps rush this because it feels like they're not doing anything, but the homeowner describing their own problem out loud is worth more than any slide you'll show them.\n\nWrite down their exact words. Not your translation of their words. \"The wind flat out ruins dinner out here\" is worth ten times \"wind mitigation\" when you say it back at pricing.",
+      "engagement_question": {
+        "text": "What sort of things do you all like to do out here?",
+        "when": "use it if the first question produces a short answer",
+        "branches": [
+          "Follow with: dinner? drinks? grandkids? Something always comes loose."
+        ]
+      }
     },
     {
       "slide_id": "e02",
       "slide_number": 2,
-      "section": "why_eclipse",
-      "title": "Your Home Solutions Experts",
-      "status": "final",
+      "section": "why_ath",
+      "title": "Who We Are — Local & Family-Owned",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Trust and local positioning — the first credibility slide, before any product talk",
+        "Homeowners buy the rep before they buy the company"
+      ],
+      "duration": {
+        "min_sec": 105,
+        "max_sec": 120,
+        "display": "1:45 – 2:00"
+      },
+      "tone_mood": "Warm, grounded, unhurried. Neighbor, not presenter. No selling energy yet. Roughly half this slide is the rep's personal story and that half should not be rushed.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "The company",
           "script": [
-            "\"Real quick before we get into the screens — I want to show you what we do as a company, because a lot of homeowners don't realize the full picture.",
-            "We're not just a screen company. We handle the full outdoor living spectrum — motorized screens, retractable awnings, louvered roof systems, and gutter protection.",
-            "The reason that matters for you is we can look at your whole outdoor space as one picture. A lot of companies can only sell you one thing. We can help you think through all of it — and make sure whatever you do today works with whatever you might want to add later.",
-            "Today we're focused on the screens — but if anything else comes up as we walk through this, just say the word.\""
-          ]
+            "\"Quick background on us.",
+            "We're Around The House Home Solutions. Local, family-owned, based right up in Monument. We've been in business since 2004, so twenty-two years now, and in that time we've completed thousands of projects across the Front Range. Over four thousand customers. This isn't something we picked up last year.",
+            "Our focus is the exterior of the home — high quality shade and protection solutions, so people can actually enjoy living in Colorado instead of hiding from it.",
+            "Something our customers really appreciate — we're not a big corporation out of Denver. You call us, you get us.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Personal touch (editable per rep)",
+          "script": [
+            "{{REP_PERSONAL_STORY}}"
+          ],
+          "stage_directions": [],
+          "sample": "Sample — Matt: \"Myself, I've been in home remodeling since I graduated college in 2014. I've worked for everything from big national remodeling companies to small owner-operated contractors — full home additions, interior remodels, decks, concrete patios. Somewhere along the way I figured out I have to actually like where I work. So when I met Jack and his brother Maxx, and saw how they treat customers and each other, I couldn't pass it up. I'm really happy I found my home here.\""
         }
       ],
-      "talking_points": [
-        "Breadth = long-term partner, not a one-product vendor",
-        "Mention all products briefly — don't sell everything on this slide",
-        "Opens the cross-sell door (louvered roof + screens = outdoor room) without forcing it"
+      "transition_out": "Outside of screens, we handle a few other things around the house too.",
+      "display_beats": [
+        "Local, family-owned, Monument",
+        "Since 2004 — twenty-two years, thousands of projects, 4,000+ customers",
+        "Exterior focus — enjoy Colorado, don't hide from it",
+        "Not a Denver corporation: you call us, you get us",
+        "YOUR personal story"
       ],
-      "coaching_note": "Keep this slide moving. It builds credibility without derailing the screen conversation."
+      "slow_down_on": {
+        "line": "You call us, you get us.",
+        "why": "it's the whole slide in five words. Say it, stop, let it land."
+      },
+      "coaching_note": "The personal touch is not filler and it is not optional. Homeowners buy the rep before they buy the company. A new rep who skips it because it feels self-indulgent will feel the difference at the close.\n\nWrite your own version. Same shape as Matt's: where you came from, why you chose here, what you think of the people you work with. Under sixty seconds, and make it true. A story you're embarrassed to tell is worse than no story.",
+      "personal_touch": "Myself, I've been in home remodeling since I graduated college in 2014. I've worked for everything from big national remodeling companies to small owner-operated contractors — full home additions, interior remodels, decks, concrete patios. Somewhere along the way I figured out I have to actually like where I work. So when I met Jack and his brother Maxx, and saw how they treat customers and each other, I couldn't pass it up. I'm really happy I found my home here.",
+      "variables_used": [
+        "REP_PERSONAL_STORY"
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Slide title in the deck currently reads \"Your Eclipse Dealer — Local & Family-Owned,\" but the script never mentions Eclipse.",
+          "recommendation": "Retitle to \"Who We Are.\" Eclipse gets its own slide at e06.",
+          "resolved": "Resolved — js/data-eclipse.js retitled to \"Who We Are — Local & Family-Owned\" per this flag's recommendation (Jack, 2026-08-07, same commit as this annotation). Eclipse's own moment is e06."
+        }
+      ]
     },
     {
       "slide_id": "e03",
       "slide_number": 3,
-      "section": "why_eclipse",
-      "title": "Your Eclipse Dealer — Local & Family-Owned",
-      "status": "final",
+      "section": "why_ath",
+      "title": "Your Home Solutions Experts",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Establish ATH as a full exterior company, not a one-product screen outfit",
+        "Opens the cross-sell door without forcing it"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30 — brisk, this is a flyover"
+      },
+      "tone_mood": "Confident and moving. The one slide where the rep is allowed to sound like he's covering ground. Breadth is the point; depth belongs to the screens.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": null,
           "script": [
-            "\"Quick background on who we are — because who installs this matters just as much as the product itself.",
-            "We were founded in 2004. We're local, family owned, based right up in Monument. Over 20 years and thousands of installations across the Front Range. This isn't something we picked up overnight.",
-            "You call us, you get us. Not a call center, not someone three states away. We're right here and we're accountable.",
-            "Eclipse is one of the most respected names in motorized exterior screens — residential and commercial applications across the country. When you work with ATH, you get the backing of a nationally recognized product with a local company that stands behind every install.\""
-          ]
+            "\"So a lot of homeowners don't realize the full picture of what we do.",
+            "We've been the authorized dealer for Gutter Helmet and heat cable systems for all twenty-two years we've been in business — that's a patented gutter and roof protection system, so you never clean your gutters again. Keeps people off ladders and protects the exterior of the home.",
+            "Sunesta retractable awnings for overhead shade — we're actually Sunesta's Dealer of the Year.",
+            "Motorized louvered roof systems, attached and freestanding. Commercial grade, built for the wind we get out here. A lot of our customers pair those with screens to create a real three-season outdoor room.",
+            "And of course the motorized screens, which is what we're here for today.",
+            "Everything's made in the USA and most of it carries a lifetime warranty.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Not a national chain, not a big Denver corporation",
-        "Real accountability — when you call, you get us",
-        "National brand + local company = both halves of trust"
+      "transition_out": "Outside of family, your home is usually the biggest investment you've got. So we only install products we'd put on our own houses, and we install them to a standard we can stand behind.",
+      "display_beats": [
+        "Gutter Helmet — 22 years, never clean your gutters again",
+        "Sunesta awnings — Dealer of the Year",
+        "Louvered roofs — commercial grade, pairs with screens",
+        "Motorized screens — today's focus",
+        "Made in USA, mostly lifetime warranties",
+        "Offer to measure anything else — then move on"
       ],
-      "coaching_note": "Fixed per Jack's ruling (2026-07-15): slide copy now matches the spoken script — \"Front Range\" throughout."
+      "slow_down_on": {
+        "line": "all twenty-two years we've been in business.",
+        "why": "longevity is the proof point on this slide. Say the number, pause a beat, move on."
+      },
+      "coaching_note": "The offer to look at other products is a seed, not an invitation. If the homeowner bites — \"actually, what would a louvered roof run?\" — acknowledge it and park it: \"Great question, let's absolutely look at that. Let me finish walking you through the screens first and we'll come back to it.\" Chasing a second product mid-presentation doubles the length and usually costs you both sales. Plant it here, harvest it after the close.",
+      "callback_triggers": [
+        "Homeowner mentions a pergola or louvered roof later",
+        "Homeowner asks about gutters, ice, or roof runoff",
+        "At the close, if a second product came up and you parked it"
+      ]
     },
     {
       "slide_id": "e04",
       "slide_number": 4,
-      "section": "why_eclipse",
+      "section": "why_ath",
       "title": "Installed In-House — Level, Parallel, To the Inch",
-      "status": "final",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Differentiate install quality — this is the slide that justifies price before price exists",
+        "Screens are less forgiving than almost anything else we install, and that's the whole argument"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 135,
+        "display": "2:00 – 2:15"
+      },
+      "tone_mood": "Calm authority. Not defensive, not bitter about competitors. The rep is describing how a professional does it and letting the contrast speak. Slight smile on the \"chuck in a truck\" line so it lands as observation rather than attack.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Why install matters more here",
           "script": [
-            "\"This is something worth knowing about before we get into the product.",
-            "All of our installers work for us — and only for us. Same team that does our awnings. They know these systems, and they know how to install them correctly.",
-            "That matters more than people realize with a screen system. The tracks have to be perfectly level and parallel — if they're off, the screen won't operate right. It's not like hanging a curtain. There's real precision involved.",
-            "We prefer a surface mount when the structure allows for it — it's clean, accessible, and easy to service. But we can fit this to virtually any structure — pergola posts, stucco, wood framing, brick, soffit mounting. Whatever your space calls for, we've done it.",
-            "And electrically — most installs are as simple as a standard 110-volt plug-in. Nothing complicated. Most jobs are done in a day.\""
-          ]
+            "\"This is worth a minute before we get to the product.",
+            "You can buy a great screen system and still end up unhappy, because a screen is less forgiving than almost anything else we install. The two side tracks have to be perfectly level and perfectly parallel to each other. Not close — parallel. If they're off, the fabric binds, the motor works against itself, and eventually something gives.",
+            "It's not like hanging a curtain. There's real precision to it.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Who does the work",
+          "script": [
+            "\"Our install teams work exclusively for us. Same crews that do our awnings and our louvered roofs — they're trained by us, they know these systems, and we inspect and warranty every job.",
+            "A lot of companies out there, it's more of a 'chuck in a truck' situation. They'll install four or five of these a year, so they slap it up and hope for the best. There's no consistency from one job to the next, and that's how homeowners end up paying for the same project twice.\"",
+            "(Slight smile on \"chuck in a truck.\" Let it land as a joke about the industry, not a specific competitor.)"
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Licensing and accountability",
+          "script": [
+            "\"Most shade products in Colorado don't require a permit, which keeps the barrier to entry very low for inexperienced companies. Because we also do larger structures like pergolas, we hold our PPRBD license in good standing and we build to code regardless of project size.",
+            "We're licensed and insured, so if something happens on the job, you're protected and we're protected.",
+            "And we do a final walkthrough on every install. If anything ever comes up, you call our 719 number and we come out. That's it.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Install quality is a close factor — 'who installs this matters just as much as the product'",
-        "Surface mount preferred: clean, accessible, serviceable — recessed available too",
-        "110V plug-in in most cases; no panel upgrades, no complicated wiring"
+      "transition_out": "So that's us. Let me tell you about the people who'll actually be at your house.",
+      "display_beats": [
+        "Screens are unforgiving — tracks must be level AND parallel",
+        "Off by a little = binding, motor strain, failure",
+        "Our teams, exclusively ours, trained by us",
+        "\"Chuck in a truck\" — light delivery",
+        "No permit required in CO = low barrier for bad companies",
+        "PPRBD licensed, insured, build to code anyway",
+        "Final walkthrough, one number to call"
       ],
-      "coaching_note": "Per the standing ruling: we say our installers \"work for us — and only us\" — never \"they're not subcontractors.\""
+      "slow_down_on": {
+        "line": "Not close — parallel.",
+        "why": "it's the most specific, most technical, most credible thing on the slide, and it's completely verifiable. A homeowner who understands why precision matters has a reason to distrust a cheap bid that they came up with themselves."
+      },
+      "coaching_note": "This is the highest-leverage trust slide in the deck and the easiest one to rush, because it's all company talk and no product. Don't. Every dollar of difference between your number and a cheaper bid gets defended right here. Skip it and the price objection arrives later with nothing to push back against.\n\nDeliver \"chuck in a truck\" lightly. The moment it sounds like you're running down competitors, the homeowner starts defending them.",
+      "engagement_question": {
+        "text": "Have you had work done on the home before? How was that experience?",
+        "branches": [
+          "If good: agree, be glad for them, move on.",
+          "If bad: this industry is notorious for it, and communication and timelines are what people complain about most, which is exactly why we run it the way we do."
+        ]
+      },
+      "reactive_scripts": [
+        {
+          "tag": "FAQ",
+          "question": "Do you use subcontractors?",
+          "trigger": "Asked only if raised",
+          "answer": [
+            "\"Our crew is 1099 technicians. But our install teams work exclusively for us — they're trained by us, we inspect every job, and we warranty every job. And our production and quality assurance guys are full-time employees.",
+            "So the accountability doesn't move. It's us either way.\""
+          ],
+          "note": "Never volunteer this. Do not say \"we don't use subcontractors\" and do not bring the word into the room. If asked, answer plainly and move on. The honesty is the point — a rep who dodges this question loses more than one who answers it."
+        }
+      ]
     },
     {
       "slide_id": "e05",
       "slide_number": 5,
-      "section": "why_eclipse",
-      "title": "Why Eclipse",
-      "status": "final",
+      "section": "why_ath",
+      "title": "Our People — Who Actually Shows Up",
+      "status": "final_new",
       "in_deck": true,
+      "purpose": [
+        "Answer the question every homeowner has and almost none of them ask",
+        "Hands the homeowner a framework they'll use to evaluate the next bid they get"
+      ],
+      "duration": {
+        "min_sec": 90,
+        "max_sec": 105,
+        "display": "1:30 – 1:45"
+      },
+      "tone_mood": "Steady and matter-of-fact. Not proud, not pitching. The rep is answering a fair question directly, which is itself the persuasive part.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "The pivot",
           "script": [
-            "\"A few things worth knowing about Eclipse as a brand.",
-            "They've been manufacturing the E-Zip system since 2013 — residential and commercial applications across the country. It's a proven, refined product.",
-            "⚠️ UNVERIFIED (not on the slide — attribute if asked): \"99.2% of Eclipse customers say they would recommend it to a friend or neighbor. Product rating of 4.9, dealer rating of 4.8 — independent verified reviews.\" These are Eclipse-published feefo figures; say 'per Eclipse's published customer reviews' if you use them.",
-            "\"The fabric is Phifer — one of the most respected fabric manufacturers in the shading industry. GreenGuard certified, built for long-term outdoor performance.\""
-          ]
+            "\"You can build a great company and a great process, but if you don't have the right people on a project, it doesn't go well. So when people are vetting a contractor, it really comes down to three questions.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The three questions",
+          "script": [
+            "\"How long have they been doing this? We've been at it twenty-two years and installed thousands of projects across the Front Range. That takes a lot of people management to get right.",
+            "Who's actually performing the work? Our own certified technicians, a fully staffed operations department, and install teams who work with us and only us.",
+            "Are they qualified? Our teams are trained to Eclipse's specification and to our own standards on top of that — and ours are higher. We do that because we want your screens to look right on day one and still look right in fifteen years.",
+            "And behind all of it there's an operations team on every project, so you're not depending on me to remember to follow up.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Since 2013 · Middletown, NY — both straight off Eclipse's own reference guide",
-        "Somfy = a name customers can Google and recognize",
-        "Wind rating stays scoped: Class 6 / 80 mph applies to the 4\" and 5\" systems"
+      "transition_out": "That's who we are. Let me tell you who builds the product.",
+      "display_beats": [
+        "Great company + wrong people = bad project",
+        "Three questions: how long · who does the work · are they qualified",
+        "22 years, thousands of projects",
+        "Our technicians, our ops team, our install crews",
+        "Trained to Eclipse spec AND our standards — ours are higher",
+        "Ops team on every project — not depending on me to follow up"
       ],
-      "coaching_note": "Stack credibility fast, then move. The review stats live in your script only until they're verified — the slide carries what we can prove."
+      "slow_down_on": {
+        "line": "you're not depending on me to remember to follow up.",
+        "why": "it's disarmingly honest and it's the fear behind every one-truck operation. Say it plainly."
+      },
+      "coaching_note": "The three questions do quiet competitive work. A cheaper bidder usually can't answer any of them well, and you've just handed the homeowner a framework to evaluate that bid with. They'll use it whether you're in the room or not.\n\nDon't oversell this slide. It's a straight answer to a fair question and it's most persuasive when it sounds like one."
     },
     {
       "slide_id": "e06",
       "slide_number": 6,
-      "section": "the_ezip",
-      "title": "What's Pushing You Back Inside?",
-      "status": "final",
+      "section": "why_eclipse",
+      "title": "Eclipse® Authorized Dealer",
+      "status": "final_new",
       "in_deck": true,
+      "purpose": [
+        "Establish the manufacturer as a real company that will still exist in fifteen years",
+        "Answers the unspoken fear behind every cheap bid — an orphaned warranty"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Steady and factual. This is a heritage slide, so let the dates and the places do the work. The rep should sound like he finds this genuinely interesting, not like he's reciting a brochure.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Who builds it",
           "script": [
-            "\"Most of the homeowners we work with on screen projects are dealing with a couple of specific things — usually it comes down to sun control, wind, and wanting to actually use the space they already have.",
-            "For you, it sounds like the main things are…\"",
-            "👉 (List their specific Accomplish List items in their words)",
-            "\"Does that feel right? Did I miss anything?\"",
-            "👉 Wait for confirmation. Do not skip this step.",
-            "\"Perfect. Everything I'm about to show you is designed around those goals specifically.\""
-          ]
+            "\"So that's us. Let me tell you who actually builds the product.",
+            "Eclipse Shading Systems is out of Middletown, New York, with additional manufacturing down in Statesville, North Carolina. They've been building the E-Zip side-retention system since 2013, and the larger seven-inch line since 2019.",
+            "Everything is custom made in the USA, built to the inch for your specific opening. There's nothing off the shelf in this.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Why the manufacturer matters",
+          "script": [
+            "\"Here's why I bring that up.",
+            "When you buy something like this, you're really trusting two companies. The one who installs it and the one who builds it. If either one disappears, your warranty goes with them.",
+            "A lot of the cheaper systems out there are assembled from parts sourced from three or four different suppliers. Nobody owns the whole thing. When something fails in year six, you're chasing a component manufacturer overseas.",
+            "With this, it's one product family from one manufacturer, and we're the licensed and insured authorized dealer for it right here. Two companies, both accountable, both still going to be here.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "THE most important transition in the deck — the product is the answer to this list, nothing more",
-        "Recap their goals in their exact words, not product language",
-        "Do not proceed until the list is confirmed and owned by the customer"
+      "transition_out": "Let me show you what that actually gets you.",
+      "display_beats": [
+        "Middletown NY, manufacturing in Statesville NC",
+        "E-Zip since 2013 · 7-inch since 2019",
+        "Custom made in the USA, built to the inch",
+        "You're trusting two companies — installer and manufacturer",
+        "Cheap systems = parts from four suppliers, nobody owns it",
+        "One product family, one manufacturer, licensed local dealer"
       ],
-      "coaching_note": "That photo is a real install — Pikes Peak, seen straight through the fabric. Let it make the 'keep the view' point for you."
+      "slow_down_on": {
+        "line": "If either one disappears, your warranty goes with them.",
+        "why": "it's the real fear behind a low bid and it's the one thing a cheap competitor genuinely cannot answer. Say it plainly, don't oversell it, move on."
+      },
+      "coaching_note": "Homeowners worry about two failures — the product breaking, and the company vanishing. Slides 2 through 5 answered the second one about ATH. This slide answers it about Eclipse, and it matters more than reps think.\n\nSay the specific places out loud. \"Middletown, New York\" and \"Statesville, North Carolina\" sound like real towns where real people build things. \"American-made\" by itself sounds like marketing.\n\nDo not turn this into a product slide. The product gets sold in Tab 3. This slide's only job is making the manufacturer feel permanent."
     },
     {
       "slide_id": "e07",
       "slide_number": 7,
-      "section": "the_ezip",
-      "title": "How the E-Zip Works",
-      "status": "final",
+      "section": "why_eclipse",
+      "title": "Why Eclipse",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Stack proof fast — engineering, motor, fabric, wind",
+        "Every badge needs a \"which means\" or it's decoration"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 135,
+        "display": "2:00 – 2:15"
+      },
+      "tone_mood": "Brisk and confident. This is a stack, so keep it moving — one item, one sentence of meaning, next. The one place to slow down is wind, because that's the item tied to something the homeowner has personally watched happen in their own backyard.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "The product line",
           "script": [
-            "\"Here's how to think about how this system works — without getting into the weeds.",
-            "The screen rolls up and stores inside a cassette housing at the top — that's a protective aluminum box that keeps your fabric safe when it's not in use. Rain, UV, debris — none of it sits on the fabric.",
-            "When you want shade or wind protection, you press a button. The screen drops down and the edges zip into side tracks — that's the key difference between this and a generic roll-down screen. The zipper retention locks the fabric edge into the track so it stays flat, stays taut, and doesn't flap around in the wind. That's the whole system in a nutshell.",
-            "And at the bottom, the hem bar has a brush seal that makes contact with the floor — so when it's all the way down, you've got a real seal. No gaps along the bottom.",
-            "One thing people always appreciate — it doesn't have to be all the way down. You can stop it wherever you want. Partial shade, partial wind block, full enclosure — you're in control.\""
-          ]
+            "\"A few things worth knowing about what you're actually getting.",
+            "Eclipse has been building this exact system since 2013 — residential and commercial, all over the country. It's a refined product at this point, not a first attempt. One consistent product family, custom made to the inch.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The motor",
+          "script": [
+            "\"The motor is Somfy, and it comes standard. Same brand used in premium motorized systems worldwide. That's not a small thing — the motor is the part that has to work ten thousand times without you thinking about it.",
+            "Handheld remote, wireless wall switch, or your phone. And it'll integrate with home automation if you ever want to go that direction.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "The fabric",
+          "script": [
+            "\"The fabric is Phifer SunTex. Phifer is one of the most respected shading fabric manufacturers in the world, and SunTex is GREENGUARD Gold certified — which means it's been independently tested for what it off-gasses, and it passed the strictest tier.",
+            "On top of the Eclipse warranty, Phifer backs the fabric with their own ten-year exterior warranty. So the fabric has two companies behind it too.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "Wind",
+          "script": [
+            "\"And this is the one that matters most out here.",
+            "The four and five inch systems carry a Class 6 wind rating, tested to eighty miles per hour, and they carry Miami-Dade County approval — that's the hurricane standard.\"",
+            "(Localize. Use their house.)",
+            "\"You mentioned the wind rips through here in the afternoon — that's exactly what that rating is about.",
+            "What makes it work is the zipper retention. The fabric edge is physically locked into the side track, so instead of billowing and flapping like a generic roll-down screen, it stays flat and taut.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Use the zipper retention explanation EVERY time — it is your clearest competitive differentiator",
-        "Numbers on the diagram match the bullets: cassette → zipper track → hem bar → control",
-        "\"Up, it disappears. Down, the space is protected. Simple.\""
+      "transition_out": "Let me show you some of these in the wild.",
+      "display_beats": [
+        "E-Zip since 2013 — refined, not a first attempt",
+        "Somfy motor STANDARD — the part that has to work 10,000 times",
+        "Phifer SunTex, GREENGUARD Gold — plus Phifer's own 10-year fabric warranty",
+        "Class 6, 80 MPH, Miami-Dade approval",
+        "LOCALIZE the wind line to their house, every time",
+        "Zipper retention = flat and taut, not flapping"
       ],
-      "coaching_note": "Make it simple, visual, and memorable. If you have the track sample in the truck, this is the slide to hand it over."
+      "slow_down_on": {
+        "line": "the wind localization",
+        "why": "this is the moment an engineering number becomes a thing the homeowner has watched happen on their own patio. A rep who reads \"Class 6, 80 MPH\" and moves on has wasted the strongest item on the slide."
+      },
+      "coaching_note": "Every badge needs a \"which means\" attached to it. Miami-Dade means nothing to a Colorado homeowner until you say hurricane standard. GREENGUARD Gold means nothing until you say independently tested and passed the strictest tier. A new rep reads the badge and moves on — the translation is the entire job of this slide.\n\nKeep it moving otherwise. Four items in two minutes means roughly thirty seconds each. If you're still on the motor at the ninety second mark, you're going to lose the room before you get to wind, which is the one they actually care about.",
+      "reactive_scripts": [
+        {
+          "tag": "FAQ",
+          "question": "Only if they ask about reviews or ratings",
+          "answer": [
+            "\"Eclipse publishes their own customer review data — last I saw it was around 99% of owners saying they'd recommend it, with product and dealer ratings both in the high fours. I'd say that's per Eclipse's published reviews rather than something I can independently verify, but it's consistent with what we see.\""
+          ],
+          "note": "Attribute it. Do not state these as your own numbers, and do not put them on a slide."
+        }
+      ],
+      "verification": [
+        {
+          "claim": "Eclipse feefo statistics — 99.2% would recommend, 4.9 product, 4.8 dealer",
+          "status": "unverified",
+          "note": "Eclipse-published, not independently verified. Rep-only, attributed, never on a customer slide. Blocked on oi04."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "The deck row currently reads \"Tested to 80 mph — 4\" & 5\" systems,\" which correctly excludes the 7-inch but leaves an obvious gap a sharp homeowner will notice.",
+          "recommendation": "Resolve alongside oi01."
+        }
+      ]
     },
     {
       "slide_id": "e08",
       "slide_number": 8,
-      "section": "the_ezip",
-      "title": "Cassette Sizes & System Options",
-      "status": "final",
+      "section": "why_eclipse",
+      "title": "Real Projects — Right Here on the Front Range",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Localization equals credibility — closes \"have you done work around here?\" before it's asked",
+        "Proof that their exact problem has already been solved for someone nearby"
+      ],
+      "duration": {
+        "min_sec": 60,
+        "max_sec": 75,
+        "display": "1:00 – 1:15"
+      },
+      "tone_mood": "Relaxed and specific. This is show-and-tell, not a pitch. Slow the pace — photos are one of the few moments a homeowner is genuinely looking at the screen instead of at the rep.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": null,
           "script": [
-            "\"Eclipse makes three cassette sizes — a 4-inch, a 5-inch, and a 7-inch — and we size the system to your specific opening. Every unit is custom made to your exact dimensions.",
-            "For most of the residential projects we do, the 5-inch is our most common. It handles openings up to 24 feet wide and drops up to 20 feet, which covers the vast majority of what we see.",
-            "The cassette itself is two-piece powder-coated extruded aluminum. That matters because a lot of cheaper systems use thin roll-form housing — essentially painted sheet metal. This is structurally different. And inside is the largest roller tube possible for that cassette size — a bigger, sag-resistant tube means your fabric hangs flat and operates smoothly for years.",
-            "The side tracks are what make this system stand out. The fabric edge zips into the track with a PVC insert — and on our Super Duty version, the track has stainless steel spring clips every 12 to 16 inches. That's what gives you a wrinkle-free, taut fabric even on wider openings.\"",
-            "🔹 STANDARD vs SUPER DUTY — present as a natural choice:\n\"For most projects, the Standard E-Zip is the right call. It's Class 6 wind resistance, tested to 80 miles per hour, and it handles Colorado wind extremely well. For openings under about 18 feet, this is what we typically recommend.",
-            "The Super Duty is an upgrade we recommend in a few specific situations — a particularly high-wind location, an opening wider than 18 feet, or if you simply want the most robust system available. It uses the stainless steel spring clips, a heavier hem bar with an internal steel channel, and superior side tension. We'll show you both in the pricing so you can see what that upgrade looks like.\""
-          ]
+            "\"These are all local. Every one of these is a project we've done on the Front Range.\"",
+            "(Point to the photo closest to their situation.)",
+            "\"This one here is very similar to what you've got — same exposure, same kind of opening, same problem with the afternoon sun.",
+            "Here's what it looks like with the screens up. You barely notice it's there. Clean cassette, low profile, looks like it was designed with the house.",
+            "And here's the same space with them down.\"",
+            "(On multi-opening projects.)",
+            "\"This one's a full enclosure — multiple screens across multiple openings. That homeowner basically turned their patio into an outdoor room. They use it most of the year now.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "THE money slide — slow down, build the value here",
-        "Three cassette sizes; we size to the opening — every unit custom to the inch",
-        "Two-piece powder-coated EXTRUDED aluminum — not thin roll-form sheet metal",
-        "Largest roller tube for the size = flat, sag-free fabric",
-        "The real choice is Standard vs Super Duty: Super Duty = stainless spring clips + heavier steel-channel hem bar, for wide/high-wind openings",
-        "Tap a size → full specs · ⇄ compares all three · 'vs. the competition' for the roll-down & sunroom contrast"
+      "transition_out": "And it's not just a handful of projects — let me show you where these are.",
+      "display_beats": [
+        "Every photo is local — say it",
+        "Point to the ONE closest to their situation and say why",
+        "Up: barely visible, looks designed-in",
+        "Down: the space is transformed",
+        "Multi-opening: outdoor room, used most of the year"
       ],
-      "coaching_note": "THIS IS YOUR MONEY SLIDE. Slow down. Cassette size is set by the opening — the customer's real decision is Standard vs Super Duty, and it's an upgrade conversation, not the opening offer. Rep-only guardrail: 80 mph / Class 6 applies to the 4\" and 5\" only — never quote a wind number for the 7\", and never a '130 mph' figure for Super Duty; none is documented."
+      "slow_down_on": {
+        "line": "the tie-back to their situation",
+        "why": "don't say it while advancing the slide. Say it, stop, and let them look at the photo while the comparison sinks in."
+      },
+      "coaching_note": "The whole value of this slide is that it's their neighborhood and their problem on somebody else's house. A generic \"here are some installs\" wastes it.\n\nBefore the appointment, pick the two photos closest to this customer — same exposure, same deck style, same part of town. If you can name the general area and they recognize it, that's worth more than any badge in the deck."
     },
     {
       "slide_id": "e09",
       "slide_number": 9,
-      "section": "the_ezip",
-      "title": "The Fabric — SunTex® by Phifer",
-      "status": "final",
+      "section": "why_eclipse",
+      "title": "We've Worked in Your Neighborhood",
+      "status": "final_new",
       "in_deck": true,
+      "purpose": [
+        "Turn \"have you done work around here?\" into a visual answer",
+        "Sets up an asset you'll return to during price conditioning"
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 seconds – 1:00"
+      },
+      "tone_mood": "Easy and conversational. The map does the talking. Let the homeowner look for their own street — that's the moment that lands, and it only happens if the rep stops talking.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": null,
           "script": [
-            "\"For fabric, we work exclusively with Phifer — one of the most respected shading fabric manufacturers in the world. GreenGuard certified, built specifically for exterior applications.",
-            "The good news — all fabrics are the same price. So the only decision you're making is what works best for your space.",
-            "The main thing to understand is openness factor — essentially how much UV the fabric blocks versus how much you can see through it.",
-            "(Hand them the SunTex 95 sample)",
-            "This is what most of our customers go with — it blocks about 95% of the UV, but you can still see through it from the inside. And from the outside — from a neighbor's yard or the street — it creates almost a mirror effect during the day. They can't see in. You can see out.",
-            "If total blackout is what you're after — complete privacy, or an extreme west-facing exposure — we can go to a solid fabric. But most people find the 95% gives them everything they need. Take a look at the colors and let's figure out what fits your home.\""
-          ]
+            "\"We've completed projects all over the greater Colorado Springs area — Monument, Falcon, Black Forest, the Springs, out toward Peyton.",
+            "Every home is a little different, but at this point we've worked through just about every scenario there is.\"",
+            "(Show the map. Then stop talking for five or six seconds.)"
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "All fabrics cost the same — the only decision is openness, not price",
-        "SunTex 95 ≈ 95% UV blocked / ~5% open — the popular pick; hand them the sample to look through",
-        "Mirror effect from outside by day = privacy without losing your view",
-        "Solid fabric available for full blackout / extreme exposure",
-        "6 colors on 80/90, 10 on 95/97 — full spec sheets are in the Docs library"
+      "transition_out": "Alright — that's the company and the product. Let's talk about your space.",
+      "display_beats": [
+        "Projects across the whole greater Springs area — name the towns",
+        "Show the map",
+        "STOP TALKING for five or six seconds",
+        "If they find their neighborhood, ask about it"
       ],
-      "coaching_note": "Do NOT say \"95% openness\" — that's backwards. SunTex 95 BLOCKS ~95% of UV and is only ~5% OPEN; the number in the name is UV blockage, not openness. Bring the physical sample — letting them look through the 95 is what sells this slide."
+      "slow_down_on": {
+        "line": "the silence after you show the map",
+        "why": "homeowners almost always start hunting for their own street on their own. When they say \"oh, that's right by us,\" the slide has done its job better than anything you could have said."
+      },
+      "coaching_note": "This is one of the few assets that gets used twice in an appointment. It's proof here, and it comes back during price conditioning when you're explaining why a company doing this volume can price the way it does. Don't burn it — show it, let them react, move on.\n\nA rep who over-explains the map has nothing left to bring back to the table.",
+      "engagement_question": {
+        "text": "Do you see your neighborhood on there?",
+        "branches": [
+          "If yes: \"That one over there we did a couple years back, same west exposure you've got.\" Only say that if it's true."
+        ]
+      },
+      "flags": [
+        {
+          "severity": "low",
+          "issue": "Map asset currently carries Sunesta install pins. Needs Eclipse projects layered in before this slide ships.",
+          "recommendation": "Tracked as oi06."
+        }
+      ]
     },
     {
       "slide_id": "e10",
       "slide_number": 10,
       "section": "the_ezip",
-      "title": "Smart Control — One Button, Total Command",
-      "status": "final",
+      "title": "What's Pushing You Back Inside?",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "THE most important transition in the deck — pivot from company to their space",
+        "The Accomplish List gets confirmed and owned here. Nothing proceeds until it does."
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 150,
+        "display": "2:00 – 2:30"
+      },
+      "tone_mood": "Warmer and slower than the trust tab. The rep stops presenting and starts listening. This is a conversation slide — if the homeowner isn't talking by the end of it, it's being run wrong.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Name the common problems",
           "script": [
-            "\"The system comes motorized as standard — that's not an upgrade, it's just how it works. Touch of a button, the screen goes up or down, and you can stop it wherever you want.",
-            "The motor is Somfy — the same brand used in premium motorized systems around the world, and it's covered for life. Standard operation is a handheld remote or a wireless wall switch. You can also control it through an app, and it integrates with home automation systems if you want to go that direction.",
-            "We also offer sun and wind sensors as add-ons — so the screen can react to the weather on its own.",
-            "Electrically, most installs are as simple as a standard 110-volt plug-in. No panel upgrades, no complicated wiring in most cases — we handle it as part of the install.\"",
-            "💵 REP-ONLY (never on the slide): the motorized package runs about $400 over a manual crank, and it carries a lifetime warranty — one of the best values in the whole system. Make it a specific talking point; it always lands."
-          ]
+            "\"So most of the homeowners we do screen projects for are dealing with some mix of the same four things.\"",
+            "(Walk the hotspots. Do not read all four in order like a list — touch the ones that match what they've told you.)",
+            "\"Sun and glare. Blocking the harsh afternoon or morning sun without losing the feeling of being outside — and cutting the heat and glare that reaches the rooms behind you.",
+            "Wind. The fabric edge zips into the side tracks, so it stays flat instead of flapping. The space becomes somewhere you can actually sit.",
+            "Privacy. A darker fabric reads almost like a mirror from outside during the day. Neighbors can't see in. You can still see out.",
+            "Bugs. The tight SunTex weave plus the brush seal on the hem bar keeps no-see-ums and mosquitoes out. For a lot of people that alone changes how much they use the space in the evening.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The Accomplish List confirmation",
+          "script": [
+            "\"For you, it sounds like the main things are…\"",
+            "(List their items. Their words, not yours. Not product names.)",
+            "\"Does that feel right? Did I miss anything?\"",
+            "👉 Wait for confirmation. Do not skip this and do not rush it.",
+            "\"Perfect. Everything I'm about to show you is built around those specifically.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Frame question (ask regardless)",
+          "script": [
+            "\"One more thing — what sort of stuff do you all like to do out here?\"",
+            "(If the answer is short: dinner? drinks? grandkids? the dog?)",
+            "\"That's really what this is about. Getting you more of those days.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Present motorized as STANDARD — never make it sound like an option",
-        "Somfy = a name they can Google; covered for life under PPP",
-        "Remote / wireless wall switch / app / home automation — their choice",
-        "Sun + wind sensors are ADD-ONS on the E-Zip (unlike the Sunesta wind sensor, which is standard)",
-        "Rep-only: motor ≈ $400 over a manual crank — a specific value line; keep the number off the slide"
+      "transition_out": "So let me show you how the system actually works.",
+      "display_beats": [
+        "Four common problems: sun/glare · wind · privacy · bugs",
+        "Touch only the ones that match THEIR situation",
+        "Say their Accomplish List back in THEIR words",
+        "\"Did I miss anything?\" — then wait",
+        "Frame question: what do you like to do out here?",
+        "\"Everything I show you is built around those goals\""
       ],
-      "coaching_note": "Present motorized as the default, not an upsell. The $400 motor value line always lands — say it out loud, don't put it on a slide. Sensors are add-ons here; do NOT carry over the Sunesta standard-wind-sensor ruling. Photo is a clearly-labeled placeholder — swap in a real shot of someone using the remote or the app once Jack supplies one."
+      "slow_down_on": {
+        "line": "the Accomplish List callback",
+        "why": "say their items back in their own words, then stop. The silence is productive — it's the moment the homeowner realizes this is about their house and not about a product."
+      },
+      "coaching_note": "This is where the presentation turns. Slides 1 through 9 were about us. From here on, every single feature you show has to answer something said on this slide.\n\nNew reps treat the Accomplish List callback as a formality and rush it. Don't. If the list feels thin, the frame question fixes it — ask what they like to do out here, listen, and add whatever comes loose before you move on.\n\nNever present a feature later that doesn't connect back to something said here. If it doesn't map to their list, it's a spec.",
+      "engagement_question": {
+        "text": "What sort of things do you all like to do out here?",
+        "branches": [
+          "Draw it out if needed: dinner, drinks, cards, the grandkids, the dog. This question produces more usable Accomplish List material than any other in the appointment."
+        ]
+      },
+      "callback_triggers": [
+        "Immediately before presenting price — recap this list first, always",
+        "Any objection where value needs rebuilding",
+        "Homeowner says \"we need to think about it\""
+      ]
     },
     {
       "slide_id": "e11",
       "slide_number": 11,
       "section": "the_ezip",
-      "title": "Real Projects — Right Here on the Front Range",
-      "status": "final",
+      "title": "How the E-Zip Works",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Give them a mental model simple enough to repeat to someone who isn't in the room",
+        "Zipper retention is your single clearest competitive differentiator — this is where it lands"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Light and hands-on. Use the diagram, use the track sample, use your hands. This is the most satisfying slide in the deck to deliver because the mechanism is genuinely clever and it takes about ninety seconds to explain.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Top to bottom",
           "script": [
-            "\"Here are some projects we've done right here in the area.",
-            "This one is very similar to what you've got — (reference their situation: west-facing, covered patio, pergola enclosure). Same exposure, same challenge with the afternoon sun and wind.",
-            "Here's what it looks like with the screens up — you barely notice they're there. Clean, low profile, looks like it belongs. And here's what it looks like when they're down — the space is completely transformed.",
-            "That homeowner told us they went from basically not using this space during the afternoon to being out there every day. That's the whole point.\""
-          ]
+            "\"Here's the whole system, without getting into the weeds.",
+            "At the top, the screen rolls up and stores inside a cassette — a protective aluminum housing. When it's not in use, rain, UV, and pine needles never touch your fabric. That's a big part of why these last.",
+            "You press a button and the screen comes down. And here's the part that matters —\"",
+            "(Hand them the track sample.)",
+            "\"— the fabric edge has a zipper welded onto it, and that zipper rides inside the side track. It's physically locked in. That's the whole difference between this and a generic roll-down screen.",
+            "A screen with no zipper track is held at the top and the bottom and nowhere else. First real gust, it billows out, gaps open along the sides, and eventually it tears itself up. This one can't. The edge is captured for the entire drop.",
+            "At the bottom, the hem bar has a brush seal that meets the floor. So when it's all the way down you've got a real seal — no gap along the deck.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Control",
+          "script": [
+            "\"And it doesn't have to be all the way down. Stop it wherever you want. Partial shade, partial wind block, full enclosure — you're in control of it.",
+            "Up, it disappears. Down, the space is protected. That's really it.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "First two photos are the SAME 18-foot opening in Monument — up, then down. Use them as the before/after pair",
-        "Tie a photo to THEIR situation — proof their problem has already been solved for someone just like them",
-        "Last photo: screens paired with a Sunesta awning — the cross-sell picture"
+      "transition_out": "So that's how they all work. Where they start to differ is in how they're built — let's look at what fits your openings.",
+      "display_beats": [
+        "Top: cassette housing — rain, UV, needles never touch fabric",
+        "HAND THEM THE TRACK before you explain the zipper",
+        "Zipper welded to fabric edge, rides inside the track, physically locked",
+        "No-zipper screens: held top and bottom only → billows, gaps, tears",
+        "Bottom: hem bar brush seal meets the floor, no gap",
+        "Stops at any height — partial or full, you're in control",
+        "\"Up it disappears, down it's protected\""
       ],
-      "coaching_note": "Move at the pace they set — slow down the moment they engage with a photo."
+      "slow_down_on": {
+        "line": "A screen with no zipper track is held at the top and the bottom and nowhere else.",
+        "why": "this is the sentence that makes every cheaper bid look cheap, and it does it without naming anyone. It's a physical fact about how the competing product is built, which is far more powerful than an opinion about its quality."
+      },
+      "coaching_note": "Use the zipper explanation every single time. It is your clearest competitive differentiator and it's the thing the homeowner will repeat to a spouse who isn't in the room, or to the next company that quotes them.\n\nGet the track sample into their hands before you explain it, not after. People understand the mechanism about four times faster when they're holding it, and the reveal holds their attention.\n\nA homeowner who can explain zipper retention to somebody else is doing your follow-up for you."
     },
     {
       "slide_id": "e12",
       "slide_number": 12,
-      "section": "wrap_up",
-      "title": "The Warranty — Recapped",
-      "status": "final",
+      "section": "the_ezip",
+      "title": "Cassette Sizes & System Options",
+      "status": "final_revised",
       "in_deck": true,
+      "is_money_slide": true,
+      "purpose": [
+        "THIS IS WHERE THE SYSTEM GETS SOLD",
+        "Sets up the secondary two-option fork — everything at pricing comes back to choices made here"
+      ],
+      "duration": {
+        "min_sec": 240,
+        "max_sec": 300,
+        "display": "4:00 – 5:00 (longest slide in the deck)"
+      },
+      "tone_mood": "This is the shift from presenting to recommending. The rep stops being neutral and takes a position. Confident, hands-on, slower than anything before it. The samples come out. The homeowner should be touching things, not just watching.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Sizing is not their decision",
+          "duration_sec": 60,
           "script": [
-            "\"One more thing worth knowing before we get to pricing — and this is genuinely one of the best warranties in the industry.",
-            "Eclipse covers the frame, the fabric, the motor, and the electronics — all of it. Lifetime coverage across the board with the Platinum Protection Plus package, and that's included on your quote. Most competitors cover components separately, with shorter terms, and often with exclusions.",
-            "Out here in Colorado — with the UV at elevation, the wind, the hail — that kind of coverage isn't just a nice-to-have. It's real protection on a real investment.",
-            "And when you need warranty service, you're calling us — not a national 800 number. We're local, we're accountable, and we come out and take care of it.",
-            "One detail worth knowing: every manufacturer requires correct installation for the warranty to be valid at all — another reason who installs this matters as much as the product.\"",
-            "Transition: \"Any questions about the warranty before we look at options?\""
-          ]
+            "\"So Eclipse builds three cassette sizes — a four inch, a five inch, and a seven inch — and here's the thing I want to be clear about up front: the size isn't really your decision. It's your opening's decision.",
+            "The four inch handles up to about fourteen feet wide with a twelve foot drop.",
+            "The five inch is what we install most often — up to twenty-four feet wide, sixteen to twenty feet of drop. That covers the vast majority of what we see on the Front Range.",
+            "The seven inch is the big one. Twenty-six feet wide, twenty foot drop, with a roller tube up to a hundred and forty millimeters.",
+            "For your openings at [X] by [X], we'd be looking at the [X] inch.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Build quality",
+          "duration_sec": 45,
+          "script": [
+            "(Hand them the cassette sample.)",
+            "\"Feel that. That's two-piece powder-coated extruded aluminum. Every size, same construction.",
+            "The reason I hand you that is a lot of cheaper systems use roll-form housing, which is basically painted sheet metal bent into a shape. This is structurally a different thing.",
+            "And inside it is the largest roller tube that'll fit that cassette. A bigger tube resists sag, which means your fabric hangs flat and stays flat — not just this year, in ten years.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Standard vs Super Duty",
+          "duration_sec": 90,
+          "script": [
+            "(Hand them both track sections. Standard first, then Super Duty. Let them feel the difference before you explain it.)",
+            "\"Now here's the actual choice.",
+            "Both versions carry the same warranty — lifetime on the frame, the fabric, the motor, and the electronics. That doesn't change either way you go.",
+            "The Standard is what we put on most residential projects. Class 6 wind rating, eighty miles per hour, with Miami-Dade County approval. Fixed side tracks, the fabric edge locks in, the hem bar seals at the bottom. For most homes out here, that's the right call and it handles our wind extremely well.",
+            "The Super Duty is a step up. Spring-retention tracks instead of fixed.\"",
+            "(Point at the two samples in their hands.)",
+            "\"You can feel it — the Standard track holds the fabric edge. The Super Duty track holds it and keeps tension on it under load. The hem bar's heavier too, with an internal steel channel.",
+            "On a wide opening or a really exposed spot, that extra side tension is what keeps the fabric dead flat instead of just contained.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "The wind proof",
+          "duration_sec": 45,
+          "script": [
+            "\"And on the fabric side — Eclipse ran these through dynamic wind testing at Architectural Testing in Pennsylvania. Engine-driven fan, ramped up to a hundred and thirty miles an hour.",
+            "The SunTex fabric came through with no damage at one-thirty. Two competing fabrics in the same test failed earlier — one at a hundred and ten, one at seventy.",
+            "That's not a number on a brochure. That's three fabrics in the same rig and ours was the one still standing.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b5",
+          "label": "Which one, and why",
+          "duration_sec": 30,
+          "script": [
+            "\"For your situation, I'd recommend [the Standard / the Super Duty] because [their exposure, their opening width, what they told you about wind].",
+            "We'll price both so you can see exactly what the difference looks like. But I don't want you buying up if you don't need it.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "Lifetime on frame, fabric, motor & electronics — via Platinum Protection Plus, included on every quote",
-        "The most comprehensive coverage in the exterior-screen industry",
-        "Competitors cover components separately — shorter terms, more exclusions",
-        "Serviced locally by ATH — you call us, not an 800 number",
-        "Tap a logo (ATH · Eclipse · Phifer) for the three-way backing",
-        "End on: 'Any questions about the warranty before we look at options?'"
+      "transition_out": "Let's talk about the fabric, because that's the part you'll actually be looking through every day.",
+      "display_beats": [
+        "Three sizes — the opening picks the size, not you",
+        "4\" → 14'w × 12'd · 5\" → 24'w × 16–20'd · 7\" → 26'w × 20'd",
+        "Hand them the cassette: 2-pc extruded aluminum vs roll-form sheet metal",
+        "Largest roller tube possible = fabric hangs flat for years",
+        "Hand them BOTH tracks — Standard then Super Duty",
+        "Same lifetime warranty either way",
+        "Standard: Class 6, 80 MPH, Miami-Dade",
+        "Super Duty: spring-retention tracks, heavier hem bar, steel channel",
+        "Wind test: SunTex no damage at 130, competitors failed at 110 and 70",
+        "Make a recommendation. Don't sell up without a reason."
       ],
-      "coaching_note": "⏱ Keep it tight — 1.5–2 minutes. PPP is included on every ATH quote (Jack's ruling), so \"lifetime\" is fair to state WITH the PPP framing and the caveat (most fabrics; clear windows excluded). The base factory warranty WITHOUT PPP is 10-yr frame/fabric and 5-yr motor/electronics — that lives here in coach only. The opt-out exists for the rare customer who asks, but a rep never proactively raises it."
+      "slow_down_on": {
+        "line": "the size isn't really your decision, it's your opening's decision.",
+        "why": "it removes a choice the homeowner doesn't want to make and frees all their attention for the one that matters. It also makes you sound like an engineer instead of a salesman thirty seconds before you recommend an upgrade."
+      },
+      "coaching_note": "This is the fork in the road. Everything before it built permission to recommend; this is where you actually do. Take a position. A rep who presents three cassette sizes and two duty levels neutrally has handed the homeowner six options and no guidance, and confusion doesn't buy.\n\nGet the samples into their hands. Physical contact with the product changes the conversation more than any statistic. A homeowner who has felt the difference between a fixed track and a spring-retention track has a reason to say no to a cheaper bid that they invented themselves — and self-generated reasons survive comparison shopping.\n\nWatch the clock. Five minutes is the longest stretch in the presentation and it's all product. If the room goes flat, cut Block 2 and keep the tracks. The cassette informs; the tracks close.\n\nNever sell Super Duty by default. On a fourteen-foot sheltered opening it's not the right recommendation, and a homeowner who later learns that will remember you sold it anyway.",
+      "verification": [
+        {
+          "claim": "130 MPH figure",
+          "status": "verified_as_fabric_test",
+          "note": "Source is Eclipse's published test writeup (Architectural Testing, York PA, April 2013). Test units were 120\" × 84\" mounted in wooden frames, and the finding was fabric integrity, not system rating. SunTex confirmed by Jack as the tested fabric. Say it as a fabric test with attribution. Do not present it as a Super Duty system spec by duty class. Blocked on oi01."
+        }
+      ],
+      "flags": [
+        {
+          "severity": "high",
+          "issue": "The deck's modelCompare Engineering row currently shows the 7-inch wind rating as \"Largest-span build\" rather than a figure, and shows the 5-inch as Class 6 / 80 MPH with no Super Duty alternative.",
+          "recommendation": "Needs correction once oi01 resolves."
+        },
+        {
+          "severity": "high",
+          "issue": "The existing e08 coaching note instructs reps to never quote 130.",
+          "recommendation": "That guardrail must be replaced with the fabric-test framing above, not simply deleted.",
+          "resolved": "Resolved in the v3 content pass — the fabric-test framing now lives in this slide's wind-proof block, its verification entry, and ref_faq."
+        },
+        {
+          "severity": "medium",
+          "issue": "The 7-inch mounting cell reads \"Surface only.\" Jack confirms any mount, surface or inside.",
+          "recommendation": "Correct in js/data-eclipse.js.",
+          "resolved": "Fixed in the deck rebuild (build spec §2.1) — all three sizes read Surface · recess · post in both the compare table and the 7-inch spec list."
+        },
+        {
+          "severity": "medium",
+          "issue": "The competitor comparison table currently lives on this slide.",
+          "recommendation": "Recommend moving it to the new e19 so this slide does one job.",
+          "resolved": "Done in the deck rebuild (build spec §2.3) — the comparison moved to ez-options and gained the hurricane-rated column."
+        }
+      ],
+      "callback_triggers": [
+        "Price objection — come back and rebuild value on the track difference",
+        "\"We're getting another quote\" — the two track samples are your strongest comparison asset",
+        "Homeowner asks what makes this different from the cheaper one"
+      ]
     },
     {
       "slide_id": "e13",
       "slide_number": 13,
-      "section": "wrap_up",
-      "title": "Our Proven Process",
-      "status": "final",
+      "section": "the_ezip",
+      "title": "The Fabric — SunTex® by Phifer",
+      "status": "final_revised",
       "in_deck": true,
+      "purpose": [
+        "Make it personal — this is the first slide where they're choosing something",
+        "Ownership starts here. A homeowner who has picked a color has started owning the project."
+      ],
+      "duration": {
+        "min_sec": 90,
+        "max_sec": 105,
+        "display": "1:30 – 1:45"
+      },
+      "tone_mood": "Collaborative and unhurried. Samples out, book open. The rep is helping them decide something, not explaining something. This should feel like the fun part, because it is.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "One manufacturer, one decision",
           "script": [
-            "\"From here, the process is simple. We take exact measurements of every opening, and everything is custom made to your dimensions. You get a project manager as your single point of contact. Install day, our crew sets the tracks perfectly level and parallel — most jobs are done in a day. We do a final walk-through together, run every screen, and make sure you're happy. Then we activate your warranty coverage — and if you ever need service, you call us, right here.",
-            "And one more thing that's included — at the one-year mark, we come back out and give the screens a free cleaning visit. No charge, no catch.\""
-          ]
+            "\"So every fabric we use is Phifer SunTex. GREENGUARD Gold certified, built specifically for exterior use.",
+            "And here's the good news — all the colors cost exactly the same. So price isn't part of this decision at all. The only real choice is how much UV you want it to block versus how much you want to see through.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The 95 (hand them the sample)",
+          "script": [
+            "\"This is SunTex 95, and it's what most of our customers land on.",
+            "The number is the UV blockage — this blocks about ninety-five percent of the UV, which means it's only about five percent open. Look through it.\"",
+            "(Let them. Stop talking.)",
+            "\"You keep your view. The heat and glare are gone, but you're not staring at a wall.",
+            "And here's the part people love — from the outside during the day, it reads almost like a mirror. Your neighbors can't see in. You can see out. A lot of folks end up valuing that as much as the sun control.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "The alternatives",
+          "script": [
+            "\"If you want more than that, the 97 blocks a little more and gives you a bit more privacy.",
+            "And if you want true blackout — total privacy, or a really brutal west exposure — we can go to a solid fabric instead.",
+            "Color-wise you've got six options on the 80 and 90, and ten on the 95 and 97. Near-black all the way to white.\"",
+            "(Open the SunTex book.)",
+            "\"Most homes out here look best picking up the trim or the fascia. What color is your trim?\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "A clean, respectful, professional construction site — every time",
-        "Warranty serviced locally by ATH — no national 800 number",
-        "Free 12-month Shade Service cleaning visit — included, confirmed current policy"
+      "transition_out": "Let me show you what this actually looks like on a real house.",
+      "display_beats": [
+        "All Phifer SunTex, GREENGUARD Gold — one manufacturer, no surprises",
+        "ALL COLORS SAME PRICE — take budget off the table immediately",
+        "Hand them the 95 and let them look through it — then stop talking",
+        "The number is UV BLOCKAGE, not openness. 95 blocks ~95%, is ~5% open.",
+        "Mirror effect from outside by day = privacy without losing the view",
+        "97 for more blockage · solid fabric for true blackout",
+        "6 colors on 80/90, 10 colors on 95/97",
+        "Open the book. Ask about their trim color."
       ],
-      "coaching_note": "12-Month Shade Service is confirmed current policy (Jack, 2026-07-15) — same pattern as Sunesta's confirmed 1-year free service. Deliver it plainly and confidently, no hedging."
+      "slow_down_on": {
+        "line": "the moment you hand them the 95 and they look through it",
+        "why": "do not narrate while they're doing it. This is the single most convincing thirty seconds in the presentation and it works entirely without you."
+      },
+      "coaching_note": "⚠️ Never say \"95% openness.\" It's backwards and it's the kind of error a competitor or a sharp homeowner will catch. SunTex 95 blocks about 95% of UV and is only about 5% open. The number in the name is blockage.\n\nBring the physical book to every appointment. A rep who describes fabric options verbally instead of handing over samples has turned the most engaging slide in the deck into a lecture.\n\nSaying \"all the colors cost the same\" early is deliberate. It removes price from a decision the homeowner is about to make, which means they choose what they actually want — and people defend choices they actually wanted.",
+      "reactive_scripts": [
+        {
+          "tag": "FAQ",
+          "question": "Will it fade?",
+          "answer": [
+            "\"SunTex is solution-dyed, so the color is built into the fiber rather than printed on the surface. It doesn't fade off the way a coated fabric does. That's part of why Phifer backs it with a ten-year exterior warranty on top of the Eclipse coverage.\""
+          ]
+        }
+      ]
     },
     {
       "slide_id": "e14",
       "slide_number": 14,
-      "section": "wrap_up",
-      "title": "Up, It Disappears. Down, It's Protected.",
-      "status": "final",
+      "section": "the_ezip",
+      "title": "Before · After · Inside",
+      "status": "final_new",
       "in_deck": true,
+      "purpose": [
+        "The single most persuasive visual in the deck — one project, three views",
+        "Answers \"will I feel closed in?\" before they ask it"
+      ],
+      "duration": {
+        "min_sec": 60,
+        "max_sec": 75,
+        "display": "1:00 – 1:15"
+      },
+      "tone_mood": "Let the photos work. Minimal talking. The rep's job here is to point and then be quiet.",
       "blocks": [
         {
           "block_id": "b1",
+          "label": "Before",
           "script": [
-            "\"It really doesn't feel like an enclosure — and that's an important distinction. Unlike a glass sunroom, this is a screen. Air moves through it. You still feel like you're outside — just without the sun beating on you and without the wind pushing you back in.",
-            "And because it's motorized, you control it completely. All the way down, partially down, or fully up in seconds. It's not a permanent enclosure. It's more like a wall you can make disappear whenever you want.\""
-          ]
+            "\"Same house, three views. This is before — nice space, no protection. Wide open to the sun and whatever the wind is doing.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "After",
+          "script": [
+            "\"Same patio, screens installed and down. Look at how clean that reads. It doesn't look like something got added on — it looks like it belongs there.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Inside (the important one)",
+          "script": [
+            "\"And this is the one I really want you to see. This is standing inside, looking out through the screen.",
+            "You can still see the neighborhood. You can see the sky. The light is soft instead of blinding, and the wind is off you — but you're clearly still outside.",
+            "That's the ninety-five doing exactly what it's supposed to do.\""
+          ],
+          "stage_directions": []
         }
       ],
-      "talking_points": [
-        "The emotional recap — the last beat before you transition to the proposal",
-        "Never use the word 'cage' unless the customer brings it up first"
+      "transition_out": "So that's the system. Let me show you how you actually run it.",
+      "display_beats": [
+        "Before: nice space, no protection, wide open",
+        "After: clean, intentional, looks like it belongs",
+        "Inside: THE money photo — still see out, soft light, still outside",
+        "Say less here than feels natural"
       ],
-      "coaching_note": "Build emotion → then logic → then close. This slide is the emotion. From here, recap their Accomplish List and move to the proposal — the close scripts (micro-close, preference close, and the 10% same-day incentive) live in the Training Coach under Pricing & Close."
+      "slow_down_on": {
+        "line": "the Inside photo",
+        "why": "every homeowner is quietly worried about feeling boxed in. This photo answers it completely and permanently, and it does it better than any sentence you could construct."
+      },
+      "coaching_note": "If their space is genuinely similar to this project, say so directly — \"this is almost exactly what we'd be doing for you.\" If it isn't, don't stretch it. An overclaimed comparison the homeowner can see through costs more than the photo gains.\n\nThis slide is also your pre-emptive answer to the cage objection. If you deliver it well, that objection often never comes up. If it comes up anyway, come back here rather than arguing.",
+      "callback_triggers": [
+        "\"Is it going to feel like a cage?\"",
+        "\"Will we still be able to see the view?\"",
+        "Any hesitation about the space feeling closed in"
+      ]
+    },
+    {
+      "slide_id": "e15",
+      "slide_number": 15,
+      "section": "smart_control",
+      "title": "Smart Control — One Button, Total Command",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Motorized is standard, not an upgrade — say it that way or you're leaving value on the table",
+        "The $500 motor delta is the best value story in the whole system"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Practical and easy. This is a relief slide, not a spec slide. The rep is taking work off the homeowner's plate.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "Motorized is how it comes",
+          "script": [
+            "\"So the system comes motorized. That's not an upgrade, that's just how it works. Touch a button, it comes down. Touch it again, it goes up. Stop it anywhere in between.",
+            "The motor is Somfy, which is the gold standard in this world — same motors in premium systems all over the country.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The value story",
+          "script": [
+            "\"Here's the number that surprises people. We do offer a manual crank version — almost nobody takes it, but it exists. The difference between manual and full motorized is about five hundred dollars.",
+            "Five hundred dollars, and it carries the same lifetime warranty as everything else. On a system like this, that's the easiest money in the project. A manual screen on a twenty-foot opening is something you'll use twice and then stop using.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "How you run it",
+          "script": [
+            "\"Standard is a handheld remote or a wireless wall switch — that's what most people use day to day. If you've got multiple screens you can run them independently or all together.",
+            "And electrically it's simple. Standard 110-volt, no panel work, no electrician in most cases. We handle it as part of the install.\""
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "There's one more control option worth showing you.",
+      "display_beats": [
+        "Motorized is STANDARD — never call it an upgrade",
+        "Somfy motor — the gold standard",
+        "Manual crank exists, ~$500 less, almost nobody takes it",
+        "Same lifetime warranty on the motor",
+        "\"A manual screen on a 20-foot opening gets used twice\"",
+        "Remote or wall switch · independent or all together",
+        "110V, no panel work, we handle it"
+      ],
+      "slow_down_on": {
+        "line": "A manual screen on a twenty-foot opening is something you'll use twice and then stop using.",
+        "why": "it's the honest version of an upsell. You're not talking them into the motor, you're telling them what actually happens, and it happens to be true."
+      },
+      "coaching_note": "Present motorized as the default and the crank as the exception. If you present them as two equal options you've created a decision the homeowner doesn't need and introduced a cheaper number into the room for no reason.\n\nThe $500 figure lands because it's small relative to the project and enormous relative to the daily experience. Say it once, plainly, and let the arithmetic happen on its own.",
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Slide image is smart-control-placeholder.svg, a labeled placeholder. Needs a real photo of someone using the remote or the app.",
+          "recommendation": "Tracked as oi03."
+        }
+      ]
+    },
+    {
+      "slide_id": "e16",
+      "slide_number": 16,
+      "section": "smart_control",
+      "title": "myLink — Your Screens on Your Phone",
+      "status": "final_new",
+      "in_deck": true,
+      "purpose": [
+        "Convenience upgrade — present it, don't push it",
+        "Also quietly answers \"what if we're not home?\""
+      ],
+      "duration": {
+        "min_sec": 45,
+        "max_sec": 60,
+        "display": "45 seconds – 1:00"
+      },
+      "tone_mood": "Light. This is an optional feature and should sound like one. No pressure in the delivery at all.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "\"Last thing on controls — this is the myLink.",
+            "It puts the screens on your phone, so you can run them whether you're home or not. Left them down and weather's coming in? Bring them up from wherever you are. Want the patio ready before you walk outside? Drop them from the kitchen.",
+            "It also ties into home automation if you ever go that direction.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Keep it optional",
+          "script": [
+            "\"Most people are perfectly happy with the remote and the wall switch. But if you're already running things from your phone around the house, this fits right in.",
+            "Is that something you'd want, or is the remote the right call for you?\""
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "Alright — let me walk you through what actually happens from here.",
+      "display_beats": [
+        "myLink = screens on your phone, home or away",
+        "Weather coming in? Bring them up from anywhere",
+        "Ties into home automation",
+        "Most people are fine with the remote — say so",
+        "Ask the question, then accept the answer"
+      ],
+      "coaching_note": "Do not push this. It's a genuine convenience for the right customer and clutter for everyone else. Ask the question, take the answer, move on.\n\nIf they've mentioned a smart thermostat, smart locks, or anything similar earlier in the appointment, this is a natural fit and worth thirty extra seconds. If they haven't, it isn't."
+    },
+    {
+      "slide_id": "e17",
+      "slide_number": 17,
+      "section": "wrap_up",
+      "title": "Our Proven Process",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Remove uncertainty about what happens after they say yes",
+        "Answers the industry's number one complaint before the homeowner has to worry about it"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Reassuring and organized. The rep should sound like he's describing a system that already exists and runs without him. Steady pace, no urgency. This slide's job is to lower blood pressure, not raise interest.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "The steps",
+          "script": [
+            "\"As you move forward with us, here's the process you can count on.",
+            "One — design. That's what we've been doing today. We finalize the openings, the system, the fabric, the colors. Nothing gets ordered until it's exactly right.",
+            "Two — project management. You get assigned a project manager who reaches out and stays with you. If there's an HOA involved, we prepare the submittal packet for you. If they come back wanting more information, we handle that too.",
+            "Three — install. Our technicians, clean site, professional from start to finish. Most screen projects are one day. A large multi-opening enclosure might run into a second.",
+            "Four — walkthrough. We go through it with you, run every screen, check every track, make sure you know how to operate it. We register your warranty and get your packet out.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Shade Service",
+          "script": [
+            "\"And then there's one more thing most companies don't do.",
+            "Twelve months after your install, we come back out. Free. We clean the system, lubricate the tracks, and inspect everything. It's not a sales visit, it's just how we keep these running the way they should.",
+            "That's the part people tell us about later.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Lead time",
+          "script": [
+            "\"Timeline-wise, we're running about six to eight weeks from order to install on screen projects. Everything is custom built to your openings, so that's manufacturing time more than scheduling.\""
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "And backing all of that is the warranty, which is worth a minute on its own.",
+      "display_beats": [
+        "Design → PM assigned → Install → Walkthrough",
+        "HOA packet handled for you if needed",
+        "Most installs one day, large enclosures maybe two",
+        "12-MONTH SHADE SERVICE — free, we come back, clean/lubricate/inspect",
+        "6 to 8 weeks, custom build time not scheduling backlog",
+        "Deliver it like a promise, not a checklist"
+      ],
+      "slow_down_on": {
+        "line": "Twelve months after your install, we come back out. Free.",
+        "why": "nobody expects it, and it reframes the whole purchase from a transaction into a relationship. Say it, pause, let them react."
+      },
+      "coaching_note": "This slide feels like housekeeping to a new rep, so it gets rushed. It shouldn't be. Home improvement is the most complained-about industry in the country and the complaints are almost never about the product — they're about nobody calling back, nobody showing up, and nobody knowing who's responsible. Every step here is quietly answering one of those.\n\nFrame the six to eight weeks as build time, not backlog. \"It's being manufactured for your openings\" is a completely different sentence than \"we're booked out.\"",
+      "engagement_question": {
+        "text": "Have you had work done on the home before? How'd that go?",
+        "when": "Use it here if you didn't use it at slide 4.",
+        "branches": [
+          "If it went badly, that's your opening: this industry is notorious for exactly that, which is why the process runs the way it does."
+        ]
+      }
+    },
+    {
+      "slide_id": "e18",
+      "slide_number": 18,
+      "section": "wrap_up",
+      "title": "The Warranty — Recapped",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Last risk-removal slide before numbers — everything after this is money",
+        "Also introduces the right-sizing lever you may need at the close"
+      ],
+      "duration": {
+        "min_sec": 75,
+        "max_sec": 90,
+        "display": "1:15 – 1:30"
+      },
+      "tone_mood": "Confident and settled. The rep isn't selling here, he's closing a loop. This should feel like the last box getting checked.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "What's covered",
+          "script": [
+            "\"So the warranty. This is genuinely one of the strongest in the industry and I want to be clear about what it covers.",
+            "Platinum Protection Plus is what we price into every system. Lifetime on the frame, lifetime on the fabric, lifetime on the motor, lifetime on the electronics. All of it, one package.",
+            "Most competitors cover components separately with different terms on each, and usually with exclusions. This doesn't work that way.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Why it matters here",
+          "script": [
+            "\"Out here specifically — UV at altitude, the wind, the hail — that kind of coverage isn't a nice-to-have. It's real protection on a real investment.",
+            "And when you need service, you're calling us. Not an 800 number in another state. We come out.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Transferability",
+          "script": [
+            "\"It's also transferable if you ever sell the house, which adds real value to the project and to the home.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "🔒 REP-ONLY — The PPP downgrade lever",
+          "conditional": true,
+          "conditional_note": "Never presented on this slide. Used only during right-sizing, after price, if the homeowner needs to reduce scope and has already declined to remove openings.",
+          "script": [
+            "Standard PPP: lifetime frame, fabric, motor, electronics.",
+            "Downgraded coverage becomes:",
+            "Frame — lifetime (unchanged)",
+            "Fabric — 10 years",
+            "Motor — 8 years",
+            "Electronics and finish — 5 years",
+            "How to offer it:",
+            "\"There is one other lever. The warranty package we price in is the lifetime coverage across the board. There's a step-down version — frame stays lifetime, fabric goes to ten years, motor to eight, electronics and finish to five.",
+            "I'll be honest, most people don't take it, because the lifetime coverage is a big part of why they chose us. But it's there if the number needs to come down and you'd rather keep all the openings.\"",
+            "👉 Order of operations at the close: remove openings first, step down duty level second, downgrade warranty third. Never lead with the warranty — it's the one that costs the customer the most in the long run."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "Alright — before I show you numbers, let me give you some context on what this stuff actually costs out there.",
+      "display_beats": [
+        "Platinum Protection Plus priced into every system, standard",
+        "Lifetime: frame · fabric · motor · electronics — ALL of it",
+        "Competitors split coverage by component with exclusions",
+        "Colorado: UV at altitude, wind, hail — coverage isn't optional here",
+        "Warranty service is US, not an 800 number",
+        "Transferable to the next owner"
+      ],
+      "slow_down_on": {
+        "line": "lifetime on the frame, lifetime on the fabric, lifetime on the motor, lifetime on the electronics.",
+        "why": "the repetition is the point. Four lifetimes in a row sounds like exactly what it is. Don't compress it into \"everything's lifetime.\""
+      },
+      "coaching_note": "Two companies stand behind this project — ATH locally and Eclipse nationally, with Phifer backing the fabric on top of that. A homeowner comparing bids is usually choosing between one company standing behind the work and none.\n\nDo not mention the downgrade option here. PPP is the standard, it's what's priced, and it's a value builder at this point in the presentation. The downgrade is a right-sizing tool for the close, and introducing it now just tells the homeowner there's a cheaper version before they've seen a number.",
+      "flags": [
+        {
+          "severity": "medium",
+          "issue": "Dollar savings for the PPP downgrade not quantified. Reps need a figure or a percentage before this is usable in the room.",
+          "recommendation": "Tracked as oi05."
+        }
+      ]
+    },
+    {
+      "slide_id": "e19",
+      "slide_number": 19,
+      "section": "wrap_up",
+      "title": "Other Options — An Honest Comparison",
+      "status": "final_new",
+      "in_deck": true,
+      "purpose": [
+        "Address every alternative they've already been considering, before price",
+        "Honest framing beats attack framing — let the facts do the work"
+      ],
+      "duration": {
+        "min_sec": 90,
+        "max_sec": 105,
+        "display": "1:30 – 1:45"
+      },
+      "tone_mood": "Even-handed and genuinely helpful. The rep is being straight about an industry that isn't always straight. Slight warmth, no sneering. The moment this sounds like trash talk, the homeowner starts defending the other guy.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "Set it up",
+          "script": [
+            "\"Before we get to numbers, let's talk about what else is out there. Most people have already looked at some of this, and I'd rather walk it with you than have you wonder.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "Generic roller screens",
+          "script": [
+            "\"Generic roll-down screens. Cheaper, and they look similar in a photo. No zipper track, though — so the fabric is only held at the top and bottom. In our wind it billows, gaps open along the sides, and the fabric works itself apart. Cheaper upfront, and you'll be looking at it again in a few years.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "Glass sunrooms",
+          "script": [
+            "\"A glass sunroom. Beautiful product, genuinely. But it's a permanent structure, it starts around fifty thousand and goes up, and by design it traps heat. You're sitting in a glass box in Colorado sun — a lot of people end up air conditioning them just to use them. And you can't open it up when you want fresh air.",
+            "Totally different product for a totally different goal.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "DIY",
+          "script": [
+            "\"Sails, umbrellas, the DIY stuff. Fine for a season. Limited coverage, no real wind protection, and it comes down every fall. It's not a solution, it's a stopgap.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b5",
+          "label": "Hurricane-rated screens",
+          "script": [
+            "\"And then there's the far end — hurricane-rated track systems, things like MagnaTrack, rated north of a hundred and fifty miles an hour. Real products, seriously engineered.",
+            "But they're built for coastal storm zones, and you pay for that. In Monument you're solving for afternoon wind and sun, not a hurricane. That's genuine overkill for what you're dealing with.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b6",
+          "label": "Doing nothing",
+          "script": [
+            "\"And of course you could do nothing. Which is a real option. It just means next summer looks like this one.\""
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "So that's the landscape. Let me show you where the money actually falls.",
+      "display_beats": [
+        "Generic rollers: no zipper, held top and bottom only, fails in our wind",
+        "Glass sunroom: $50,000+, permanent, traps heat, can't open it",
+        "DIY sails/umbrellas: one season, no wind protection, stopgap",
+        "MagnaTrack-class: 150+ MPH, real product, built for hurricanes — overkill here",
+        "Do nothing: next summer looks like this one",
+        "Even tone throughout. No sneering."
+      ],
+      "slow_down_on": {
+        "line": "In Monument you're solving for afternoon wind and sun, not a hurricane.",
+        "why": "it's the line that makes ATH the sensible middle instead of the expensive option. You just told them not to overbuy, which is the most credible thing a salesperson can say."
+      },
+      "coaching_note": "Naming a real competitor product honestly — MagnaTrack is good, it's just built for a different problem — buys you enormous credibility. A rep who claims every alternative is garbage sounds like a salesman. A rep who says one of them is excellent and wrong for this house sounds like an advisor.\n\nOnly bring up glass sunrooms if they're actually in play or the homeowner raises them. Don't hand someone a new idea to go price out."
+    },
+    {
+      "slide_id": "e20",
+      "slide_number": 20,
+      "section": "wrap_up",
+      "title": "Not All Shade Costs the Same",
+      "status": "final_new",
+      "in_deck": true,
+      "is_reference_slide": true,
+      "bookmark_label": "Price Tiers",
+      "purpose": [
+        "Price conditioning — build the range before revealing their number",
+        "Turns \"how much is it?\" from a fear into a question they already know the answer to"
+      ],
+      "duration": {
+        "min_sec": 120,
+        "max_sec": 150,
+        "display": "2:00 – 2:30"
+      },
+      "tone_mood": "Loosest the rep has been since the fabric slide. A little funny, genuinely helpful. Energy comes back up here on purpose, because the last two slides were serious. By the end of this slide the room should feel easier, not tighter.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": "Set it up",
+          "duration_sec": 20,
+          "script": [
+            "\"Alright. Before I show you numbers, let me give you some context, because 'patio screen' can mean about five completely different things depending on who you're talking to.",
+            "I'd rather you know where everything falls than have me throw a number at you cold.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b2",
+          "label": "The bottom",
+          "duration_sec": 40,
+          "script": [
+            "\"At the very bottom you've got the DIY stuff. Roll-up bamboo, a sail, an outdoor curtain off a website. Five hundred to a thousand dollars, and honestly? For a summer or two, fine.",
+            "Then the low-end installed screens. Somewhere around a thousand to three thousand an opening. Manual usually, no zipper track, minimal warranty — a year on components if you're lucky. Somebody hangs it and moves on.\"",
+            "(Light delivery here.)",
+            "\"The problem isn't really the screen. It's that when something goes wrong there's nobody to call. And if it's motorized at that price, the motor is the part that goes first.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b3",
+          "label": "The top",
+          "duration_sec": 30,
+          "script": [
+            "\"On the other end, the hurricane-rated systems and the glass enclosures. MagnaTrack-class screens, full sunrooms — you're talking twenty thousand on the low end and it runs to a hundred thousand plus for a real glass room.",
+            "Beautiful, seriously engineered, and built for a problem you don't have.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b4",
+          "label": "Where we live",
+          "duration_sec": 30,
+          "script": [
+            "\"A quality motorized screen — real zipper retention, name-brand fabric, a real company, a real warranty, professionally installed — is going to land somewhere between four thousand and twelve thousand depending on how many openings and how big they are.",
+            "We're going to fall right in there. We're not the cheapest quote you'll get, and honestly I'd be a little worried if we were. But we're not the most expensive either, and there's a reason for that — we do a lot of volume with Eclipse, and that buying power comes back to you.\""
+          ],
+          "stage_directions": []
+        },
+        {
+          "block_id": "b5",
+          "label": "Hand off",
+          "duration_sec": 20,
+          "script": [
+            "\"So that's the landscape. Nothing I'm about to show you should be a surprise.",
+            "And based on everything we talked about —\"",
+            "(Name their Accomplish List items.)",
+            "\"— I think you're going to like where this comes in.\"",
+            "👉 Smile. Go straight into pricing. Do not pause for questions here."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "display_beats": [
+        "\"Patio screen means five different things\" — set the frame",
+        "DIY: $500–$1,000, fine for a season",
+        "Low-end installed: $1,000–$3,000/opening, manual, no zipper, 1-yr warranty",
+        "Top end: $20,000–$100,000+ MagnaTrack and glass rooms",
+        "Quality installed: $4,000–$12,000 — WE LIVE HERE",
+        "\"Not the cheapest, and I'd be worried if we were\"",
+        "Volume with Eclipse = buying power back to you",
+        "Name their list, smile, go straight to numbers"
+      ],
+      "slow_down_on": {
+        "line": "We're not the cheapest quote you'll get, and honestly I'd be a little worried if we were.",
+        "why": "it's the most valuable sentence on the slide. Honest, slightly funny, and it inoculates against every competing bid they'll see for the next three weeks."
+      },
+      "coaching_note": "This slide exists so your number isn't the first piece of price information in the room. A homeowner with no reference point hears a price and reacts emotionally. A homeowner who just agreed that a quality screen runs four to twelve hears a price and evaluates it. Same number, completely different conversation.\n\nSay the ranges with total ease. Any hesitation or apology in your voice tells them the price is high before they've heard it. Sound like a guy explaining how the market works, not a guy softening a blow.\n\nThe humor lives at the bottom of the range, not the top. Cheap screens are funny. Expensive ones need to sound serious, because their job is making our number feel reasonable.\n\nDo not stop for questions at the end. The energy built here is what carries into the reveal. A pause lets it leak out and invites a pre-emptive objection before there's a number to object to.",
+      "callback_triggers": [
+        "Price objection — come back and re-walk the four tiers",
+        "\"We're getting another quote\"",
+        "\"That's more than we expected\""
+      ]
+    },
+    {
+      "slide_id": "e21",
+      "slide_number": 21,
+      "section": "wrap_up",
+      "title": "Up, It Disappears. Down, It's Protected.",
+      "status": "final_revised",
+      "in_deck": true,
+      "purpose": [
+        "Last emotional beat before numbers — leave them picturing the space, not the spec"
+      ],
+      "duration": {
+        "min_sec": 30,
+        "max_sec": 45,
+        "display": "30 – 45 seconds"
+      },
+      "tone_mood": "Warm and brief. Everything before this was information. This is a picture.",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "label": null,
+          "script": [
+            "\"That's really the whole idea.",
+            "When you don't need it, it's gone — up in the cassette, you'd barely know it's there. When you do, the sun's off you, the wind's off you, and you're still outside.",
+            "You're not giving up the space to get the protection. You're just finally in control of it.\"",
+            "(Pause.)",
+            "\"Any questions about any of it? The product, the company, me — anything at all?\"",
+            "👉 Ask it and then actually wait. This is the last clean chance to surface a concern before price is on the table."
+          ],
+          "stage_directions": []
+        }
+      ],
+      "transition_out": "Alright — let me show you what I put together.",
+      "display_beats": [
+        "Up: gone. Down: protected. Still outside either way.",
+        "\"You're not giving up the space to get the protection\"",
+        "Ask the open question — then WAIT",
+        "An objection surfaced here costs far less than after a number"
+      ],
+      "slow_down_on": {
+        "line": "You're not giving up the space to get the protection.",
+        "why": "it's the resolution of the fear that's been sitting underneath the whole appointment, and it's the last thing you want in their head before numbers."
+      },
+      "coaching_note": "The open-questions ask is not a formality. It's the cheapest possible moment to discover an objection. New reps ask it and immediately keep talking, which defeats the entire purpose. Ask, stop, count to five in your head."
     },
     {
       "slide_id": "ref_dodont",
-      "in_deck": false,
       "section": "reference",
-      "status": "final",
       "title": "Do & Don't",
+      "status": "final_revised",
+      "in_deck": false,
       "training_notes": {
         "do_not": [
-          "Do not lead with cassette size or specs before confirming the customer's goals",
-          "Do not skip the fabric sample — let them look through it and feel it",
-          "Do not present the Super Duty as the default — it is an upgrade conversation",
-          "Do not use the word \"cage\" unless the customer brings it up first",
-          "Do not compare to glass sunrooms unless the customer raises it",
-          "Do not offer the 10% same-day incentive before the price has landed and been absorbed"
+          "Present product before the Accomplish List is confirmed and owned",
+          "Say \"95% openness\" — SunTex 95 blocks 95% of UV and is ~5% open",
+          "Quote 130 MPH as a Super Duty system rating — it's a fabric test, attribute it",
+          "Present Super Duty as the default — it's an upgrade conversation",
+          "Present motorized as an option — it's standard",
+          "Volunteer the word \"subcontractor\" — reactive answer only",
+          "Mention the PPP downgrade before the price has landed",
+          "Bring up glass sunrooms unless the homeowner does",
+          "Offer {{SAME_WEEK_SAVINGS}} before the price is absorbed",
+          "Discount without adjusting scope first",
+          "Ask \"What do you think?\" or \"Any questions?\" as your close",
+          "Mention the referral program during the presentation"
         ],
         "do": [
-          "Bring fabric samples to every appointment — let them look through the 95% sample",
-          "Use the direction the space faces to anchor the sun-angle conversation",
-          "Use the zipper retention explanation every time — it is your clearest competitive differentiator",
-          "Present motorized as standard — never an option",
-          "Always confirm: standard duty, or does the situation call for Super Duty?",
-          "Present two options at pricing — always"
+          "Confirm the Accomplish List and get explicit agreement before any product talk",
+          "Carry all four samples: track, hem bar, SunTex book, cassette",
+          "Hand them the track before explaining zipper retention",
+          "Hand them the SunTex 95 and then stop talking",
+          "Anchor the sun conversation to the direction their space faces",
+          "Localize the wind story to their house, every time",
+          "Say the size is the opening's decision, not theirs",
+          "Make a recommendation on duty level and give the reason",
+          "Present two options, never three",
+          "Lead the close with scope, not duty level",
+          "Let the number sit — first person to talk after the price loses ground",
+          "Come back to the reference map and price conditioning when value needs rebuilding"
         ]
       }
     },
     {
       "slide_id": "ref_close",
-      "in_deck": false,
       "section": "reference",
-      "status": "final",
       "title": "Pricing & Close",
-      "coaching_note": "Urgency mechanic (Jack's call, 2026-07-15): the 10% SAME-DAY incentive — introduced calmly, once, AFTER the price lands and is absorbed. Never lead with it, never repeat it as a pressure tactic. Rep-only; it never appears on a customer slide.",
+      "status": "final_revised",
+      "in_deck": false,
+      "coaching_note": "Urgency mechanic is {{SAME_WEEK_SAVINGS}} — introduced calmly, once, AFTER the price lands and is absorbed. Never lead with it, never repeat it as pressure. Rep-only; it never appears on a customer slide. Percentage is set at the company level, not by the rep.",
       "blocks": [
         {
           "block_id": "b1",
-          "label": "Transition to pricing — outcome first, price second",
+          "label": "The four sales you must make",
           "script": [
-            "Always revisit the Accomplish List before showing a number. This is not \"here's the price\" — it's \"here's the solution to what you asked for.\"",
-            "\"So based on everything we talked through — and your goals of…\" (repeat their list, in their words) \"…this is what I put together for you. Each screen is custom made to your exact opening — nothing off the shelf.\""
-          ]
+            "1. Do the project — they believe this space is worth solving for",
+            "2. Do it right — they believe the quality and warranty justify the investment",
+            "3. Do it with ATH — they trust you, the company, and the install",
+            "4. Do it now — the same-week savings and the six-to-eight-week lead time both support this",
+            "If you lose the sale, trace it back to which one wasn't closed. That's your gap."
+          ],
+          "stage_directions": []
         },
         {
           "block_id": "b2",
-          "label": "Micro-close — before the real close",
+          "label": "Accomplish List — master E-Zip version",
           "script": [
-            "\"Does this all make sense so far?\"",
-            "Stop talking. Wait. Do not fill the silence.",
-            "If they say yes and seem engaged — move to close. If they hesitate — something is unresolved. Find it before you ask for the decision."
-          ]
+            "☐ Use the space during peak sun hours, not just mornings and evenings",
+            "☐ Block the harsh sun from wherever it hits hardest",
+            "☐ Cut the wind so the space is comfortable to sit in",
+            "☐ Keep the view — see out without being blasted",
+            "☐ Reduce heat and glare reaching the rooms behind the space",
+            "☐ Add privacy from neighbors or the street",
+            "☐ Keep no-see-ums and mosquitoes out so evenings work",
+            "☐ Extend usability into more months of the year",
+            "☐ Push-button convenience",
+            "☐ Make it look finished and intentional, not pieced together",
+            "☐ Create a true outdoor room",
+            "☐ Something that holds up in Colorado wind long-term"
+          ],
+          "stage_directions": []
         },
         {
           "block_id": "b3",
-          "label": "The close is a preference question",
+          "label": "Post-install — the referral program (not part of the presentation)",
           "script": [
-            "\"Between the two options we walked through — which one feels like the right fit for what you're trying to accomplish?\"",
-            "NOT \"What do you think?\" and NOT \"Any questions?\" — give them a direction to move in, not a yes/no.",
-            "Most customers: \"Let's go with the Standard — the warranty and wind rating are exactly what we need.\" If they ask what the Super Duty actually does for them — that's a buying question. Walk it again and let them decide."
-          ]
-        },
-        {
-          "block_id": "b4",
-          "label": "Two options, always",
-          "script": [
-            "Option 1 is the ideal, full recommendation — presented first, never the lesser option. Option 2 is the alternative: the Super Duty upgrade or a scope adjustment. Each screen is priced per opening, custom to their exact dimensions.",
-            "If price pushback is about scope, adjust scope — never discount without adjusting scope first."
-          ]
-        },
-        {
-          "block_id": "b5",
-          "label": "The same-day incentive — once, after the price lands",
-          "script": [
-            "After the first number has landed and been absorbed:",
-            "\"And one more thing — we do offer a same-day incentive. If you decide to move forward today, we can take 10% off the total. No pressure on that — I just want to make sure you have the full picture.\"",
-            "Introduce it calmly, ONCE, after the price — never lead with it, never repeat it as pressure. It's one of the Four Sales (\"do it now\"): the incentive plus the 3–5 week install window are what support moving today."
-          ]
-        }
-      ]
-    },
-    {
-      "slide_id": "ref_predemo",
-      "in_deck": false,
-      "section": "reference",
-      "status": "final",
-      "title": "Pre-Demo Recap at the Table",
-      "coaching_note": "Pre-frame at the table — set expectations and take control of the room before Slide 1.",
-      "blocks": [
-        {
-          "block_id": "b1",
-          "script": [
-            "\"So what I'd like to do is take about 10 to 15 minutes and walk you through how these screen systems work, what makes them different from anything else out there, and how we'd design this specifically for your space. Then we'll look at some options together and figure out what actually makes the most sense for you. Every screen we do is custom made for the opening — so there's nothing off the shelf here. Sound good?\"",
-            "MASTER E-ZIP ACCOMPLISH LIST — fill in during discovery, confirm before the demo begins (their words, not product names):",
-            "☐ Use the outdoor space more — during peak sun hours, not just morning and evening\n☐ Block harsh sun from the west, south, or wherever it hits hardest\n☐ Cut the wind so the space is actually comfortable to sit in\n☐ Keep the view — see out without being blasted by sun or wind\n☐ Reduce heat and glare coming into the interior rooms behind the space\n☐ Add privacy from neighbors, the street, or adjacent properties\n☐ Keep no-see-ums and insects out so evenings are enjoyable\n☐ Extend usability into more months of the year — spring through fall\n☐ Have something easy and convenient to control with a button\n☐ Make the space feel finished and intentional — not temporary or pieced together\n☐ Enclose the full porch or pergola and create a true outdoor room\n☐ Have something that holds up in Colorado wind and weather long-term",
-            "Sun-angle cheat: West-facing = afternoon · South = midday · East = morning · North = usually wind or privacy."
-          ]
+            "Referral program: $200 gift card once a referred project is installed.",
+            "👉 Never mentioned during the sales appointment. This is a post-install conversation, raised at the walkthrough or the twelve-month Shade Service visit. Bringing it up while selling makes the recommendation sound transactional."
+          ],
+          "stage_directions": []
         }
       ]
     },
     {
       "slide_id": "ref_faq",
-      "in_deck": false,
       "section": "reference",
-      "status": "final",
       "title": "FAQs & Objections",
+      "status": "final_revised",
+      "in_deck": false,
       "reactive_scripts": [
         {
           "tag": "FAQ",
-          "question": "Will I still be able to see my view through the fabric?",
+          "question": "Will I still be able to see my view?",
           "answer": [
-            "Great question — and it's one of the most common things people ask.",
-            "The 95% fabric — which is what about 95% of our customers go with — lets you see through it from the inside. You get your view. The sun and wind are blocked, but you're not staring at a wall.",
-            "Here's the bonus: from the outside, looking in at the screen, it creates almost a mirror effect during the day. Neighbors can't see in. You can see out. A lot of customers actually love that as much as the sun control.",
-            "Let me show you the sample so you can actually look through it."
+            "\"That's the most common question we get, and it's the right one to ask. Let me show you rather than tell you.\"",
+            "(Hand them the SunTex 95.)",
+            "\"Look through it. You keep your view — the heat and glare are gone but you're not staring at a wall. And from outside during the day it reads almost like a mirror. They can't see in, you can see out.\""
           ]
         },
         {
           "tag": "FAQ",
           "question": "Will it hold up in Colorado wind?",
           "answer": [
-            "That's actually one of the strongest selling points of this system.",
-            "The E-Zip is Class 6 wind resistance tested — rated to 80 miles per hour on the 4\" and 5\" systems. The zipper retention is what makes the difference. The fabric edge is physically locked into the side track — so instead of billowing and flapping like a generic roll-down screen, this system stays flat and taut even in high wind.",
-            "If you're in a particularly exposed location, that's when we'd talk about the Super Duty — it adds stainless steel spring clips in the tracks for even more side tension.",
-            "⚠️ Do NOT quote \"performs well above 80 in practice\" or any 130-mph figure — no documentation exists for either."
+            "\"That's one of the strongest things about this system. The four and five inch carry a Class 6 rating, tested to eighty, and they're Miami-Dade approved — that's the hurricane standard.",
+            "What makes it work is the zipper. The fabric edge is physically locked into the track for the whole drop, so it stays flat instead of billowing.",
+            "Eclipse also ran these in dynamic wind testing in Pennsylvania — the SunTex fabric came through with no damage at a hundred and thirty. Two competing fabrics in the same test failed at a hundred ten and seventy.\""
+          ],
+          "note": "Frame 130 as the fabric test result. Not a system rating."
+        },
+        {
+          "tag": "Objection",
+          "question": "Is it going to feel like a cage?",
+          "answer": [
+            "\"It really doesn't, and that's a fair thing to wonder. Unlike a glass room, this is a screen — air moves through it, so it doesn't trap heat. You still feel like you're outside, just without the sun on you.",
+            "And it's motorized, so it's never permanent. All the way down, halfway, or completely gone in about twenty seconds.\"",
+            "(Go back to the Before/After/Inside slide rather than arguing.)"
+          ]
+        },
+        {
+          "tag": "FAQ",
+          "question": "How do we get in and out?",
+          "answer": [
+            "\"You run it up with the remote — takes seconds. There's no door panel in this system; you enter and exit by raising the screen. Most people stop thinking about it after the first week.\""
           ]
         },
         {
           "tag": "FAQ",
           "question": "Will it keep no-see-ums out?",
           "answer": [
-            "Yes — and that's actually one of the things the Phifer fabric is specifically designed for. The weave is tight enough to stop no-see-ums, mosquitoes, and other small insects. When it's down and sealed at the bottom, you've got a real barrier. A lot of our customers tell us this alone changed how much they use their patio in the evenings."
+            "\"Yes — the SunTex weave is tight enough for no-see-ums and mosquitoes, and the brush seal on the hem bar closes the gap at the floor. For a lot of our customers that's the thing that changed how much they use the space in the evening.\""
           ]
         },
         {
           "tag": "FAQ",
-          "question": "How do I get in and out?",
+          "question": "What about hail?",
           "answer": [
-            "Simple — you run it up with the remote. Comes up in seconds.",
-            "One thing to note — this system doesn't have a built-in door panel. The way you enter and exit is by raising the screen. Most homeowners find they don't even think about it after the first week."
-          ]
-        },
-        {
-          "tag": "FAQ",
-          "question": "Do you all offer any financing?",
-          "answer": [
-            "Yes, absolutely. We have some great options available. Unlike credit cards with yearly fees and interest rates as high as 29%, we work with home-improvement lenders. There's no prepayment penalty, and everything extra you pay goes directly toward the principal. We have low monthly budget plans with rates as low as 10.99%, or a 12-month no-interest / same-as-cash option. These are popular either way you go because there's no money down, and the first payment isn't due until after the installation is complete.",
-            "We can look into getting you pre-approved with no impact on your credit score. Is that something you'd be interested in?"
-          ]
-        },
-        {
-          "tag": "FAQ",
-          "question": "Will you all be doing this work or do you use subcontractors?",
-          "answer": [
-            "Yes! We work with subcontractor partners. We train with them, critique, and perform final inspections. They work for us and only us. All of our partners install to the specifications required by the manufacturers and are trained directly as well. Around the House manages and warranties the work, and will perform a final walk-through to ensure quality and satisfaction."
+            "\"Fair question out here. Realistically, screens do well with hail because they hang vertically — hail comes down at an angle and mostly glances off rather than hitting flat. We see very little hail damage on these compared to roofs or awnings.",
+            "If something ever did happen, it'd typically be covered under your homeowner's policy the same as any other exterior damage, and we can handle minor touchups ourselves.\""
           ]
         },
         {
           "tag": "Objection",
-          "question": "\"Is it going to feel like a cage or a sunroom?\"",
+          "question": "We got a quote for a lot less.",
           "answer": [
-            "It really doesn't — and that's an important distinction.",
-            "Unlike a glass sunroom, this is a screen. Air moves through it. It doesn't trap heat the way an enclosed glass room does. You still feel like you're outside — just without the sun beating on you and without the wind pushing you back in.",
-            "And because it's motorized, you control it completely. You can have it all the way down, partially down, or fully up in seconds. It's not a permanent enclosure. It's more like a wall you can make disappear whenever you want."
+            "\"That's worth digging into, because the price gap usually comes down to three specific things.",
+            "Does their system use a true zipper retention track, or is the fabric only held top and bottom? What's the actual warranty — all four components, or split up by part with different terms? And is the fabric a name brand with published UV data?",
+            "Those three questions will tell you a lot about what you're actually comparing.\""
           ]
         },
         {
           "tag": "Objection",
-          "question": "\"We got a quote from someone else for a lot less.\"",
+          "question": "We want to think about it.",
           "answer": [
-            "That's worth understanding — because not all screen systems are the same, and the price difference usually comes down to a few specific things.",
-            "The biggest one is whether it uses a true zipper retention system. A generic roll-down screen with no zipper track will flap in the wind and eventually fail. The zipper is what keeps this system taut and functional in Colorado conditions.",
-            "Second is the warranty. Most cheaper systems have a limited warranty on components, shorter terms, and often require you to deal with a manufacturer directly rather than a local dealer.",
-            "Third is the fabric — Phifer is a specific manufacturer with a documented track record.",
-            "We'd rather show you exactly what the difference is than just ask you to take our word for it."
+            "\"Totally fair. Help me understand where you're at — on a scale of one to ten, how close does this feel to being the right move?\"",
+            "(7 or above: find the specific gap. Below 7: something bigger is unresolved.)",
+            "\"What's the one thing that would need to be different for this to be an easy yes?\""
           ]
+        },
+        {
+          "tag": "Objection",
+          "question": "We want another quote.",
+          "answer": [
+            "\"Completely reasonable — I'd do the same. When you're comparing, ask about the zipper track, the full warranty terms, and the fabric manufacturer. Those three will tell you most of what you need to know.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "It's more than we expected.",
+          "answer": [
+            "\"I hear you. Is it the whole project, or is it the size of it?",
+            "If it's scope, we can look at doing the opening that solves the biggest problem now and holding the price on the rest for a year. If it's the system, we can talk about what Standard versus Super Duty actually means for your exposure.",
+            "We'll find the version of this that works for where you're at.\""
+          ],
+          "note": "Remove openings the homeowner chooses. Adjust scope before discounting."
+        },
+        {
+          "tag": "Objection",
+          "question": "We need to talk it over.",
+          "answer": [
+            "\"Of course. Is there anything we haven't covered that would help when you walk them through it? And is there any chance we could get them on a quick call? I'd rather answer questions directly than have it go through a game of telephone.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "We might wait until next season.",
+          "answer": [
+            "\"Totally your call, and I'll be straight with you on timing. We're six to eight weeks out right now because everything is built to your openings. When the warm weather hits, that stretches.",
+            "The practical piece is that every week this isn't up is another week you're not using the space. But whenever it's right for you is the right time.\""
+          ]
+        },
+        {
+          "tag": "Objection",
+          "question": "We're thinking about a pergola or louvered roof first.",
+          "answer": [
+            "\"That actually makes good sense, and the two work really well together. We do the Eclipse Latitude louvered roof system as well — a lot of our customers pair the roof overhead with screens on the sides to create a true outdoor room.",
+            "If that's the direction, let's talk through both so whatever you do now sets up cleanly for what comes later.\""
+          ]
+        },
+        {
+          "tag": "FAQ",
+          "question": "Do you offer financing?",
+          "answer": [
+            "\"We do. Unlike credit cards with annual fees and rates up into the high twenties, we work with home improvement lenders. No prepayment penalty, and anything extra you pay goes straight to principal.",
+            "There are low monthly budget plans with rates as low as 10.99%, or a twelve-month no-interest, same-as-cash option. Both are zero money down, with the first payment not due until after the install is complete.",
+            "We can check pre-approval with no impact on your credit. Want me to look at that?\""
+          ]
+        },
+        {
+          "tag": "FAQ",
+          "question": "Do you use subcontractors?",
+          "answer": [
+            "\"Our crew is 1099 technicians. But our install teams work exclusively for us — they're trained by us, we inspect every job, and we warranty every job. Our production and quality assurance guys are full-time employees.",
+            "So the accountability doesn't move. It's us either way.\""
+          ],
+          "note": "Never volunteer this."
         },
         {
           "tag": "Rep Ref",
-          "question": "E-Zip vs. Sunesta — the quick rep contrast",
+          "question": "E-Zip vs. Sunesta — rep reference",
           "answer": [
-            "When both are on the table, or you're switching gears mid-appointment:",
-            "Primary benefit — Sunesta: overhead shade & sun projection. E-Zip: full opening control — sun, wind, and privacy.",
-            "Customer pain — Sunesta: can't use the space during the day. E-Zip: the elements push them off the patio entirely.",
-            "Wind story — Sunesta: arms tested to 98 mph. E-Zip: Class 6, tested to 80 mph, zipper retention keeps it taut.",
-            "Key differentiator — Sunesta: Smart Case, strong arms, cable system. E-Zip: the zipper-retention track — no flapping, no gaps.",
-            "Fabric decision — Sunesta: color & pattern. E-Zip: openness factor — SunTex 95 is almost always right.",
-            "The two options — Sunesta: Sunesta vs Sunstyle. E-Zip: Standard vs Super Duty.",
-            "Common objection — Sunesta: will it block our view? E-Zip: will I still be able to see through it?",
-            "Competitor contrast — Sunesta: Frankenstein awnings. E-Zip: generic roll-downs and glass sunrooms.",
-            "Cross-sell — Sunesta: drop screen, LED lights. E-Zip: additional screens, louvered-roof pairing.",
-            "Install — Sunesta: one day typically. E-Zip: one day, sometimes two on larger enclosures."
+            "Solves — Sunesta: Overhead sun. E-Zip: The whole opening — sun, wind, privacy, bugs.",
+            "Their pain — Sunesta: Can't use it midday. E-Zip: Elements push them off entirely.",
+            "Wind story — Sunesta: Arms tested to 98 MPH. E-Zip: Class 6 / 80 MPH certified · fabric tested to 130.",
+            "Differentiator — Sunesta: Smart Case. E-Zip: Zipper retention track.",
+            "Fabric choice — Sunesta: Color and pattern. E-Zip: UV blockage — 95 is almost always right.",
+            "Two options — Sunesta: Sunesta vs Sunstyle. E-Zip: Which openings now vs. later.",
+            "Common objection — Sunesta: Will it block our view? E-Zip: Will it feel like a cage?",
+            "Competitor contrast — Sunesta: Frankenstein awnings. E-Zip: Generic rollers, glass sunrooms.",
+            "Cross-sell — Sunesta: Drop screen, LED lights. E-Zip: More openings, louvered roof."
           ]
         }
       ]
     }
   ],
-  "modules": [],
-  "open_items": []
+  "modules": [
+    {
+      "module_id": "m_ezip_pricing_transition",
+      "section": "pricing",
+      "title": "Pricing Transition & Close",
+      "status": "final_new",
+      "is_slide": false,
+      "duration": {
+        "min_sec": 180,
+        "max_sec": 240,
+        "display": "3:00 – 4:00 through the close transition"
+      },
+      "tone_mood": "Confident and genuinely excited — not performed. The rep should sound like someone about to hand over good news. Any hesitation, apology, or throat-clearing tells the homeowner the number is high before they've seen it. Indifference is the target: warm, engaged, completely unattached to the outcome.",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "LAY OFF THE PRICE",
+          "duration_sec": 60,
+          "script": [
+            "\"Are you all excited?\"",
+            "(If rapport supports it: \"Should I do a drum roll?\")",
+            "\"So based on everything we talked about — and your goals of —\"",
+            "(Repeat the Accomplish List. Their words.)",
+            "\"— this is what I put together for you.",
+            "These numbers include the complete system on [X] openings, custom built to your exact dimensions, Somfy motorization, the SunTex fabric in the color you picked, professional installation by our team, and the Platinum Protection Plus lifetime warranty.",
+            "We're six to eight weeks out, and your install is a one-day job. And most importantly, you get this space back.\""
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "PRESENT TWO OPTIONS",
+          "duration_sec": 60,
+          "script": [
+            "👉 Primary fork is scope. Secondary fork is duty level.",
+            "\"This option is designed to give you everything you said you wanted.\"",
+            "Option 1 — The full scope. Every opening, the recommended duty level.",
+            "Option 2 — The priority scope. The opening or openings that solve the biggest problem, with the rest priced so they can add later at today's number.",
+            "\"Option one covers all [X] openings — the whole space, done at once.",
+            "Option two is if you'd rather start with the [main opening], which is where the real problem is, and add the others down the road. I've priced those out so you know exactly what they'd be whenever you're ready.\"",
+            "👉 If duty level is genuinely in play, present it as a line within each option rather than as a third option. Two options, never three."
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "REBUILD EXCITEMENT",
+          "duration_sec": 40,
+          "script": [
+            "\"And the good news is you caught us at a good time.\"",
+            "👉 First the one-year price. This is the safety net — it lowers pressure in the room.",
+            "\"First thing — this price is good for a full year. You can call me tomorrow, six months from now, three hundred sixty-four days from now, and this is locked. I'm not coming back to tell you it went up. That's yours either way.\"",
+            "👉 Pause. Let it land. They need to feel unpressured before you give them a reason to move.",
+            "👉 Then the savings. Once, with authority. Do not repeat it, do not apologize for it.",
+            "\"The one thing that doesn't hold for a year is this — we're running {{SAME_WEEK_SAVINGS}} for folks who get on the schedule this week. That's not a pressure thing, it's just how we plan the install calendar. The price is protected either way. That piece isn't.\"",
+            "👉 Then stop talking about it. Moving on immediately is what keeps it from feeling like a pitch."
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "MICRO-CLOSE",
+          "duration_sec": 15,
+          "script": [
+            "\"Does this all make sense so far?\"",
+            "👉 Wait for the answer. This is a checkpoint, not a rhetorical question."
+          ]
+        },
+        {
+          "phase": 5,
+          "label": "CLOSE TRANSITION",
+          "duration_sec": 15,
+          "script": [
+            "\"So between the two we've talked through — which one feels like the right starting point for you?\"",
+            "👉 NOT \"What do you think?\" or \"Any questions?\"",
+            "The close is a preference question. Give them a direction to move in.",
+            "What you'll typically hear:",
+            "\"Let's just do all of them — we'd rather not do this twice.\" (most common)",
+            "\"Let's start with the back and see how we like it.\" (a yes, not a no — write it)",
+            "\"What's the difference if we went Super Duty on the big one?\" (a buying question — answer it and close)"
+          ]
+        },
+        {
+          "phase": 6,
+          "label": "RIGHT-SIZING ORDER OF OPERATIONS",
+          "duration_sec": null,
+          "script": [
+            "If the number needs to come down, in this order:",
+            "1. Remove openings. Let them choose which. Hold the price on the rest for a year.",
+            "2. Step down duty level where exposure genuinely allows it.",
+            "3. Downgrade the warranty package — last resort, see e18 rep-only block.",
+            "👉 Never discount without adjusting scope first. A number that drops for no reason tells the homeowner the first number was made up."
+          ]
+        },
+        {
+          "phase": 7,
+          "label": "THE STEP-OUTSIDE",
+          "duration_sec": 300,
+          "script": [
+            "👉 Situational. Primarily for appointments where both decision-makers are present and need to confer.",
+            "⏱ 5 minutes outside. No longer.",
+            "Tone/Mood: Completely relaxed. This only works if the rep genuinely doesn't seem to need the answer.",
+            "\"You know what — let me get out of your hair for a few minutes.",
+            "I want to double-check a couple of the track measurements and grab some detail photos for the file anyway. Gives you two a chance to talk without me sitting here.",
+            "I'll leave everything right here — both options, the fabric book, all of it. Take your time.\"",
+            "👉 Leave the iPad open to the two options. Leave the samples on the table.",
+            "👉 Go outside and actually do the work.",
+            "Coming back in:",
+            "\"Alright, got what I needed. So — where'd you two land?\"",
+            "👉 Then stop. Do not re-pitch. Do not fill the silence."
+          ]
+        }
+      ],
+      "coaching_note": "The step-outside gives a couple permission to be honest with each other, which they will not do with a salesperson at the table. It also removes you as the thing being decided about — the conversation becomes about the screens, not about whether they like you.\n\nFive minutes. Not two, not fifteen. Two isn't enough for a real conversation and fifteen lets them talk themselves out of it.\n\nDon't use this on single-decision-maker appointments. There's nobody to confer with and it just breaks momentum.",
+      "variables_used": [
+        "SAME_WEEK_SAVINGS",
+        "ACCOMPLISH_LIST"
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "oi01",
+      "item": "System-level wind rating by cassette size and duty class — need current Eclipse engineering documentation. The published 130 MPH figure is a 2013 FABRIC test (Architectural Testing, York PA) on 120\"x84\" units, not a system rating by duty class, and must never appear in a spec table.",
+      "blocks": [
+        "e07",
+        "e12"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi02",
+      "item": "SAME_WEEK_SAVINGS percentage undecided (10% or 5%) and the week boundary is undefined — signed by Sunday, or seven days from appointment?",
+      "blocks": [
+        "m_ezip_pricing_transition",
+        "ref_close"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    },
+    {
+      "id": "oi03",
+      "item": "Real photo for e15 Smart Control — still images/eclipse/smart-control-placeholder.svg",
+      "blocks": [
+        "e15"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi04",
+      "item": "Eclipse published review statistics (99.2% recommend, 4.9 product, 4.8 dealer) unverified — rep-only with attribution until confirmed",
+      "blocks": [
+        "e07"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi05",
+      "item": "PPP downgrade dollar savings not quantified — reps need a figure before this is usable as a right-sizing lever",
+      "blocks": [
+        "e18"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi06",
+      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate.",
+      "blocks": [
+        "e09"
+      ],
+      "owner": "Maxx",
+      "status": "open",
+      "priority": "low"
+    },
+    {
+      "id": "oi07",
+      "item": "Legacy script/talkingPoints/coach fields stripped from js/data-eclipse.js. renderRehearsal() no longer reads them: it now splits into three states — unmapped slide shows the gap state, a failed content load shows the banner alone, and a load still in flight shows a loading placeholder.",
+      "blocks": [],
+      "owner": "Jack",
+      "status": "resolved_this_commit",
+      "priority": "high"
+    },
+    {
+      "id": "oi08",
+      "item": "Before/After/Inside photo set for e14 — extracted from slide 11 of the current Eclipse slide PDF into images/eclipse/transform-{before,after,inside}.jpg",
+      "blocks": [
+        "e14"
+      ],
+      "owner": "Jack",
+      "status": "resolved_this_commit",
+      "priority": "high"
+    },
+    {
+      "id": "oi09",
+      "item": "Hero image needed for e06 Eclipse Authorized Dealer — currently a labelled placeholder (images/eclipse/eclipse-dealer-placeholder.svg)",
+      "blocks": [
+        "e06"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi10",
+      "item": "myLink app screenshot for e16 — a Somfy stock shot is in place (images/eclipse/mylink-phone.jpg), but the handset shown is a dated model. Replace with a current phone-in-hand shot when one exists.",
+      "blocks": [
+        "e16"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi11",
+      "item": "Install lead time is split into LEAD_TIME_WEEKS_SCREENS and LEAD_TIME_WEEKS_AWNINGS. data/company-settings.json is loaded once for every product, so the single LEAD_TIME_WEEKS it replaced could never hold six-to-eight weeks for screens and a different figure for awnings at the same time. Both keys ship NOT_SET: screens is six to eight per this rebuild, and Jack sets the awning figure.",
+      "blocks": [
+        "e17",
+        "m_ezip_pricing_transition"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi13",
+      "item": "Team or install-crew photo for e05 \"Our People\" — currently a labelled placeholder. The group shot on p2 of the Eclipse slide PDF is NOT usable here: it is a Sunesta dealer-awards ceremony at a costume party, so it would put another manufacturer's branding across the Eclipse deck and undercut a slide about certified crews. Wanted: ATH technicians or an install crew on a real job. CHECKED and clear: e02 ez-dealer uses dealer-family.jpg (the four family owners, professional attire, no manufacturer branding) and needs no change. CARRY FORWARD: the customer-facing Eclipse slide PDF still runs that same Sunesta awards photo on its own slide 2 under \"WHO WE ARE\" — same two problems, competitor-manufacturer branding plus costume attire under a company-credibility headline. Fix it when that deck is rebuilt rather than importing it here. One crew photo solves the app slide and the PDF slide together.",
+      "blocks": [
+        "e05"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
+    },
+    {
+      "id": "oi12",
+      "item": "Price-tier photos for e20 tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
+      "blocks": [
+        "e20"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "low"
+    },
+    {
+      "id": "oi14",
+      "item": "Miami-Dade approval scope unconfirmed. Script states approval without scope claim pending the document. Obtain the Notice of Acceptance from Eclipse showing which cassette sizes and duty levels are covered, then restore scope language if supported.",
+      "blocks": [
+        "e07",
+        "e12"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "high"
+    }
+  ]
 }

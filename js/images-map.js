@@ -78,6 +78,16 @@ const IMAGES = {
   ezServiceBadge: "images/eclipse/service-badge-ez.svg",
   ezBadgeClass6Wind: "images/eclipse/badge-class6-wind.svg",
   ezSmartControlPlaceholder: "images/eclipse/smart-control-placeholder.svg",
+  ezDealerPlaceholder: "images/eclipse/eclipse-dealer-placeholder.svg",
+  ezPeoplePlaceholder: "images/eclipse/people-placeholder.svg",
+  ezArchedDeck: "images/eclipse/arched-deck.jpg",
+  ezMylinkPhone: "images/eclipse/mylink-phone.jpg",
+  // Before/After/Inside — one project, three views. Cropped from slide 11 of
+  // "Eclipse E-Zip Sales Presentation Slides (4).pdf" (the current variant —
+  // the one whose OUR PROCESS slide carries four steps ending in Shade Service).
+  ezTransformBefore: "images/eclipse/transform-before.jpg",
+  ezTransformAfter: "images/eclipse/transform-after.jpg",
+  ezTransformInside: "images/eclipse/transform-inside.jpg",
   ezLogoEclipse: "images/logo-eclipse.png",
   logoGutterhelmet: "images/logo-gutterhelmet.jpg",
   pcTier1: "images/pricecond/tier1-shadesail.jpg",
