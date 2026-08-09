@@ -41,8 +41,15 @@ work off the homeowner's plate.
 > "Standard is a handheld remote or a wireless wall switch — that's what most people use day to
 > day. If you've got multiple screens you can run them independently or all together.
 >
+> We also offer sun and wind sensors as add-ons — so the screen can react to the weather on its own.
+>
 > And electrically it's simple. Standard 110-volt, no panel work, no electrician in most cases.
 > We handle it as part of the install."
+
+*(Sensor line restored from the pre-v3 blessed script — "E-Zip Script (1).docx" — per Jack,
+2026-08-09. v3 dropped it while the deck bullet kept promising sensors, so present mode was
+offering something no rep had words for. Sensors are ADD-ONS on the E-Zip; do NOT carry over
+the Sunesta ruling where the wind sensor is standard. Tracked as `oi15`.)*
 
 **Transition out:** "There's one more control option worth showing you."
 
@@ -53,6 +60,7 @@ work off the homeowner's plate.
 - Same lifetime warranty on the motor
 - "A manual screen on a 20-foot opening gets used twice"
 - Remote or wall switch · independent or all together
+- Sun + wind sensors are ADD-ONS here (NOT standard like Sunesta's wind sensor)
 - 110V, no panel work, we handle it
 
 **Slow down on:** *"A manual screen on a twenty-foot opening is something you'll use twice and then

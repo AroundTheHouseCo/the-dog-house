@@ -1249,6 +1249,7 @@
           "label": "How you run it",
           "script": [
             "\"Standard is a handheld remote or a wireless wall switch — that's what most people use day to day. If you've got multiple screens you can run them independently or all together.",
+            "We also offer sun and wind sensors as add-ons — so the screen can react to the weather on its own.",
             "And electrically it's simple. Standard 110-volt, no panel work, no electrician in most cases. We handle it as part of the install.\""
           ],
           "stage_directions": []
@@ -1262,6 +1263,7 @@
         "Same lifetime warranty on the motor",
         "\"A manual screen on a 20-foot opening gets used twice\"",
         "Remote or wall switch · independent or all together",
+        "Sun + wind sensors are ADD-ONS here (NOT standard like Sunesta's wind sensor)",
         "110V, no panel work, we handle it"
       ],
       "slow_down_on": {
@@ -2208,6 +2210,16 @@
       "owner": "Jack",
       "status": "open",
       "priority": "high"
+    },
+    {
+      "id": "oi15",
+      "item": "e15 sensor coverage: the deck bullet promised \"Sun and wind sensors available as add-ons\" while the v3 script never mentioned them — present mode was offering an accessory no rep had words for. RESOLVED 2026-08-09 (Jack): sensors are a real E-Zip add-on (confirmed by the pre-v3 blessed script from \"E-Zip Script (1).docx\" and the Eclipse Product Reference Guide), so the original line was restored verbatim to the e15 \"How you run it\" block and mirrored into PART3.md rather than new copy being written. STANDING RULE: sensors are ADD-ONS on the E-Zip — never carry over the Sunesta ruling where the wind sensor ships standard. STILL OPEN: no add-on price is documented, so a rep can't answer \"what do they cost?\" — supply a figure if one exists.",
+      "blocks": [
+        "e15"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "low"
     }
   ]
 }
