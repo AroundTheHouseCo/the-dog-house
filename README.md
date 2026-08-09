@@ -2,7 +2,7 @@
 
 The all-product sales asset for Around The House Home Solutions reps: customer-facing
 presentations plus rep-only "Training Coach" resources, per product. Sunesta® Awnings
-(22-slide deck + Sunesta Coach) and Eclipse® E-Zip Screens (14-slide deck + Eclipse
+(22-slide deck + Sunesta Coach) and Eclipse® E-Zip Screens (21-slide deck + Eclipse
 Coach) are fully built and live; Gutter Helmet® and Louvered Pergolas are registered
 shells waiting for content (`PRODUCTS` in `js/registry.js`, flip `ready:true` when a
 product ships).
@@ -47,8 +47,13 @@ core lives in `TRAINING_SHARED` and each product's `training.doDont` lists are a
 deck-with-notes, 10-Step Process, Pre-Demo Recap, Do & Don't, FAQs, Pricing & Close,
 Photo Library, Docs). **Customer mode must never show training UI** — no "training",
 "coach", "script", or "rep-only" text may be visible; verify with a DOM text sweep, not
-by eyeballing. Training Mode reads `script`/`talkingPoints`/`coach`/`personalTouch`
-straight from each slide's data, so slide edits update both modes automatically.
+by eyeballing. Training Mode reads script/coaching/beats from each product's own
+content JSON (`data/doghouse-content-v1.json`, `data/training-content-eclipse.json`),
+joined to the deck via that file's `deck_map` — content edits happen in the JSON, never
+in `js/data-<product>.js`. A dormant per-slide `script`/`talkingPoints`/`coach` fallback
+still lives on the Sunesta deck object for a failed or in-flight content fetch (see
+`renderRehearsal()` in `js/app.js`); Eclipse's copy was retired in its 2026-08 rebuild,
+so that fallback path is Sunesta-only now.
 
 **Slide types** (all data-driven): videoloop (YouTube segment loop), splittext/splitphoto
 (optional `cert`, `scrub` mini-video-scrubber, `docViewer` in-app document book),
