@@ -23,7 +23,12 @@
 // but an edit to an *existing* file's content does. The two versions are
 // independent on purpose: a Tier 1 content change shouldn't force every
 // installed client to re-download 80MB of Tier 2, and vice versa.
-const TIER1_VERSION = "2026-08-09.2";
+// DEV NOTE: this version string is the Tier 1 cache NAME. Bumping it orphans the
+// old cache and forces a fresh precache — which is also the fastest way to stop
+// the SW serving you stale files while testing a change locally. The fetch
+// handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
+// NOT defeat it. See README "The service worker will serve you stale files".
+const TIER1_VERSION = "2026-08-09.3";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;

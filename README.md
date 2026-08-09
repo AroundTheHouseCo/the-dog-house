@@ -92,6 +92,43 @@ badge overlaps them.
    (`git show HEAD:path` vs `curl`), and spot-check new assets return 200 with correct
    MIME types. Pages caches ~10 min — hard-refresh the iPad after deploys.
 
+### The service worker will serve you stale files while you test
+
+**This has burned three separate rounds. It is not a browser bug or a preview-tool bug —
+it's `sw.js` working exactly as designed**, and the same offline-first behaviour reps
+depend on in a basement with no signal:
+
+- The fetch handler is **cache-first**: `caches.match(request, {ignoreSearch: true})`
+  returns the cached copy and never revalidates.
+- `{ignoreSearch: true}` means **`?bust=123` cannot work.** A cache-busting query string
+  matches the same cached entry. Don't reach for it; it will silently lie to you.
+- The cache lives in the **browser**, so restarting the preview server, opening a fresh
+  tab, or `location.reload()` all change nothing.
+- `curl` bypasses the SW entirely, which is why curl and the app disagree. **curl tells
+  you what the server has; only an in-page fetch tells you what the app sees.** Both are
+  useful — don't treat curl agreement as proof the app is fixed.
+
+**Do this instead** (order matters — clearing *before* you edit is the classic mistake:
+the SW re-precaches on the next load and you're stale again):
+
+1. Edit the file. 2. Sync it to the preview mirror. 3. *Then* clear:
+
+```js
+(async () => { for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();
+  for (const k of await caches.keys()) await caches.delete(k); })()
+```
+
+4. Reload.
+
+**Faster alternative:** bump `TIER1_VERSION` in `sw.js` *before* browser testing. The
+version is the cache *name*, so changing it orphans the old cache and forces a fresh
+precache — which is the same bump the change needs before shipping anyway.
+
+**When you can't get a trustworthy read** (rare, and you've already done the above): inject
+the rule as an inline `<style>` and measure real layout — inline styles never touch the
+network or the SW. Verify data-only edits (JSON/doc strings) with direct file reads instead
+of the browser; they have no rendering path worth booting a browser for.
+
 ## Design language
 
 - Palette via CSS vars: `--green-dark #1b5e3f`, `--green #2e7d4f`, `--orange #F5A623`,
