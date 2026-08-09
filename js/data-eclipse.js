@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // ECLIPSE® E-ZIP MOTORIZED SCREENS — customer-facing deck
 //
-// Rebuilt per audit-ezip/ECLIPSE_EZIP_DECK_BUILD_SPEC (v1.0): 14 slides -> 21,
+// Rebuilt per docs/ezip-rebuild/ATH_EZip_Deck_Build_Spec.md (v1.0): 14 slides -> 21,
 // 3 tabs -> 5. Slide ORDER and SECTION membership are owned here (authority
 // rule); all script/coaching content lives in data/training-content-eclipse.json
 // and joins by that file's deck_map.
@@ -95,7 +95,13 @@ const ECLIPSE_DECK = {
 
 "WHY ECLIPSE": [
   {
-    // NEW (spec §3.2). Hero image is a clearly-labeled placeholder — oi09.
+    // oi09 RESOLVED 2026-08-09 (Jack): "use the Sunesta dealer photo for now."
+    // Two candidates carried that description -- dealer-family.jpg (cleared, no
+    // manufacturer branding, already used on e02 and the warranty ATH node) and
+    // the Sunesta awards-ceremony photo (disqualified per oi13: dense Sunesta
+    // branding, costume attire). Confirmed dealer-family.jpg at full resolution
+    // before assigning -- reusing Sunesta branding on a slide titled "Eclipse
+    // Authorized Dealer" would have been a direct content contradiction.
     id:"ez-eclipse", type:"splittext",
     title:"Eclipse® Authorized Dealer",
     bullets:[
@@ -105,7 +111,7 @@ const ECLIPSE_DECK = {
       "ATH is a licensed and insured Eclipse authorized dealer",
       "Two companies behind your project — not a system assembled from four suppliers"
     ],
-    image: IMAGES.ezDealerPlaceholder
+    image: IMAGES.dealerFamily
   },
   {
     id:"ez-credibility", type:"credibility",
@@ -135,11 +141,15 @@ const ECLIPSE_DECK = {
              IMAGES.ezSunroom, IMAGES.ezWithAwning, IMAGES.ezArchedDeck, IMAGES.ezPartWayUp ]
   },
   {
-    // NEW (spec §3.3). Shape mirrors Sunesta's refmap slide (s10) exactly.
-    // The map data (js/reference-map.js) currently carries Sunesta install pins
-    // only — Eclipse projects still need layering in (oi06). Until then this
-    // shows combined ATH projects, which is accurate and arguably stronger.
-    id:"ez-refmap", type:"refmap", image: IMAGES.refMapPlaceholder,
+    // oi06 RESOLVED 2026-08-09 (Jack): use a generic map graphic rather than
+    // wait on Eclipse-specific install pins from Maxx. This USED to be
+    // type:"refmap", mirroring Sunesta's slide (s10) exactly and rendering the
+    // live interactive map -- but with no Eclipse pin data, that map fell back
+    // to showing real Sunesta customer locations labeled "combined ATH
+    // projects," and none of those are actual screen installs. type:"splitphoto"
+    // instead, same slide shape, with a plain non-data-driven map illustration
+    // (images/eclipse/refmap-generic.svg) that makes no specific-location claim.
+    id:"ez-refmap", type:"splitphoto", image: IMAGES.ezRefMapGeneric,
     title:"We've Worked in Your Neighborhood",
     subtext:"Projects completed all over the greater Colorado Springs area."
   }
@@ -293,6 +303,12 @@ const ECLIPSE_DECK = {
 
 "SMART CONTROL": [
   {
+    // e16 (myLink) was merged into this slide 2026-08-09 per Jack: a standalone
+    // "screens on your phone" slide was redundant with the bullet below, and
+    // folding it in gave the tab a real second half instead of a thin extra
+    // slide. Image is the myLink photo that used to live on e16 -- Somfy stock,
+    // phone in hand, cropped from the Eclipse slide PDF, dated handset; fine as
+    // a stand-in, oi10 stays open (relocated here) for a current shot.
     id:"ez-smart", type:"splittext",
     title:"Smart Control — One Button, Total Command",
     bullets:[
@@ -302,21 +318,6 @@ const ECLIPSE_DECK = {
       "Integrates with home automation — works right alongside the rest of your smart home",
       "Sun and wind sensors available as add-ons — automate it to the weather",
       "Standard 110-volt plug-in in most homes — no panel upgrades, no complicated wiring"
-    ],
-    image: IMAGES.ezSmartControlPlaceholder
-  },
-  {
-    // NEW (spec §3.5). Photo is the Somfy myLink "Remote" screen, phone in hand,
-    // cropped from the Eclipse slide PDF — manufacturer stock, and the handset
-    // shown is a dated model. Fine as a stand-in; oi10 stays open for a current
-    // shot.
-    id:"ez-mylink", type:"splittext",
-    title:"myLink — Your Screens on Your Phone",
-    bullets:[
-      "Run your screens from anywhere — home or away",
-      "Weather rolling in? Bring them up from wherever you are",
-      "Integrates with home automation",
-      "Optional — most homeowners are happy with the remote and wall switch"
     ],
     image: IMAGES.ezMylinkPhone
   }

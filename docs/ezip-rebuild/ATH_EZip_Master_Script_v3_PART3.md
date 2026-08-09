@@ -18,6 +18,12 @@
 **Tone/Mood:** Practical and easy. This is a relief slide, not a spec slide. The rep is taking
 work off the homeowner's plate.
 
+*(SLIDE 16 — myLink — was merged into this slide 2026-08-09 per Jack: standalone, its "screens on
+your phone" content was redundant with Block 3 below, and the tab reads better as one full slide
+than two thin ones. Its phone-in-hand photo now serves as this slide's image, resolving `oi03`;
+the photo is Somfy manufacturer stock with a dated handset, carried forward as `oi10`. The deck
+renumbered 17–21 → 16–20 to close the gap.)*
+
 ### Block 1 — Motorized is how it comes
 
 > "So the system comes motorized. That's not an upgrade, that's just how it works. Touch a button,
@@ -42,6 +48,7 @@ work off the homeowner's plate.
 > day. If you've got multiple screens you can run them independently or all together.
 >
 > We also offer sun and wind sensors as add-ons — so the screen can react to the weather on its own.
+> They run about four hundred twenty-five dollars, installed.
 >
 > And electrically it's simple. Standard 110-volt, no panel work, no electrician in most cases.
 > We handle it as part of the install."
@@ -49,9 +56,12 @@ work off the homeowner's plate.
 *(Sensor line restored from the pre-v3 blessed script — "E-Zip Script (1).docx" — per Jack,
 2026-08-09. v3 dropped it while the deck bullet kept promising sensors, so present mode was
 offering something no rep had words for. Sensors are ADD-ONS on the E-Zip; do NOT carry over
-the Sunesta ruling where the wind sensor is standard. Tracked as `oi15`.)*
+the Sunesta ruling where the wind sensor is standard. Price confirmed 2026-08-09 (Jack): $425,
+added to the script and closed out as `oi15`.)*
 
-**Transition out:** "There's one more control option worth showing you."
+**Transition out:** "Alright — let me walk you through what actually happens from here." *(reused
+verbatim from SLIDE 16 — myLink, merged above — since it already bridges cleanly into the
+Process slide that follows)*
 
 **Display beats:**
 - Motorized is STANDARD — never call it an upgrade
@@ -61,6 +71,7 @@ the Sunesta ruling where the wind sensor is standard. Tracked as `oi15`.)*
 - "A manual screen on a 20-foot opening gets used twice"
 - Remote or wall switch · independent or all together
 - Sun + wind sensors are ADD-ONS here (NOT standard like Sunesta's wind sensor)
+- Sensor add-on runs ~$425 installed
 - 110V, no panel work, we handle it
 
 **Slow down on:** *"A manual screen on a twenty-foot opening is something you'll use twice and then
@@ -76,55 +87,9 @@ The $500 figure lands because it's small relative to the project and enormous re
 daily experience. Say it once, plainly, and let the arithmetic happen on its own.
 
 **Flags:**
-- 🟡 *medium* — Slide image is `smart-control-placeholder.svg`, a labeled placeholder. Needs a real
-  photo of someone using the remote or the app. Tracked as `oi03`.
-
----
-
-## 🟡 SLIDE 16 — myLINK
-### `e16` · `ez-mylink` · splittext · **NEW SLIDE**
-### *Your Screens on Your Phone*
-
-👉 Convenience upgrade — present it, don't push it
-👉 Also quietly answers "what if we're not home?"
-⏱ 45 seconds – 1:00
-
-**Tone/Mood:** Light. This is an optional feature and should sound like one. No pressure in the
-delivery at all.
-
-### Block 1
-
-> "Last thing on controls — this is the myLink.
->
-> It puts the screens on your phone, so you can run them whether you're home or not. Left them
-> down and weather's coming in? Bring them up from wherever you are. Want the patio ready before
-> you walk outside? Drop them from the kitchen.
->
-> It also ties into home automation if you ever go that direction."
-
-### Block 2 — Keep it optional
-
-> "Most people are perfectly happy with the remote and the wall switch. But if you're already
-> running things from your phone around the house, this fits right in.
->
-> Is that something you'd want, or is the remote the right call for you?"
-
-**Transition out:** "Alright — let me walk you through what actually happens from here."
-
-**Display beats:**
-- myLink = screens on your phone, home or away
-- Weather coming in? Bring them up from anywhere
-- Ties into home automation
-- Most people are fine with the remote — say so
-- Ask the question, then accept the answer
-
-**Slow down on:** nothing. This is one of the two fastest slides in the deck.
-
-**Coaching note:** Do not push this. It's a genuine convenience for the right customer and clutter
-for everyone else. Ask the question, take the answer, move on.
-
-If they've mentioned a smart thermostat, smart locks, or anything similar earlier in the
-appointment, this is a natural fit and worth thirty extra seconds. If they haven't, it isn't.
+- 🟢 *resolved* — Slide image was `smart-control-placeholder.svg`. RESOLVED 2026-08-09: SLIDE 16
+  (myLink) merged in above; its phone-in-hand photo now fills this slot. Handset is a dated Somfy
+  stock model — see `oi10`.
 
 ---
 
@@ -132,8 +97,8 @@ appointment, this is a natural fit and worth thirty extra seconds. If they haven
 
 ---
 
-## 🟡 SLIDE 17 — OUR PROVEN PROCESS
-### `e17` · `ez-process` · processsteps *(was `e13`)*
+## 🟡 SLIDE 16 — OUR PROVEN PROCESS
+### `e16` · `ez-process` · processsteps *(was `e13`)*
 
 👉 Remove uncertainty about what happens after they say yes
 👉 Answers the industry's number one complaint before the homeowner has to worry about it
@@ -204,8 +169,8 @@ industry is notorious for exactly that, which is why the process runs the way it
 
 ---
 
-## 🟡 SLIDE 18 — THE WARRANTY, RECAPPED
-### `e18` · `ez-warranty` · warrantyrecap *(was `e12`)*
+## 🟡 SLIDE 17 — THE WARRANTY, RECAPPED
+### `e17` · `ez-warranty` · warrantyrecap *(was `e12`)*
 
 👉 Last risk-removal slide before numbers — everything after this is money
 👉 Also introduces the right-sizing lever you may need at the close
@@ -295,8 +260,8 @@ most in the long run.
 
 ---
 
-## 🟡 SLIDE 19 — OTHER OPTIONS
-### `e19` · `ez-options` · difference · **NEW SLIDE**
+## 🟡 SLIDE 18 — OTHER OPTIONS
+### `e18` · `ez-options` · difference · **NEW SLIDE**
 ### *An Honest Comparison*
 
 👉 Address every alternative they've already been considering, before price
@@ -370,8 +335,8 @@ someone a new idea to go price out.
 
 ---
 
-## 🟡 SLIDE 20 — NOT ALL SHADE COSTS THE SAME
-### `e20` · `ez-pricecond` · costscale · **NEW SLIDE**
+## 🟡 SLIDE 19 — NOT ALL SHADE COSTS THE SAME
+### `e19` · `ez-pricecond` · costscale · **NEW SLIDE**
 
 👉 Price conditioning — build the range before revealing their number
 👉 Turns "how much is it?" from a fear into a question they already know the answer to
@@ -469,8 +434,8 @@ pause lets it leak out and invites a pre-emptive objection before there's a numb
 
 ---
 
-## 🟡 SLIDE 21 — UP, IT DISAPPEARS. DOWN, IT'S PROTECTED.
-### `e21` · `ez-viewstays` · herosplit *(was `e14`)*
+## 🟡 SLIDE 20 — UP, IT DISAPPEARS. DOWN, IT'S PROTECTED.
+### `e20` · `ez-viewstays` · herosplit *(was `e14`)*
 
 👉 Last emotional beat before numbers — leave them picturing the space, not the spec
 ⏱ 30 – 45 seconds
@@ -620,7 +585,7 @@ If the number needs to come down, in this order:
 
 1. **Remove openings.** Let them choose which. Hold the price on the rest for a year.
 2. **Step down duty level** where exposure genuinely allows it.
-3. **Downgrade the warranty package** — last resort, see `e18` rep-only block.
+3. **Downgrade the warranty package** — last resort, see `e17` rep-only block.
 
 👉 Never discount without adjusting scope first. A number that drops for no reason tells the
 homeowner the first number was made up.

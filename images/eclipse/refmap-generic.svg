@@ -1,0 +1,41 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- oi06 RESOLVED 2026-08-09 (Jack): generic reference/map graphic rather than
+       waiting on Eclipse-specific install pins from Maxx. e09 switched from the
+       live refmap renderer (which was showing real Sunesta customer pins,
+       labeled "combined ATH projects", none of them actual screen installs)
+       to this splitphoto slide with a plain, non-data-driven map illustration.
+       Not a labeled placeholder; this is the shipped asset. -->
+  <rect x="0" y="0" width="800" height="600" fill="#eef6ee"/>
+  <!-- abstract road grid -->
+  <g stroke="#cfe3d3" stroke-width="10" fill="none">
+    <path d="M0 130 L800 100"/>
+    <path d="M0 300 L800 320"/>
+    <path d="M0 470 L800 495"/>
+    <path d="M170 0 L145 600"/>
+    <path d="M420 0 L440 600"/>
+    <path d="M650 0 L670 600"/>
+  </g>
+  <g stroke="#e3efe4" stroke-width="4" fill="none">
+    <path d="M0 210 L800 205"/>
+    <path d="M0 385 L800 405"/>
+    <path d="M290 0 L300 600"/>
+    <path d="M540 0 L555 600"/>
+  </g>
+  <!-- pin markers -->
+  <g transform="translate(255,235)">
+    <path d="M0 -46 C -25 -46 -41 -28 -41 -8 C -41 17 0 58 0 58 C 0 58 41 17 41 -8 C 41 -28 25 -46 0 -46 Z" fill="#2e7d4f"/>
+    <circle cx="0" cy="-10" r="15" fill="#eef6ee"/>
+  </g>
+  <g transform="translate(430,340)">
+    <path d="M0 -58 C -31 -58 -51 -35 -51 -10 C -51 21 0 72 0 72 C 0 72 51 21 51 -10 C 51 -35 31 -58 0 -58 Z" fill="#1b5e3f"/>
+    <circle cx="0" cy="-12" r="19" fill="#eef6ee"/>
+  </g>
+  <g transform="translate(575,220)">
+    <path d="M0 -38 C -20 -38 -33 -23 -33 -7 C -33 14 0 47 0 47 C 0 47 33 14 33 -7 C 33 -23 20 -38 0 -38 Z" fill="#F5A623"/>
+    <circle cx="0" cy="-8" r="12" fill="#eef6ee"/>
+  </g>
+  <g transform="translate(340,420)">
+    <path d="M0 -32 C -17 -32 -28 -19 -28 -6 C -28 12 0 40 0 40 C 0 40 28 12 28 -6 C 28 -19 17 -32 0 -32 Z" fill="#2e7d4f"/>
+    <circle cx="0" cy="-7" r="10" fill="#eef6ee"/>
+  </g>
+</svg>

@@ -29,12 +29,11 @@
     "ez-fabric": "e13",
     "ez-transform": "e14",
     "ez-smart": "e15",
-    "ez-mylink": "e16",
-    "ez-process": "e17",
-    "ez-warranty": "e18",
-    "ez-options": "e19",
-    "ez-pricecond": "e20",
-    "ez-viewstays": "e21"
+    "ez-process": "e16",
+    "ez-warranty": "e17",
+    "ez-options": "e18",
+    "ez-pricecond": "e19",
+    "ez-viewstays": "e20"
   },
   "variables": [
     {
@@ -1250,12 +1249,13 @@
           "script": [
             "\"Standard is a handheld remote or a wireless wall switch — that's what most people use day to day. If you've got multiple screens you can run them independently or all together.",
             "We also offer sun and wind sensors as add-ons — so the screen can react to the weather on its own.",
+            "They run about four hundred twenty-five dollars, installed.",
             "And electrically it's simple. Standard 110-volt, no panel work, no electrician in most cases. We handle it as part of the install.\""
           ],
           "stage_directions": []
         }
       ],
-      "transition_out": "There's one more control option worth showing you.",
+      "transition_out": "Alright — let me walk you through what actually happens from here.",
       "display_beats": [
         "Motorized is STANDARD — never call it an upgrade",
         "Somfy motor — the gold standard",
@@ -1264,6 +1264,7 @@
         "\"A manual screen on a 20-foot opening gets used twice\"",
         "Remote or wall switch · independent or all together",
         "Sun + wind sensors are ADD-ONS here (NOT standard like Sunesta's wind sensor)",
+        "Sensor add-on runs ~$425 installed",
         "110V, no panel work, we handle it"
       ],
       "slow_down_on": {
@@ -1273,63 +1274,15 @@
       "coaching_note": "Present motorized as the default and the crank as the exception. If you present them as two equal options you've created a decision the homeowner doesn't need and introduced a cheaper number into the room for no reason.\n\nThe $500 figure lands because it's small relative to the project and enormous relative to the daily experience. Say it once, plainly, and let the arithmetic happen on its own.",
       "flags": [
         {
-          "severity": "medium",
-          "issue": "Slide image is smart-control-placeholder.svg, a labeled placeholder. Needs a real photo of someone using the remote or the app.",
-          "recommendation": "Tracked as oi03."
+          "severity": "resolved",
+          "issue": "Slide image was smart-control-placeholder.svg.",
+          "recommendation": "RESOLVED 2026-08-09: e16 (myLink) was merged into this slide as redundant; its phone-in-hand photo now serves as e15's image. Handset is a dated Somfy stock model, not current -- see oi10."
         }
       ]
     },
     {
       "slide_id": "e16",
       "slide_number": 16,
-      "section": "smart_control",
-      "title": "myLink — Your Screens on Your Phone",
-      "status": "final_new",
-      "in_deck": true,
-      "purpose": [
-        "Convenience upgrade — present it, don't push it",
-        "Also quietly answers \"what if we're not home?\""
-      ],
-      "duration": {
-        "min_sec": 45,
-        "max_sec": 60,
-        "display": "45 seconds – 1:00"
-      },
-      "tone_mood": "Light. This is an optional feature and should sound like one. No pressure in the delivery at all.",
-      "blocks": [
-        {
-          "block_id": "b1",
-          "label": null,
-          "script": [
-            "\"Last thing on controls — this is the myLink.",
-            "It puts the screens on your phone, so you can run them whether you're home or not. Left them down and weather's coming in? Bring them up from wherever you are. Want the patio ready before you walk outside? Drop them from the kitchen.",
-            "It also ties into home automation if you ever go that direction.\""
-          ],
-          "stage_directions": []
-        },
-        {
-          "block_id": "b2",
-          "label": "Keep it optional",
-          "script": [
-            "\"Most people are perfectly happy with the remote and the wall switch. But if you're already running things from your phone around the house, this fits right in.",
-            "Is that something you'd want, or is the remote the right call for you?\""
-          ],
-          "stage_directions": []
-        }
-      ],
-      "transition_out": "Alright — let me walk you through what actually happens from here.",
-      "display_beats": [
-        "myLink = screens on your phone, home or away",
-        "Weather coming in? Bring them up from anywhere",
-        "Ties into home automation",
-        "Most people are fine with the remote — say so",
-        "Ask the question, then accept the answer"
-      ],
-      "coaching_note": "Do not push this. It's a genuine convenience for the right customer and clutter for everyone else. Ask the question, take the answer, move on.\n\nIf they've mentioned a smart thermostat, smart locks, or anything similar earlier in the appointment, this is a natural fit and worth thirty extra seconds. If they haven't, it isn't."
-    },
-    {
-      "slide_id": "e17",
-      "slide_number": 17,
       "section": "wrap_up",
       "title": "Our Proven Process",
       "status": "final_revised",
@@ -1399,8 +1352,8 @@
       }
     },
     {
-      "slide_id": "e18",
-      "slide_number": 18,
+      "slide_id": "e17",
+      "slide_number": 17,
       "section": "wrap_up",
       "title": "The Warranty — Recapped",
       "status": "final_revised",
@@ -1486,8 +1439,8 @@
       ]
     },
     {
-      "slide_id": "e19",
-      "slide_number": 19,
+      "slide_id": "e18",
+      "slide_number": 18,
       "section": "wrap_up",
       "title": "Other Options — An Honest Comparison",
       "status": "final_new",
@@ -1570,8 +1523,8 @@
       "coaching_note": "Naming a real competitor product honestly — MagnaTrack is good, it's just built for a different problem — buys you enormous credibility. A rep who claims every alternative is garbage sounds like a salesman. A rep who says one of them is excellent and wrong for this house sounds like an advisor.\n\nOnly bring up glass sunrooms if they're actually in play or the homeowner raises them. Don't hand someone a new idea to go price out."
     },
     {
-      "slide_id": "e20",
-      "slide_number": 20,
+      "slide_id": "e19",
+      "slide_number": 19,
       "section": "wrap_up",
       "title": "Not All Shade Costs the Same",
       "status": "final_new",
@@ -1670,8 +1623,8 @@
       ]
     },
     {
-      "slide_id": "e21",
-      "slide_number": 21,
+      "slide_id": "e20",
+      "slide_number": 20,
       "section": "wrap_up",
       "title": "Up, It Disappears. Down, It's Protected.",
       "status": "final_revised",
@@ -2038,7 +1991,7 @@
             "If the number needs to come down, in this order:",
             "1. Remove openings. Let them choose which. Hold the price on the rest for a year.",
             "2. Step down duty level where exposure genuinely allows it.",
-            "3. Downgrade the warranty package — last resort, see e18 rep-only block.",
+            "3. Downgrade the warranty package — last resort, see e17 rep-only block.",
             "👉 Never discount without adjusting scope first. A number that drops for no reason tells the homeowner the first number was made up."
           ]
         },
@@ -2093,12 +2046,12 @@
     },
     {
       "id": "oi03",
-      "item": "Real photo for e15 Smart Control — still images/eclipse/smart-control-placeholder.svg",
+      "item": "Real photo for e15 Smart Control — still images/eclipse/smart-control-placeholder.svg RESOLVED 2026-08-09 (Jack): e16 (myLink) merged into e15 as redundant content; its phone-in-hand photo now fills e15's image slot.",
       "blocks": [
         "e15"
       ],
       "owner": "Jack",
-      "status": "open",
+      "status": "resolved",
       "priority": "medium"
     },
     {
@@ -2115,7 +2068,7 @@
       "id": "oi05",
       "item": "PPP downgrade dollar savings not quantified — reps need a figure before this is usable as a right-sizing lever",
       "blocks": [
-        "e18"
+        "e17"
       ],
       "owner": "Jack",
       "status": "open",
@@ -2123,12 +2076,12 @@
     },
     {
       "id": "oi06",
-      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate.",
+      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate. RESOLVED 2026-08-09 (Jack): use a generic map graphic rather than wait on Eclipse pins. e09 switched from the live refmap renderer to a plain splitphoto illustration (images/eclipse/refmap-generic.svg) that makes no specific-location claim.",
       "blocks": [
         "e09"
       ],
       "owner": "Maxx",
-      "status": "open",
+      "status": "resolved",
       "priority": "low"
     },
     {
@@ -2161,9 +2114,9 @@
     },
     {
       "id": "oi10",
-      "item": "myLink app screenshot for e16 — a Somfy stock shot is in place (images/eclipse/mylink-phone.jpg), but the handset shown is a dated model. Replace with a current phone-in-hand shot when one exists.",
+      "item": "myLink app screenshot for e15 (relocated from e16, which was merged into e15 2026-08-09) — a Somfy stock shot is in place (images/eclipse/mylink-phone.jpg), but the handset shown is a dated model. Replace with a current phone-in-hand shot when one exists.",
       "blocks": [
-        "e16"
+        "e15"
       ],
       "owner": "Jack",
       "status": "open",
@@ -2173,7 +2126,7 @@
       "id": "oi11",
       "item": "Install lead time is split into LEAD_TIME_WEEKS_SCREENS and LEAD_TIME_WEEKS_AWNINGS. data/company-settings.json is loaded once for every product, so the single LEAD_TIME_WEEKS it replaced could never hold six-to-eight weeks for screens and a different figure for awnings at the same time. Awnings set 2026-08-08 (Jack): 5 to 7 weeks. Screens was already six to eight per the rebuild. Both keys are now SET.",
       "blocks": [
-        "e17",
+        "e16",
         "m_ezip_pricing_transition"
       ],
       "owner": "Jack",
@@ -2192,9 +2145,9 @@
     },
     {
       "id": "oi12",
-      "item": "Price-tier photos for e20 tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
+      "item": "Price-tier photos for e19 (renumbered from e20 2026-08-09) tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
       "blocks": [
-        "e20"
+        "e19"
       ],
       "owner": "Jack",
       "status": "open",
@@ -2213,12 +2166,12 @@
     },
     {
       "id": "oi15",
-      "item": "e15 sensor coverage: the deck bullet promised \"Sun and wind sensors available as add-ons\" while the v3 script never mentioned them — present mode was offering an accessory no rep had words for. RESOLVED 2026-08-09 (Jack): sensors are a real E-Zip add-on (confirmed by the pre-v3 blessed script from \"E-Zip Script (1).docx\" and the Eclipse Product Reference Guide), so the original line was restored verbatim to the e15 \"How you run it\" block and mirrored into PART3.md rather than new copy being written. STANDING RULE: sensors are ADD-ONS on the E-Zip — never carry over the Sunesta ruling where the wind sensor ships standard. STILL OPEN: no add-on price is documented, so a rep can't answer \"what do they cost?\" — supply a figure if one exists.",
+      "item": "e15 sensor coverage: the deck bullet promised \"Sun and wind sensors available as add-ons\" while the v3 script never mentioned them — present mode was offering an accessory no rep had words for. RESOLVED 2026-08-09 (Jack): sensors are a real E-Zip add-on (confirmed by the pre-v3 blessed script from \"E-Zip Script (1).docx\" and the Eclipse Product Reference Guide), so the original line was restored verbatim to the e15 \"How you run it\" block and mirrored into PART3.md rather than new copy being written. STANDING RULE: sensors are ADD-ONS on the E-Zip — never carry over the Sunesta ruling where the wind sensor ships standard. STILL OPEN: no add-on price is documented, so a rep can't answer \"what do they cost?\" — supply a figure if one exists. PRICE CONFIRMED 2026-08-09 (Jack): $425. Added to e15 block b3 script and display_beats.",
       "blocks": [
         "e15"
       ],
       "owner": "Jack",
-      "status": "open",
+      "status": "resolved",
       "priority": "low"
     }
   ]
