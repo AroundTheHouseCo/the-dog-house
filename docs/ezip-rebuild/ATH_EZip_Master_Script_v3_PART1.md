@@ -94,7 +94,7 @@ the highest-leverage single addition in the whole proposal.
 | Fabric naming | **UV blockage** — SunTex 80 / 90 / 95 / 97. "Openness factor" retired. |
 | Miami-Dade | Approval stated **without a scope claim** — Notice of Acceptance pending (`oi14`) |
 | 7-inch mounting | **Any mount** — surface or inside |
-| Same-week incentive | `{{SAME_WEEK_SAVINGS}}` variable, `status: NOT_SET` |
+| Same-week incentive | **5%** — `{{SAME_WEEK_SAVINGS}}` variable, set in `data/company-settings.json`. Week boundary still undefined (`oi02`). |
 | Glass sunroom | **$50,000 and up** |
 | Referral | **Post-install only** — never in the presentation |
 | Subcontractors | Never volunteered. Reactive answer only. |

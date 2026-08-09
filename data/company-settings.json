@@ -4,8 +4,8 @@
   "_shared_across_products": "This file is loaded once, not per product -- a key set here applies to EVERY product. Where a value genuinely differs by product, the answer is separate keys, not a per-product block: lead time was a single LEAD_TIME_WEEKS until the Eclipse rebuild established that screens run six to eight weeks while awnings run something else, which one shared key can never express. Hence the _SCREENS / _AWNINGS pair below.",
   "values": {
     "LEAD_TIME_WEEKS_SCREENS": "",
-    "LEAD_TIME_WEEKS_AWNINGS": "",
-    "SAME_WEEK_SAVINGS": "",
+    "LEAD_TIME_WEEKS_AWNINGS": "5 to 7",
+    "SAME_WEEK_SAVINGS": "5%",
     "PRICE_ONLINE_HANDYMAN": "",
     "PRICE_SUSPICION_THRESHOLD": "",
     "PRICE_PERGOLA_FLOOR": "",

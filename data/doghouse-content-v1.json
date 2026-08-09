@@ -104,8 +104,7 @@
       "type": "range",
       "source": "company_settings",
       "required": true,
-      "status": "NOT_SET",
-      "guidance": "Enter as a range only — the script supplies the word \"weeks\" around the token. Screens run their own figure under LEAD_TIME_WEEKS_SCREENS; the two shared one key until the Eclipse rebuild, which could never be right for both products at once."
+      "guidance": "5 to 7 weeks, set 2026-08-08 (Jack). Screens run their own figure under LEAD_TIME_WEEKS_SCREENS; the two shared one key until the Eclipse rebuild, which could never be right for both products at once."
     },
     {
       "key": "PRICE_ONLINE_HANDYMAN",
