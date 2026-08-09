@@ -435,11 +435,40 @@ function tcExportContent(){
 // reactive_scripts questions) via the same entryId + path scheme every
 // other resolved read in this file uses, rather than a second, divergent
 // traversal of the raw entry object.
+// Reference entries (ref_faq, ref_dodont, ref_close) are deliberately NOT in
+// tcWalk() — they're reached from their own hub cards, not the sequential
+// deck walk. But they hold a large share of what a rep actually needs to look
+// up under pressure: Eclipse's 16 FAQ/objection answers live entirely in
+// ref_faq, and its pricing module carries no reactive_scripts to backfill
+// them through (that's deliberate — see app.js's FAQ view, which concatenates
+// module + ref_faq and would otherwise double-render). The net effect was
+// that searching "hail" or "financing" on Eclipse returned nothing at all.
+//
+// So search runs over a corpus, not the walk: every walk node, plus the
+// reference entries, each tagged with where it lives so the caller can route
+// a hit correctly. Sunesta gains the same coverage — its ref_faq answers
+// weren't searchable either; they only appeared to be because its module
+// duplicates two of them.
+const TC_REF_VIEW = { ref_dodont: "dodont", ref_faq: "faq", ref_close: "close", ref_predemo: "recap" };
+function tcSearchCorpus(){
+  const a = tcActive();
+  if (!a) return [];
+  const nodes = tcWalk().map((n) => ({ ...n, inWalk: true }));
+  for (const [id, view] of Object.entries(TC_REF_VIEW)) {
+    const entry = a.byId[id];
+    // Skip anything already in the walk (a product could legitimately put a
+    // reference entry in prep_ids) so a hit can't be listed twice.
+    if (entry && !nodes.some((n) => n.id === id))
+      nodes.push({ kind: "reference", id, section: "Reference", entry, deckId: null, inWalk: false, refView: view });
+  }
+  return nodes;
+}
+
 function tcSearch(q){
   if (!tcReady() || !q || q.trim().length < 2) return [];
   const needle = q.trim().toLowerCase();
   const hits = [];
-  for (const node of tcWalk()) {
+  for (const node of tcSearchCorpus()) {
     const e = node.entry;
     const id = e.slide_id || e.module_id;
     const found = [];
@@ -453,10 +482,30 @@ function tcSearch(q){
         if ((line || "").toLowerCase().includes(needle)) found.push({ where:g.label || "Script", text:line });
       });
     });
+    // Questions AND answers. A rep searching "hail" is looking for the answer
+    // body, not a question that happens to contain the word — matching only
+    // questions made most of ref_faq invisible even once it was in the corpus.
     (e.reactive_scripts || []).forEach((r, ri) => {
       const question = tcFieldValue(id, `reactive_scripts.${ri}.question`);
-      if ((question || "").toLowerCase().includes(needle)) found.push({ where:"Q&A", text:question });
+      const qHit = (question || "").toLowerCase().includes(needle);
+      if (qHit) found.push({ where:"Q&A", text:question });
+      const answerKey = r.answer ? "answer" : r.script ? "script" : null;
+      if (answerKey) (r[answerKey] || []).forEach((_, li) => {
+        const line = tcFieldValue(id, `reactive_scripts.${ri}.${answerKey}.${li}`);
+        if ((line || "").toLowerCase().includes(needle))
+          // Label the hit with its question so the result is self-explaining.
+          found.push({ where: question ? `Q&A — ${question}` : "Q&A", text: line });
+      });
     });
+    // Do & Don't lists — short, high-recall lines a rep looks up by phrase.
+    const tn = e.training_notes || {};
+    for (const kind of ["do", "do_not"]) {
+      (tn[kind] || []).forEach((_, i) => {
+        const line = tcFieldValue(id, `training_notes.${kind}.${i}`);
+        if ((line || "").toLowerCase().includes(needle))
+          found.push({ where: kind === "do" ? "Do" : "Do not", text: line });
+      });
+    }
     if (found.length) hits.push({ node, matches:found });
   }
   return hits;

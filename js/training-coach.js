@@ -208,16 +208,29 @@ function tcvRenderWalk(root){
     const hits = tcSearch(tcv.q);
     resBox.innerHTML = !tcv.q.trim() ? "" : (hits.length
       ? `<div class="tcv-hits">${hits.map(h => {
+          // A reference hit (ref_faq etc.) isn't in the walk, so it can't be
+          // reached by moving tcv.i — it routes to its own hub page instead.
           const at = walk.findIndex(n => n.id === h.node.id);
-          return `<button class="tcv-hit" data-at="${at}" data-id="${tcEsc(h.node.id)}"
+          const isRef = h.node.inWalk === false && !!h.node.refView;
+          return `<button class="tcv-hit${isRef ? " is-ref" : ""}" data-at="${at}" data-id="${tcEsc(h.node.id)}"
+            ${isRef ? `data-refview="${tcEsc(h.node.refView)}"` : ""}
             data-script="${h.matches.some(x => x.where !== "Title")}">
-            <span class="tcv-hit-title">${tcEsc(h.node.entry.title)}</span>
+            <span class="tcv-hit-title">${tcEsc(h.node.entry.title)}${
+              isRef ? `<span class="tcv-hit-tag">Reference</span>` : ""}</span>
             <span class="tcv-hit-where">${tcEsc(h.node.section)} · ${tcEsc(h.matches[0].where)}</span>
             <span class="tcv-hit-text">${tcEsc(h.matches[0].text.slice(0, 110))}</span>
           </button>`;}).join("")}</div>`
       : `<div class="tcv-hits none">No matches.</div>`);
     resBox.querySelectorAll(".tcv-hit").forEach(b => {
       b.onclick = () => {
+        const refView = b.dataset.refview;
+        if (refView) {
+          // Leave the walk entirely and open the reference page the hit lives on.
+          tcv.q = ""; tcv.drawer = false;
+          centerView = refView;
+          renderCenter();
+          return;
+        }
         tcv.i = +b.dataset.at;
         if (b.dataset.script === "true") tcExpanded.add(b.dataset.id);
         tcv.q = ""; tcv.drawer = false;
