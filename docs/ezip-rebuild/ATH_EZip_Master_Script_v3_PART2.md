@@ -312,7 +312,7 @@ being run wrong.
 
 ### Block 2 — The Accomplish List confirmation
 
-> "For you, it sounds like the main things are…"
+> "For you, it sounds like the main things are… `{{ACCOMPLISH_LIST}}`"
 
 *(List their items. Their words, not yours. Not product names.)*
 

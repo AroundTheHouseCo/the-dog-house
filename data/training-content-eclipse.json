@@ -823,7 +823,7 @@
           "block_id": "b2",
           "label": "The Accomplish List confirmation",
           "script": [
-            "\"For you, it sounds like the main things are…\"",
+            "\"For you, it sounds like the main things are… {{ACCOMPLISH_LIST}}\"",
             "(List their items. Their words, not yours. Not product names.)",
             "\"Does that feel right? Did I miss anything?\"",
             "👉 Wait for confirmation. Do not skip this and do not rush it.",
@@ -856,6 +856,9 @@
         "why": "say their items back in their own words, then stop. The silence is productive — it's the moment the homeowner realizes this is about their house and not about a product."
       },
       "coaching_note": "This is where the presentation turns. Slides 1 through 9 were about us. From here on, every single feature you show has to answer something said on this slide.\n\nNew reps treat the Accomplish List callback as a formality and rush it. Don't. If the list feels thin, the frame question fixes it — ask what they like to do out here, listen, and add whatever comes loose before you move on.\n\nNever present a feature later that doesn't connect back to something said here. If it doesn't map to their list, it's a spec.",
+      "variables_used": [
+        "ACCOMPLISH_LIST"
+      ],
       "engagement_question": {
         "text": "What sort of things do you all like to do out here?",
         "branches": [
@@ -1632,7 +1635,7 @@
           "duration_sec": 20,
           "script": [
             "\"So that's the landscape. Nothing I'm about to show you should be a surprise.",
-            "And based on everything we talked about —\"",
+            "And based on everything we talked about — {{ACCOMPLISH_LIST}}\"",
             "(Name their Accomplish List items.)",
             "\"— I think you're going to like where this comes in.\"",
             "👉 Smile. Go straight into pricing. Do not pause for questions here."
@@ -1655,6 +1658,9 @@
         "why": "it's the most valuable sentence on the slide. Honest, slightly funny, and it inoculates against every competing bid they'll see for the next three weeks."
       },
       "coaching_note": "This slide exists so your number isn't the first piece of price information in the room. A homeowner with no reference point hears a price and reacts emotionally. A homeowner who just agreed that a quality screen runs four to twelve hears a price and evaluates it. Same number, completely different conversation.\n\nSay the ranges with total ease. Any hesitation or apology in your voice tells them the price is high before they've heard it. Sound like a guy explaining how the market works, not a guy softening a blow.\n\nThe humor lives at the bottom of the range, not the top. Cheap screens are funny. Expensive ones need to sound serious, because their job is making our number feel reasonable.\n\nDo not stop for questions at the end. The energy built here is what carries into the reveal. A pause lets it leak out and invites a pre-emptive objection before there's a number to object to.",
+      "variables_used": [
+        "ACCOMPLISH_LIST"
+      ],
       "callback_triggers": [
         "Price objection — come back and re-walk the four tiers",
         "\"We're getting another quote\"",
@@ -1964,7 +1970,7 @@
           "script": [
             "\"Are you all excited?\"",
             "(If rapport supports it: \"Should I do a drum roll?\")",
-            "\"So based on everything we talked about — and your goals of —\"",
+            "\"So based on everything we talked about — and your goals of {{ACCOMPLISH_LIST}} —\"",
             "(Repeat the Accomplish List. Their words.)",
             "\"— this is what I put together for you.",
             "These numbers include the complete system on [X] openings, custom built to your exact dimensions, Somfy motorization, the SunTex fabric in the color you picked, professional installation by our team, and the Platinum Protection Plus lifetime warranty.",

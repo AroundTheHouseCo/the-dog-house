@@ -416,7 +416,7 @@ slide the room should feel easier, not tighter.
 
 > "So that's the landscape. Nothing I'm about to show you should be a surprise.
 >
-> And based on everything we talked about —"
+> And based on everything we talked about — `{{ACCOMPLISH_LIST}}`"
 
 *(Name their Accomplish List items.)*
 
@@ -523,7 +523,7 @@ unattached to the outcome.
 
 *(If rapport supports it: "Should I do a drum roll?")*
 
-> "So based on everything we talked about — and your goals of —"
+> "So based on everything we talked about — and your goals of `{{ACCOMPLISH_LIST}}` —"
 
 *(Repeat the Accomplish List. Their words.)*
 
