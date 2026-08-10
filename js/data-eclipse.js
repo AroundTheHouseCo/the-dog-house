@@ -163,15 +163,19 @@ const ECLIPSE_DECK = {
              IMAGES.ezSunroom, IMAGES.ezWithAwning, IMAGES.ezArchedDeck, IMAGES.ezPartWayUp ]
   },
   {
-    // oi06 RESOLVED 2026-08-09 (Jack): use a generic map graphic rather than
-    // wait on Eclipse-specific install pins from Maxx. This USED to be
-    // type:"refmap", mirroring Sunesta's slide (s10) exactly and rendering the
-    // live interactive map -- but with no Eclipse pin data, that map fell back
-    // to showing real Sunesta customer locations labeled "combined ATH
-    // projects," and none of those are actual screen installs. type:"splitphoto"
-    // instead, same slide shape, with a plain non-data-driven map illustration
-    // (images/eclipse/refmap-generic.svg) that makes no specific-location claim.
-    id:"ez-refmap", type:"splitphoto", image: IMAGES.ezRefMapGeneric,
+    // oi06 RE-RESOLVED 2026-08-10 (Jack): back to type:"refmap", same
+    // data/reference-map.json Sunesta uses -- no Eclipse-specific pins needed.
+    // The 2026-08-09 switch to a generic graphic assumed the shipped dataset
+    // was Sunesta-only; verified against the actual CRM export before
+    // reverting: the 828-row source is tagged Record Type "Shades Retail"
+    // uniformly, and a same-family export with a Job (Product) Type column
+    // shows "Shades Retail" spans Sunesta Awning AND Eclipse Screen installs
+    // together (also Retractable Awning / Motorized Pergola) -- distinct from
+    // Gutter Helmet, which is a separate CRM pipeline entirely and was never
+    // in this dataset. image: kept as the fallback splitphoto renders if the
+    // dataset ever fails to load (refmapHasData() false) -- a real finished
+    // asset, not a "pending" placeholder, so the fallback stays honest either way.
+    id:"ez-refmap", type:"refmap", image: IMAGES.ezRefMapGeneric,
     title:"We've Worked in Your Neighborhood",
     subtext:"Projects completed all over the greater Colorado Springs area."
   }

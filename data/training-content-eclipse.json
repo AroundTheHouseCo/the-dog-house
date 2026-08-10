@@ -781,9 +781,14 @@
       },
       "flags": [
         {
-          "severity": "low",
-          "issue": "Map asset currently carries Sunesta install pins. Needs Eclipse projects layered in before this slide ships.",
-          "recommendation": "Tracked as oi06."
+          "severity": "resolved",
+          "issue": "Map asset was believed to carry Sunesta-only install pins.",
+          "recommendation": "RESOLVED 2026-08-10 (Jack): verified against the actual CRM export -- the 828-row source is tagged Record Type \"Shades Retail\" uniformly, and a same-family export with a Job (Product) Type column confirms \"Shades Retail\" spans Sunesta Awning AND Eclipse Screen jobs together. e09 switched back to type:\"refmap\", same data/reference-map.json Sunesta uses. See oi06."
+        },
+        {
+          "severity": "medium",
+          "issue": "Block 1 script names \"Falcon\" and \"Black Forest\" as towns worked in, but neither appears in the live 20-town pin dataset (data/reference-map.json) -- Colorado Springs, Monument, Pueblo, Castle Rock, Peyton, and 15 others, no Falcon or Black Forest. Surfaced now because e09 renders the real map for the first time as of this round; previously nothing checked the spoken town list against actual pins.",
+          "recommendation": "Flagging per the verbatim/blessed-script discipline rather than editing -- either confirm real completed jobs exist in those towns (and the CRM export just didn't capture/geocode them) or swap in two towns the map actually shows. New open item, not yet numbered."
         }
       ]
     },
@@ -2076,11 +2081,11 @@
     },
     {
       "id": "oi06",
-      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate. RESOLVED 2026-08-09 (Jack): use a generic map graphic rather than wait on Eclipse pins. e09 switched from the live refmap renderer to a plain splitphoto illustration (images/eclipse/refmap-generic.svg) that makes no specific-location claim.",
+      "item": "Reference map asset carries Sunesta pins only — needs Eclipse projects layered in. Until then e09 shows combined ATH projects, which is accurate. RESOLVED 2026-08-09 (Jack): use a generic map graphic rather than wait on Eclipse pins. e09 switched from the live refmap renderer to a plain splitphoto illustration (images/eclipse/refmap-generic.svg) that makes no specific-location claim. RE-RESOLVED 2026-08-10 (Jack): the generic-graphic call assumed the shipped dataset was Sunesta-only. Verified against the actual CRM export before reverting -- the 828-row source used to build data/reference-map.json is uniformly tagged Record Type \"Shades Retail\", and a same-family export with an explicit Job (Product) Type column shows \"Shades Retail\" spans Sunesta Awning Install AND Eclipse Screen Install together (also Retractable Awning, Motorized Pergola) -- distinct from Gutter Helmet, a separate CRM pipeline never in this data. No product-filtering exists anywhere in tools/build-reference-map.mjs or the source export, so the 209 shipped pins were never filterable by product to begin with. e09 switched back to type:\"refmap\", pointed at the same file Sunesta uses -- no Eclipse-specific dataset needed. owner reassigned off Maxx; nothing left for him to produce here.",
       "blocks": [
         "e09"
       ],
-      "owner": "Maxx",
+      "owner": "Jack",
       "status": "resolved",
       "priority": "low"
     },
@@ -2173,6 +2178,16 @@
       "owner": "Jack",
       "status": "resolved",
       "priority": "low"
+    },
+    {
+      "id": "oi16",
+      "item": "e09 Block 1 script names \"Falcon\" and \"Black Forest\" as towns worked in, but neither appears in the live 20-town pin dataset (data/reference-map.json) -- Colorado Springs, Monument, Pueblo, Castle Rock, Peyton, Widefield, Fountain, Littleton, Penrose, Arvada, Avondale, Canon City, Denver, Elbert, Highlands Ranch, Larkspur, Manitou Springs, Parker, Westminster, Woodland Park, no Falcon or Black Forest. Surfaced 2026-08-10 when e09 switched to the live refmap render for the first time (oi06) -- previously nothing checked the spoken town list against actual pins, since no real map was on screen to contradict it. Either confirm real completed jobs exist in those towns and the CRM export simply did not capture/geocode them, or swap in two towns the map actually shows.",
+      "blocks": [
+        "e09"
+      ],
+      "owner": "Jack",
+      "status": "open",
+      "priority": "medium"
     }
   ]
 }
