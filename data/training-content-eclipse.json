@@ -754,7 +754,7 @@
           "block_id": "b1",
           "label": null,
           "script": [
-            "\"We've completed projects all over the greater Colorado Springs area — Monument, Falcon, Black Forest, the Springs, out toward Peyton.",
+            "\"We've completed projects all over the greater Colorado Springs area — Monument, Widefield, Fountain, the Springs, out toward Peyton.",
             "Every home is a little different, but at this point we've worked through just about every scenario there is.\"",
             "(Show the map. Then stop talking for five or six seconds.)"
           ],
@@ -786,9 +786,9 @@
           "recommendation": "RESOLVED 2026-08-10 (Jack): verified against the actual CRM export -- the 828-row source is tagged Record Type \"Shades Retail\" uniformly, and a same-family export with a Job (Product) Type column confirms \"Shades Retail\" spans Sunesta Awning AND Eclipse Screen jobs together. e09 switched back to type:\"refmap\", same data/reference-map.json Sunesta uses. See oi06."
         },
         {
-          "severity": "medium",
+          "severity": "resolved",
           "issue": "Block 1 script names \"Falcon\" and \"Black Forest\" as towns worked in, but neither appears in the live 20-town pin dataset (data/reference-map.json) -- Colorado Springs, Monument, Pueblo, Castle Rock, Peyton, and 15 others, no Falcon or Black Forest. Surfaced now because e09 renders the real map for the first time as of this round; previously nothing checked the spoken town list against actual pins.",
-          "recommendation": "Flagging per the verbatim/blessed-script discipline rather than editing -- either confirm real completed jobs exist in those towns (and the CRM export just didn't capture/geocode them) or swap in two towns the map actually shows. New open item, not yet numbered."
+          "recommendation": "RESOLVED 2026-08-10 (Jack): swapped to Widefield and Fountain, both real towns in the live pin dataset (3 and 2 pins respectively) and both Pikes Peak region, consistent with the rest of the line (Monument, the Springs, Peyton). See oi16."
         }
       ]
     },
@@ -2181,12 +2181,12 @@
     },
     {
       "id": "oi16",
-      "item": "e09 Block 1 script names \"Falcon\" and \"Black Forest\" as towns worked in, but neither appears in the live 20-town pin dataset (data/reference-map.json) -- Colorado Springs, Monument, Pueblo, Castle Rock, Peyton, Widefield, Fountain, Littleton, Penrose, Arvada, Avondale, Canon City, Denver, Elbert, Highlands Ranch, Larkspur, Manitou Springs, Parker, Westminster, Woodland Park, no Falcon or Black Forest. Surfaced 2026-08-10 when e09 switched to the live refmap render for the first time (oi06) -- previously nothing checked the spoken town list against actual pins, since no real map was on screen to contradict it. Either confirm real completed jobs exist in those towns and the CRM export simply did not capture/geocode them, or swap in two towns the map actually shows.",
+      "item": "e09 Block 1 script names \"Falcon\" and \"Black Forest\" as towns worked in, but neither appears in the live 20-town pin dataset (data/reference-map.json) -- Colorado Springs, Monument, Pueblo, Castle Rock, Peyton, Widefield, Fountain, Littleton, Penrose, Arvada, Avondale, Canon City, Denver, Elbert, Highlands Ranch, Larkspur, Manitou Springs, Parker, Westminster, Woodland Park, no Falcon or Black Forest. Surfaced 2026-08-10 when e09 switched to the live refmap render for the first time (oi06) -- previously nothing checked the spoken town list against actual pins, since no real map was on screen to contradict it. Either confirm real completed jobs exist in those towns and the CRM export simply did not capture/geocode them, or swap in two towns the map actually shows. RESOLVED 2026-08-10 (Jack): went with the swap -- Falcon/Black Forest replaced with Widefield (3 pins) and Fountain (2 pins), both real towns in the live dataset and geographically consistent with the rest of the line (Monument, the Springs, Peyton, all Pikes Peak region). Edited in data/training-content-eclipse.json b1 script and mirrored into ATH_EZip_Master_Script_v3_PART2.md.",
       "blocks": [
         "e09"
       ],
       "owner": "Jack",
-      "status": "open",
+      "status": "resolved",
       "priority": "medium"
     }
   ]
