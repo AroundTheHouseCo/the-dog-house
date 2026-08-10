@@ -616,7 +616,10 @@ function renderSlide(){
   // product-lineup slide, which keeps its plain grid untouched.
   if(s.type==="costscale"){
     const panel = document.createElement("div");
-    panel.className="costscale-panel";
+    // s.bigThumbs opts a deck into the doubled-circle treatment; the renderer
+    // and its CSS are shared with Sunesta's own costscale slide, which keeps
+    // the original 68px circles.
+    panel.className="costscale-panel"+(s.bigThumbs?" cs-big":"");
     // Even spacing across the track — the "not at either end" read comes from
     // position, not styling. Computed from the rung count rather than a fixed
     // list so a 4-tier scale doesn't leave a gap at the right; for the 5-rung
@@ -648,7 +651,9 @@ function renderSlide(){
     if(openHotspot!==null && s.rungs[openHotspot]){
       const r = s.rungs[openHotspot];
       const pop = document.createElement("div");
-      pop.className="popover";
+      // .popover-card is shared by every popover in both decks, so the matching
+      // scale-up rides the same s.bigThumbs opt-in rather than a bare class.
+      pop.className="popover"+(s.bigThumbs?" cs-pop-big":"");
       pop.style.zIndex=20;
       pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
         ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}

@@ -1501,6 +1501,16 @@
   /* exactly 4 cards (e.g. Eclipse's product lineup) — clean 2x2 instead of
      the default 3-column grid's 3-then-1 wrap */
   .products-cards.grid-2x2{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);}
+  /* Squarer product photos (Jack, 2026-08-10). .pcard-photo's HEIGHT is pinned
+     by the row (740px slide-area ceiling minus head/body leaves 203px), so the
+     only route to a less-letterboxed ratio is a narrower card. Constraining the
+     CARD rather than pillarboxing the photo inside a full-width one keeps the
+     photo full-bleed and the body text aligned to its edge — the freed space
+     lands between tiles, reading as grid gutter instead of empty card. 280px
+     puts the photo at ~1.37:1 (was 2.80:1); 260px starts wrapping the sublabel,
+     which steals the height back. Scoped to .grid-2x2 (the exactly-4-cards
+     case) so Sunesta's 3-card "Our Products" slide is untouched. */
+  .products-cards.grid-2x2 .pcard{max-width:280px;margin:0 auto;}
   .pcard{
     position:relative;z-index:6;
     background:#fff;border:1px solid #e7e4da;border-radius:12px;
@@ -1609,6 +1619,30 @@
     border-left:6px solid transparent;border-right:6px solid transparent;
     border-top:6px solid var(--orange);
   }
+
+  /* Doubled tier circles (Jack, 2026-08-10) — opt-in via s.bigThumbs so
+     Sunesta's own 5-rung costscale slide keeps its original 68px circles.
+     Node width grows with them so the wider circle never crowds its label,
+     and the track's own margins absorb the extra width at 4 rungs. */
+  .cs-big .cs-thumb{
+    width:136px;height:136px;
+    border-width:6px;
+    box-shadow:0 5px 18px rgba(0,0,0,.30);
+  }
+  .cs-big .cs-thumb-empty{
+    background:repeating-linear-gradient(45deg,#e9e6df,#e9e6df 10px,#dedad0 10px,#dedad0 20px);
+  }
+  .cs-big .cs-node{width:216px;}
+  .cs-big .cs-dollars{font-size:15px;margin-bottom:10px;}
+  .cs-big .cs-label{margin-top:12px;font-size:13.5px;}
+  .cs-big .cs-node-ath .cs-thumb{box-shadow:0 5px 20px rgba(245,166,35,.58);}
+
+  /* The same popover, proportionally larger — structure and content unchanged. */
+  .cs-pop-big .popover-card{max-width:580px;padding:80px 34px 34px;}
+  .cs-pop-big .popover-card h3{font-size:25px;margin:0 0 11px;}
+  .cs-pop-big .popover-card p{font-size:17px;line-height:1.55;}
+  .cs-pop-big .reason-pop-img{max-height:290px;border-radius:10px;margin-bottom:16px;}
+  .cs-pop-big .popover-close{top:18px;right:18px;}
 
   /* ===== Home screen ===== */
   .home-screen{

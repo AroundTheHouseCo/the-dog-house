@@ -428,6 +428,7 @@ const ECLIPSE_DECK = {
     // Tier 1 photo credit (CC via Openverse/Flickr): "First Shot, New Lens"
     // by tdlucas5000 (CC BY 2.0) — shared with Sunesta's price-conditioning slide.
     id:"ez-pricecond", type:"costscale",
+    bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-10)
     eyebrow:"Know the market — position, don't surprise",
     title:"Not All Shade Costs the Same",
     paragraph:"Four tiers of outdoor shade, from a bamboo roll-up to a full glass room. Tap any tier to see what that money actually buys.",
