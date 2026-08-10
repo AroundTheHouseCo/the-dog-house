@@ -72,12 +72,19 @@ const ECLIPSE_DECK = {
     rows:[
       {photo: IMAGES.prodScreenPhoto, logo: IMAGES.ezLogoEclipse, label:"Eclipse® E-Zip Screens", sublabel:"Today's focus — motorized zipper-track screens",
        detail:"Motorized exterior screens with zipper retention — sun, wind, bug, and privacy control for patios, decks, and porches. Custom made to your exact opening."},
+      // Item 3 (Jack, 2026-08-10), option 3: object-position:top so the
+      // symmetric object-fit:cover crop doesn't eat into the roofline/canopy
+      // -- these two photos put their subject in the upper portion of frame
+      // with excess patio/lawn below, unlike the other two rows (subject
+      // spans the frame evenly, left at the object-fit default).
       {photo: IMAGES.triSunestaAwning, logo: IMAGES.sunestaLogo, label:"Sunesta® Retractable Awnings", sublabel:"Overhead shade on demand",
-       detail:"Custom retractable awnings — shade over the whole space when you want it, sun when you don't. Pairs beautifully with E-Zip screens."},
+       detail:"Custom retractable awnings — shade over the whole space when you want it, sun when you don't. Pairs beautifully with E-Zip screens.",
+       photoPosition:"top"},
       {photo: IMAGES.prodGutterPhoto, logo: IMAGES.logoGutterhelmet, label:"Gutter Helmet®", sublabel:"Never clean your gutters again",
        detail:"Gutter protection and seamless gutters — the other side of what we do around the house."},
       {photo: IMAGES.prodLouverPhoto, logo: IMAGES.ezLogoEclipse, label:"Eclipse® Latitude™ Louvered Roofs", sublabel:"A true outdoor room",
-       detail:"Motorized louvered roof systems — overhead coverage that opens and closes. Many customers pair a louvered roof with E-Zip screens on the sides."}
+       detail:"Motorized louvered roof systems — overhead coverage that opens and closes. Many customers pair a louvered roof with E-Zip screens on the sides.",
+       photoPosition:"top"}
     ]
   },
   {

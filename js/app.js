@@ -569,7 +569,7 @@ function renderSlide(){
     const cardsHTML = s.rows.map((r,i)=>`
       <div class="pcard" data-i="${i}">
         <div class="pcard-photo">
-          <img src="${r.photo}" alt="">
+          <img src="${r.photo}" alt=""${r.photoPosition?` style="object-position:${r.photoPosition}"`:""}>
           ${r.icon?`<div class="pcard-icon"><img src="${r.icon}"></div>`:""}
           ${r.num?`<div class="pcard-num">${r.num}</div>`:""}
         </div>
