@@ -35,7 +35,7 @@ const ECLIPSE_DECK = {
     // bigSubtext scopes the CSS bump to ez-intro so e20/smarttitle/led (the
     // other herosplit slides, shared .hero-subtext class) are unaffected.
     bigSubtext: true,
-    subtext:"Control the sun. Beat the wind. Love your outdoor space.<br><br>Every screen is custom made for your opening — nothing off the shelf here.",
+    subtext:"Control the sun. Beat the wind. Love your outdoor space.",
     image: IMAGES.ezHeroDusk,
     // Source photo has a slight camera-roll tilt (horizon + deck railing both
     // lean up-right) — leveled here with a small CSS rotation rather than a
@@ -47,13 +47,21 @@ const ECLIPSE_DECK = {
     // Retitled per the e02 content flag (Jack, 2026-08-07): the slide's content
     // is entirely ATH — the script never mentions Eclipse, which gets its own
     // moment at ez-eclipse/e06.
+    // Item 6 (Jack, 2026-08-10): consolidated to highlight fragments per his
+    // draft, with a line-3 edit ("not three states away" restored) -- was
+    // "Founded in 2004 — over 20 years, family-owned, based in Monument" /
+    // "Thousands of installations across the Front Range" / "You call us, you
+    // get us — not a call center, not someone three states away" / "Same
+    // trained install team as our awning division" / "Eclipse: a nationally
+    // recognized screen brand, backed by a local company that stands behind
+    // every install".
     title:"Who We Are — Local & Family-Owned",
     bullets:[
-      "Founded in 2004 — over 20 years, family-owned, based in Monument",
-      "Thousands of installations across the Front Range",
-      "You call us, you get us — not a call center, not someone three states away",
-      "Same trained install team as our awning division",
-      "Eclipse: a nationally recognized screen brand, backed by a local company that stands behind every install"
+      "Founded 2004 · Family-owned · Monument, CO",
+      "Thousands of installs, Front Range",
+      "You call us — not a call center, not three states away",
+      "Same crew as our awning division",
+      "Local company, nationally recognized brand"
     ],
     image: IMAGES.dealerFamily
   },
