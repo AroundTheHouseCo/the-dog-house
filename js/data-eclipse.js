@@ -418,9 +418,13 @@ const ECLIPSE_DECK = {
     // NEW (spec §3.7). Shape mirrors Sunesta's costscale slide (s22). Dollar
     // ranges live in each rung's popover detail, not on the face of the slide —
     // the track itself shows relative position via the $ marks, same as Sunesta.
-    // Tiers 2 and 4 have no honest photo yet (the Sunesta tier images are awning
-    // shots, wrong product) — tracked as an open item; the renderer omits the
-    // thumb when a rung has no photo.
+    // oi12 RESOLVED 2026-08-10 (Jack): tiers 2 and 4 photos supplied directly
+    // (a low-end/broken zipper shade; a glassed-in porch) rather than reusing
+    // Sunesta's awning-shot tier images, which would have shown the wrong
+    // product. Both are small source files (194x259 / 780x421) -- fine for the
+    // 68px .cs-thumb circle; the popover's .reason-pop-img (max-height:190px,
+    // object-fit:contain) will letterbox tier 2's portrait crop rather than
+    // fill the width, which is expected given the source, not a bug.
     // Tier 1 photo credit (CC via Openverse/Flickr): "First Shot, New Lens"
     // by tdlucas5000 (CC BY 2.0) — shared with Sunesta's price-conditioning slide.
     id:"ez-pricecond", type:"costscale",
@@ -430,11 +434,11 @@ const ECLIPSE_DECK = {
     rungs:[
       {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"DIY & temporary",
        detail:"$500 – $1,000. Bamboo roll-ups, shade sails, outdoor curtains. Fine for a season — no engineering, no wind rating, no warranty to speak of."},
-      {n:2, label:"Low-end installed",
+      {n:2, photo:IMAGES.ezPcTier2, popPhoto:IMAGES.ezPcTier2, label:"Low-end installed",
        detail:"$1,000 – $3,000 per opening. Usually manual, no zipper track, and a one-year warranty on components. This is the tier where the screen flaps in the wind and fails early."},
       {n:3, photo:IMAGES.ezMonDown, popPhoto:IMAGES.ezMonDown, label:"Quality motorized — where we live", athMarker:true,
        detail:"$4,000 – $12,000. Zipper retention, name-brand Phifer fabric, a real lifetime warranty through PPP, and professional installation by the team that stands behind it."},
-      {n:4, label:"Hurricane-rated & glass rooms",
+      {n:4, photo:IMAGES.ezPcTier4, popPhoto:IMAGES.ezPcTier4, label:"Hurricane-rated & glass rooms",
        detail:"$20,000 – $100,000+. MagnaTrack-class storm systems and full glass sunrooms. Excellent engineering — built for a different problem, at a very different budget."}
     ]
   },

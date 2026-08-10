@@ -2145,12 +2145,12 @@
     },
     {
       "id": "oi12",
-      "item": "Price-tier photos for e19 (renumbered from e20 2026-08-09) tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb.",
+      "item": "Price-tier photos for e19 (renumbered from e20 2026-08-09) tiers 2 (low-end installed) and 4 (hurricane-rated & glass rooms). Sunesta's tier images are awning shots, so reusing them would show the wrong product; both rungs currently render a pending thumb. RESOLVED 2026-08-10 (Jack): both photos supplied directly (low-end/broken zipper shade for tier 2, glassed-in porch for tier 4) and wired into ez-pricecond rungs n:2/n:4 in js/data-eclipse.js.",
       "blocks": [
         "e19"
       ],
       "owner": "Jack",
-      "status": "open",
+      "status": "resolved",
       "priority": "low"
     },
     {
