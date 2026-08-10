@@ -531,6 +531,7 @@ function renderSlide(){
       </div>`).join("");
     panel.innerHTML = `
       <div class="cred-left">
+        ${s.headerLogo?`<img class="cred-header-logo" src="${s.headerLogo}">`:""}
         <h2>${s.title}</h2>
         <p>${s.paragraph}</p>
       </div>
@@ -820,7 +821,7 @@ function renderSlide(){
         <div class="hero-photo"><img src="${s.image}"${s.imageRotate?` style="transform:rotate(${s.imageRotate}deg) scale(${s.imageScale||1.06})"`:""}><div class="hero-fade"></div></div>
         <div class="hero-text">
           <h2>${s.title}</h2>
-          ${s.subtext?`<div class="hero-subtext">${s.subtext}</div>`:""}
+          ${s.subtext?`<div class="hero-subtext${s.bigSubtext?" lg":""}">${s.subtext}</div>`:""}
         </div>
       </div>
       ${footerBannerHTML(s.title)}

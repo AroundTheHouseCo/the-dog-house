@@ -28,7 +28,7 @@ brochure.
 > "So that's us. Let me tell you who actually builds the product.
 >
 > Eclipse Shading Systems is out of Middletown, New York, with additional manufacturing down in
-> Statesville, North Carolina. They've been building the E-Zip side-retention system since 2013,
+> Statesville, North Carolina. They've been building the E-Zip side-retention system since 2002,
 > and the larger seven-inch line since 2019.
 >
 > Everything is custom made in the USA, built to the inch for your specific opening. There's
@@ -53,7 +53,7 @@ brochure.
 
 **Display beats:**
 - Middletown NY, manufacturing in Statesville NC
-- E-Zip since 2013 · 7-inch since 2019
+- E-Zip since 2002 · 7-inch since 2019
 - Custom made in the USA, built to the inch
 - You're trusting two companies — installer and manufacturer
 - Cheap systems = parts from four suppliers, nobody owns it
@@ -90,7 +90,7 @@ homeowner has personally watched happen in their own backyard.
 
 > "A few things worth knowing about what you're actually getting.
 >
-> Eclipse has been building this exact system since 2013 — residential and commercial, all over
+> Eclipse has been building this exact system since 2002 — residential and commercial, all over
 > the country. It's a refined product at this point, not a first attempt. One consistent product
 > family, custom made to the inch."
 
@@ -131,7 +131,7 @@ homeowner has personally watched happen in their own backyard.
 **Transition out:** "Let me show you some of these in the wild."
 
 **Display beats:**
-- E-Zip since 2013 — refined, not a first attempt
+- E-Zip since 2002 — refined, not a first attempt
 - Somfy motor STANDARD — the part that has to work 10,000 times
 - Phifer SunTex, GREENGUARD Gold — plus Phifer's own 10-year fabric warranty
 - Class 6, 80 MPH, Miami-Dade approval

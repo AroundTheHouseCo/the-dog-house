@@ -168,7 +168,7 @@ title:   Eclipse® Authorized Dealer
 image:   [ASSET NEEDED — see §7]
 bullets:
   - Eclipse Shading Systems — Middletown, New York, with manufacturing in Statesville, North Carolina
-  - Building the E-Zip since 2013 · the 7-inch line since 2019
+  - Building the E-Zip since 2002 · the 7-inch line since 2019
   - Custom made in the USA, built to the inch for every opening
   - ATH is a licensed and insured Eclipse authorized dealer
   - Two companies behind your project — not a system assembled from four suppliers

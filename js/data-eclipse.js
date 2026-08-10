@@ -31,6 +31,10 @@ const ECLIPSE_DECK = {
   {
     id:"ez-intro", type:"herosplit",
     title:"Eclipse® E-Zip Motorized Screens",
+    // Item 1 (Jack, 2026-08-10): bump subtext size on this cover slide only --
+    // bigSubtext scopes the CSS bump to ez-intro so e20/smarttitle/led (the
+    // other herosplit slides, shared .hero-subtext class) are unaffected.
+    bigSubtext: true,
     subtext:"Control the sun. Beat the wind. Love your outdoor space.<br><br>Every screen is custom made for your opening — nothing off the shelf here.",
     image: IMAGES.ezHeroDusk,
     // Source photo has a slight camera-roll tilt (horizon + deck railing both
@@ -75,12 +79,10 @@ const ECLIPSE_DECK = {
     image: IMAGES.ezRecessedStone
   },
   {
-    // NEW (spec §3.1). Labelled placeholder until a real team / install-crew
-    // photo exists (oi13). The obvious candidate -- the group shot on p2 of the
-    // Eclipse slide PDF -- is a SUNESTA dealer-awards ceremony at a costume
-    // party, so it would put another manufacturer's branding across the Eclipse
-    // deck and undercut a slide about certified crews. arched-deck.jpg, which
-    // stood in here, moved to the gallery where a real local install belongs.
+    // oi13 RESOLVED 2026-08-10 (Jack): real install-crew photo supplied --
+    // installer mid-job on a porch, ladders and tools in frame. Replaces the
+    // labeled placeholder; two prior searches (the Eclipse PDF's p2 group shot,
+    // then the full 18-photo screens library) had turned up nothing usable.
     id:"ez-people", type:"splittext",
     title:"Our People — Who Actually Shows Up",
     bullets:[
@@ -89,7 +91,7 @@ const ECLIPSE_DECK = {
       "Trained to Eclipse specification — and to our standards on top of that",
       "A full operations team on every project, so nothing depends on one person remembering"
     ],
-    image: IMAGES.ezPeoplePlaceholder
+    image: IMAGES.ezPeopleInstalling
   }
 ],
 
@@ -106,7 +108,7 @@ const ECLIPSE_DECK = {
     title:"Eclipse® Authorized Dealer",
     bullets:[
       "Eclipse Shading Systems — Middletown, New York, with manufacturing in Statesville, North Carolina",
-      "Building the E-Zip since 2013 · the 7-inch line since 2019",
+      "Building the E-Zip since 2002 · the 7-inch line since 2019",
       "Custom made in the USA, built to the inch for every opening",
       "ATH is a licensed and insured Eclipse authorized dealer",
       "Two companies behind your project — not a system assembled from four suppliers"
@@ -114,15 +116,20 @@ const ECLIPSE_DECK = {
     image: IMAGES.dealerFamily
   },
   {
+    // Item 5 (Jack, 2026-08-10), specified against an annotated screenshot:
+    // the old Row 1 (Eclipse logo/"Building the E-Zip since 2013"/Middletown
+    // sublabel) is gone -- its logo promoted to a standalone headerLogo above
+    // the headline, its "Middletown, New York since [date]" fact was already
+    // fully covered by the paragraph below (no new clause needed there, just
+    // the 2002 correction). 3 rows remain: Somfy, Phifer, Class 6.
     id:"ez-credibility", type:"credibility",
+    headerLogo: IMAGES.ezLogoEclipse,
     title:"Why Eclipse",
-    paragraph:"Eclipse Shading Systems has manufactured the E-Zip in Middletown, New York since 2013 — residential and commercial applications across the country. A proven, refined product line — not something pieced together from multiple sources.",
+    paragraph:"Eclipse Shading Systems has manufactured the E-Zip in Middletown, New York since 2002 — residential and commercial applications across the country. A proven, refined product line — not something pieced together from multiple sources.",
     rows:[
-      {icon: IMAGES.ezLogoEclipse, label:"Building the E-Zip since 2013", sublabel:"Manufactured in Middletown, New York",
-       detail:"Eclipse has manufactured the E-Zip side-retention system since 2013, and the largest 7-inch line since 2019. One consistent product family, custom made to the inch for every opening."},
       {icon: IMAGES.ezLogoSomfy, label:"Powered by Somfy", sublabel:"The industry's gold-standard motors",
        detail:"Somfy motors come standard — the same brand used in premium motorized systems around the world. Handheld remote, wireless wall switch, or app control, with home-automation integration available."},
-      {label:"Phifer SunTex® fabrics", sublabel:"GREENGUARD Gold certified",
+      {icon: IMAGES.ezLogoPhifer, label:"Phifer SunTex® fabrics", sublabel:"GREENGUARD Gold certified",
        detail:"Phifer is one of the most respected shading-fabric manufacturers in the world. SunTex is GREENGUARD Gold certified and built specifically for exterior applications — and it carries its own 10-year exterior fabric warranty from Phifer."},
       {icon: IMAGES.ezBadgeClass6Wind, label:"Class 6 wind resistance", sublabel:"Tested to 80 mph — 4\" & 5\" systems",
        detail:"The zipper retention locks the fabric edge into the side track, so the screen stays flat and taut instead of billowing and flapping like a generic roll-down screen."}
@@ -261,7 +268,7 @@ const ECLIPSE_DECK = {
           // FABRIC test result and must never appear in this table (oi01).
           {label:"Wind rating", cells:[["check","Class 6 · 80 mph"],["check","Class 6 · 80 mph"],["check","Class 6 · Super Duty"]]},
           {label:"Cassette", cells:[["check","2-pc extruded alum."],["check","2-pc extruded alum."],["check","2-pc extruded alum."]]},
-          {label:"In production since", cells:[["check","2013"],["check","2013"],["check","2019"]]}
+          {label:"In production since", cells:[["check","2002"],["check","2002"],["check","2019"]]}
         ]}
       ]
     },
@@ -351,7 +358,7 @@ const ECLIPSE_DECK = {
     ],
     nodes:[
       {id:"ath", kind:"logo-ath", title:"Around The House", detail:"Your local team — design, install, and warranty service all handled right here in Monument. When you need service, you call us, not a national 800 number.", photo:IMAGES.dealerFamily},
-      {id:"eclipse", kind:"logo", logo:IMAGES.ezLogoEclipse, title:"Eclipse", detail:"The manufacturer — Eclipse Shading Systems has built the E-Zip since 2013. Platinum Protection Plus is the coverage that takes the frame, fabric, motor, and electronics to lifetime.", photo:null},
+      {id:"eclipse", kind:"logo", logo:IMAGES.ezLogoEclipse, title:"Eclipse", detail:"The manufacturer — Eclipse Shading Systems has built the E-Zip since 2002. Platinum Protection Plus is the coverage that takes the frame, fabric, motor, and electronics to lifetime.", photo:null},
       {id:"phifer", kind:"text", title:"Phifer", detail:"The fabric maker. Phifer's SunTex carries its own 10-year exterior fabric warranty and GREENGUARD Gold certification — the foundation under the PPP fabric coverage.", photo:null}
     ],
     serviceBadge: IMAGES.ezServiceBadge,

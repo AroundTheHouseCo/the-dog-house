@@ -83,6 +83,8 @@ const IMAGES = {
   ezArchedDeck: "images/eclipse/arched-deck.jpg",
   ezMylinkPhone: "images/eclipse/mylink-phone.jpg",
   ezRefMapGeneric: "images/eclipse/refmap-generic.svg",
+  ezPeopleInstalling: "images/eclipse/people-installing.jpg",
+  ezLogoPhifer: "images/eclipse/logo-phifer.jpg",
   // Before/After/Inside — one project, three views. Cropped from slide 11 of
   // "Eclipse E-Zip Sales Presentation Slides (4).pdf" (the current variant —
   // the one whose OUR PROCESS slide carries four steps ending in Shade Service).

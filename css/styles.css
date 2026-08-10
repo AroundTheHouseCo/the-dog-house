@@ -926,6 +926,12 @@
     border-left:3px solid var(--orange);
     padding-left:12px;
   }
+  /* cover-slide-only bump (item 1, 2026-08-10) -- opt-in via s.bigSubtext so
+     the other herosplit slides (e20, Sunesta's smarttitle/led) are untouched */
+  .hero-subtext.lg{
+    font-size:18px;
+    line-height:1.45;
+  }
   .hero-panel .footer-banner .footer-title{color:var(--green-bright);}
 
   .difference-panel{
@@ -991,6 +997,7 @@
     flex:0 0 38%;
     padding:0 40px;
   }
+  .cred-header-logo{display:block;max-width:240px;max-height:80px;object-fit:contain;margin:0 0 18px;}
   .cred-left h2{font-size:34px;line-height:1.15;margin:0 0 14px;color:var(--charcoal);}
   .cred-left p{font-size:15px;line-height:1.55;color:#555;margin:0;max-width:380px;}
   .cred-chevron{
