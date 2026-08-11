@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-08-10.7";
+const TIER1_VERSION = "2026-08-10.8";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -107,6 +107,13 @@ const TIER1_URLS = [
   "images/icon-180.png",
   "images/icon-192.png",
   "images/icon-512.png",
+  // apple-touch-startup-image (index.html <head>) -- iOS splash for the two
+  // iPad Pro screen classes, portrait + landscape. Referenced by index.html
+  // but not otherwise fetched by any JS, so it needed its own explicit entry.
+  "images/splash-1668x2388.jpg",
+  "images/splash-2388x1668.jpg",
+  "images/splash-2048x2732.jpg",
+  "images/splash-2732x2048.jpg",
   "images/dealer-family.jpg",
   "images/training-photo.jpg",
   "images/training-cert.jpg",
