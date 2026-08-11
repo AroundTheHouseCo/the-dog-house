@@ -311,7 +311,13 @@ const ECLIPSE_DECK = {
       "Want full blackout instead? A solid fabric gives total shade and privacy for extreme exposures",
       "6 colors on SunTex 80/90, 10 on SunTex 95/97 — near-black to white"
     ],
-    image: IMAGES.ezMonOutside
+    image: IMAGES.ezMonOutside,
+    // Same in-app doc viewer Sunesta's s15 uses for its fabric book, so the
+    // rep never leaves the deck to answer a color/spec question. Pages are
+    // the two in-repo Phifer PDFs (docs/suntex-*-samples.pdf, 4pp each)
+    // rasterized at 1485px wide -- see images/ezip-fabric-pages/.
+    docViewer:{title:"SunTex® by Phifer — Fabric Samples & Specs", tapLabel:"Tap to browse the fabric book",
+      pages:["images/ezip-fabric-pages/suntex-95-97-01.jpg","images/ezip-fabric-pages/suntex-95-97-02.jpg","images/ezip-fabric-pages/suntex-95-97-03.jpg","images/ezip-fabric-pages/suntex-95-97-04.jpg","images/ezip-fabric-pages/suntex-80-90-01.jpg","images/ezip-fabric-pages/suntex-80-90-02.jpg","images/ezip-fabric-pages/suntex-80-90-03.jpg","images/ezip-fabric-pages/suntex-80-90-04.jpg"]}
   },
   {
     // NEW (spec §3.4). Three views of ONE project, cropped from slide 11 of the
@@ -472,7 +478,13 @@ PRODUCT_DATA.eclipse = {
   photoCats: ["screens"],
   docs: [
     {name:"SunTex 80 / 90 — Fabric Samples & Specs (Phifer)", file:"docs/suntex-80-90-samples.pdf", kind:"pdf"},
-    {name:"SunTex 95 / 97 — Fabric Samples & Specs (Phifer)", file:"docs/suntex-95-97-samples.pdf", kind:"pdf"}
+    {name:"SunTex 95 / 97 — Fabric Samples & Specs (Phifer)", file:"docs/suntex-95-97-samples.pdf", kind:"pdf"},
+    // Platinum Protection Plus certificate + full warranty terms (Eclipse
+    // v.6.23, 3pp). This is the source document behind the e17 warranty
+    // ruling -- see the warranty fork in the Eclipse source notes. NOTE:
+    // OneDrive holds a possibly-newer Aug-2024 copy that is cloud-only and
+    // could not be read from here; re-check before relying on these terms.
+    {name:"Platinum Protection Plus — Warranty Terms (Eclipse)", file:"docs/eclipse-ppp-warranty.pdf", kind:"pdf"}
   ],
-  docsCard: {name:"Fabric Specs & Samples", sub:"Phifer SunTex spec sheets — all four collections"}
+  docsCard: {name:"Fabric Specs & Warranty", sub:"Phifer SunTex spec sheets + Platinum Protection Plus terms"}
 };

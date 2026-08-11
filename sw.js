@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-08-10.8";
+const TIER1_VERSION = "2026-08-10.9";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -273,7 +273,18 @@ const TIER1_URLS = [
   "images/fabric-pages/page-07.jpg",
   "images/fabric-pages/page-08.jpg",
   "images/fabric-pages/z-frame-colors.jpg",
-  "images/fabric-pages/z-smartdrop-colors.jpg"
+  "images/fabric-pages/z-smartdrop-colors.jpg",
+  // Eclipse e13 in-app fabric book (docViewer) -- the two Phifer SunTex PDFs
+  // rasterized to pages. Tier 1 because it opens from inside the deck, same
+  // as Sunesta's fabric-pages above.
+  "images/ezip-fabric-pages/suntex-95-97-01.jpg",
+  "images/ezip-fabric-pages/suntex-95-97-02.jpg",
+  "images/ezip-fabric-pages/suntex-95-97-03.jpg",
+  "images/ezip-fabric-pages/suntex-95-97-04.jpg",
+  "images/ezip-fabric-pages/suntex-80-90-01.jpg",
+  "images/ezip-fabric-pages/suntex-80-90-02.jpg",
+  "images/ezip-fabric-pages/suntex-80-90-03.jpg",
+  "images/ezip-fabric-pages/suntex-80-90-04.jpg"
 ];
 
 // Photo Library (all 5 categories, full + thumb) and Docs & Spec Sheets
@@ -593,7 +604,8 @@ const TIER2_URLS = [
   "docs/sunstyle-spec-sheet.pdf",
   "docs/sunesta-fabric-collection.pdf",
   "docs/suntex-80-90-samples.pdf",
-  "docs/suntex-95-97-samples.pdf"
+  "docs/suntex-95-97-samples.pdf",
+  "docs/eclipse-ppp-warranty.pdf"
 ];
 
 self.addEventListener("install", (event) => {
