@@ -60,7 +60,7 @@ const IMAGES = {
   procService: "images/proc-service.svg",
 
   // — Eclipse E-Zip (images/eclipse/) —
-  ezHeroDusk: "images/eclipse/byerly-1.jpg",
+  ezHeroDusk: "images/eclipse/covered-patio-ezips.jpg",
   ezHalfDeployed: "images/eclipse/byerly-2.jpg",
   ezNight: "images/eclipse/byerly-night.jpg",
   ezMonUp: "images/eclipse/monument-18ft-up.jpg",

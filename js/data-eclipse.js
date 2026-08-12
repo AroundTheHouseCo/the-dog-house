@@ -36,11 +36,10 @@ const ECLIPSE_DECK = {
     // other herosplit slides, shared .hero-subtext class) are unaffected.
     bigSubtext: true,
     subtext:"Control the sun. Beat the wind. Love your outdoor space.",
-    image: IMAGES.ezHeroDusk,
-    // Source photo has a slight camera-roll tilt (horizon + deck railing both
-    // lean up-right) — leveled here with a small CSS rotation rather than a
-    // forced crop; scale compensates for the corner gap the rotation opens up.
-    imageRotate: 1.3, imageScale: 1.07
+    // Swapped 2026-08-12 (Jack): exterior daytime shot, two E-Zips partially
+    // lowered on a covered gable patio -- replaces the old dusk lifestyle
+    // photo. Verticals are plumb in this source, so no rotate/scale needed.
+    image: IMAGES.ezHeroDusk
   },
   {
     id:"ez-dealer", type:"splittext",

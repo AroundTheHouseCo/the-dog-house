@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-08-12.1";
+const TIER1_VERSION = "2026-08-12.2";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -171,7 +171,7 @@ const TIER1_URLS = [
   "images/proc-walkthrough.svg",
   "images/proc-warranty.svg",
   "images/proc-service.svg",
-  "images/eclipse/byerly-1.jpg",
+  "images/eclipse/covered-patio-ezips.jpg",
   "images/eclipse/byerly-2.jpg",
   "images/eclipse/byerly-night.jpg",
   "images/eclipse/monument-18ft-up.jpg",
