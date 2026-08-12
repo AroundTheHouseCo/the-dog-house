@@ -67,7 +67,79 @@ const REGION_BY_CITY = {
   "Denver":            "Denver Metro",
   "Westminster":       "Denver Metro",
   "Parker":            "Denver Metro",
+  // --- 39 towns added 2026-08-12 with the all-products rebuild. Assigned by
+  // the same straight-line nearest-anchor check the original 20 used. The two
+  // hand rulings above (Cañon City -> Southern Colorado, Larkspur -> Pikes
+  // Peak) are deliberately NOT recomputed: raw distance would flip Cañon City.
+  "Aurora":              "Denver Metro",
+  "Beulah":              "Southern Colorado",
+  "Black Forest":        "Pikes Peak Region",
+  "Boone":               "Southern Colorado",
+  "Buena Vista":         "Pikes Peak Region",
+  "Calhan":              "Pikes Peak Region",
+  "Cascade":             "Pikes Peak Region",
+  "Chipita Park":        "Pikes Peak Region",
+  "Colorado City":       "Southern Colorado",
+  "Craig":               "Denver Metro",
+  "Cripple Creek":       "Pikes Peak Region",
+  "Divide":              "Pikes Peak Region",
+  "Elizabeth":           "Denver Metro",
+  "Falcon":              "Pikes Peak Region",
+  "Fleming":             "Denver Metro",
+  "Florissant":          "Pikes Peak Region",
+  "Fowler":              "Southern Colorado",
+  "Golden":              "Denver Metro",
+  "Green Mountain Falls":"Pikes Peak Region",
+  "Idaho Springs":       "Denver Metro",
+  "Kiowa":               "Denver Metro",
+  "La Junta":            "Southern Colorado",
+  "La Veta":             "Southern Colorado",
+  "Lake George":         "Pikes Peak Region",
+  "Lamar":               "Southern Colorado",
+  "Olney Springs":       "Southern Colorado",
+  "Palmer Lake":         "Pikes Peak Region",
+  "Phoenix":             "Pikes Peak Region",
+  "Pine Grove":          "Denver Metro",
+  "Pueblo West":         "Southern Colorado",
+  "Ramah":               "Pikes Peak Region",
+  "Rocky Ford":          "Southern Colorado",
+  "Rye":                 "Southern Colorado",
+  "Security":            "Pikes Peak Region",
+  "Silver Cliff":        "Southern Colorado",
+  "Simla":               "Pikes Peak Region",
+  "Victor":              "Pikes Peak Region",
+  "Westcliffe":          "Southern Colorado",
+  "Westwood Lake":       "Pikes Peak Region",
 };
+
+// ---------------------------------------------------- map-view exclusions --
+// These pins stay in data/reference-map.json — they are real completed jobs
+// and the file remains the honest record. They are withheld from the MAP only.
+//
+// Two reasons, both measured 2026-08-12:
+//
+//  1. Distance. A job 150+ miles out forces fitBounds to span the whole state,
+//     which zooms its region so far out that the dense local pins collapse
+//     into a smudge. Cost is driven by map EXTENT, not marker count: Denver
+//     Metro rendered 60 pins in 608ms purely because Craig was in frame, and
+//     dropped to 3ms without it.
+//  2. Bad geocodes. Four addresses resolved to the wrong part of Colorado
+//     (worst: a Palmer Lake job placed 151 miles away in the San Juans).
+//     Deliberately NOT auto-corrected — they are listed in the e09 open item
+//     for manual verification, since silently moving a customer's pin is worse
+//     than not drawing it.
+const MAP_EXCLUDED_TOWNS = new Set([
+  "Craig", "Fleming", "Lamar", "La Veta", "La Junta",
+  "Rocky Ford", "Idaho Springs", "Buena Vista", "Phoenix",
+]);
+// Keyed to 6dp — the jitter is deterministic, so these are stable across rebuilds.
+const MAP_EXCLUDED_PINS = new Set([
+  "38.301874,-104.799667",   // "Samo D."   — listed Colorado Springs
+  "39.032665,-104.299030",   // "Carl P."   — listed Colorado Springs
+  "38.019856,-107.314694",   // "Vester S." — listed Palmer Lake, landed in the San Juans
+  "38.959038,-103.757505",   // "Daniel G." — listed Elbert
+]);
+const pinKey = (ll) => `${ll[0].toFixed(6)},${ll[1].toFixed(6)}`;
 // Fallback for a town added by a future rebuild that isn't in the table
 // above yet: nearest-anchor distance, logged loudly rather than guessed at
 // silently. Keeps the UI at exactly three regions without ever dropping pins.
@@ -90,10 +162,14 @@ function regionFor(city, center){
 function regionGroups(){
   const byRegion = new Map(REFMAP_REGIONS.map((r) => [r, { name: r, count: 0, pins: [] }]));
   for (const t of REFMAP_DATA.towns) {
+    if (MAP_EXCLUDED_TOWNS.has(t.city)) continue;          // see MAP_EXCLUDED_TOWNS
+    const pins = t.pins.filter((p) => !MAP_EXCLUDED_PINS.has(pinKey(p.ll)));
+    if (!pins.length) continue;
     const g = byRegion.get(regionFor(t.city, t.center));
-    g.count += t.count;
-    g.pins.push(...t.pins);
+    g.count += pins.length;
+    g.pins.push(...pins);
   }
+  // Ordering still uses the count internally; it is simply never displayed.
   return [...byRegion.values()].sort((a, b) => b.count - a.count);
 }
 
@@ -136,12 +212,17 @@ function refmapIsOpen(){ return refmapRegion !== null; }
 function refmapHasData(){ return !!(REFMAP_DATA && REFMAP_DATA.towns && REFMAP_DATA.towns.length); }
 
 // ---------------------------------------------------------------- views --
+// No project counts are rendered anywhere in this module (Jack, 2026-08-12).
+// Neither the all-regions total nor the per-region number is shown: a precise
+// figure invites arithmetic in the middle of a sales conversation, and the
+// map itself is the proof. Counts are still computed in regionGroups() for
+// ordering — they are simply never displayed. Individual pin names on tap
+// are unaffected and stay exactly as they were.
 function refmapListHTML(s, regions){
-  const total = REFMAP_DATA.totalPins;
   return `
     <div class="refmap-head">
       <h2>${s.title}</h2>
-      <div class="refmap-sub">${total.toLocaleString()} completed projects across ${regions.length} regions — tap a region to see the map.</div>
+      <div class="refmap-sub">Tap a region to see where we have worked.</div>
     </div>
     <div class="refmap-regions">
       ${regions.map((r, i) => `
@@ -157,7 +238,7 @@ function refmapMapHTML(r){
   return `
     <div class="refmap-mapbar">
       <button class="refmap-back" id="refmapBack">‹ All regions</button>
-      <div class="refmap-mapbar-title">${r.name} <span>· ${r.count} project${r.count === 1 ? "" : "s"}</span></div>
+      <div class="refmap-mapbar-title">${r.name}</div>
     </div>
     <div class="refmap-mapwrap">
       <div class="refmap-canvas" id="refmapCanvas"></div>
@@ -205,6 +286,11 @@ function mountLeaflet(panel, r){
   const map = L.map(host, {
     zoomControl: true,
     attributionControl: true,
+    // Render markers to a single <canvas> instead of one SVG/DOM node each.
+    // With the all-products dataset the Pikes Peak drill-in mounts ~3,600
+    // circleMarkers at once; as individual DOM nodes that is enough to stall
+    // an iPad on open. Canvas keeps it to one element and one paint.
+    preferCanvas: true,
     // the slide sits inside a tap-to-advance surface; keep map gestures
     // contained so a pan never reads as a slide swipe
     tap: false

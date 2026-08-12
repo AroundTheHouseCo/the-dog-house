@@ -88,6 +88,49 @@ Tap several tiers quickly in a row.
 
 ---
 
+---
+
+## Reference Map — performance (s10 Sunesta / e09 Eclipse)
+
+Added 2026-08-12. The map went from 209 pins to **3,878** when it was rebuilt across every ATH
+product line. Rendering was moved to canvas (`preferCanvas`) and the render cost measured on
+desktop Chrome: the worst region went from 658 ms to **100 ms**.
+
+**No one has measured this on an actual iPad.** It cannot be done from the build machine — the
+tooling there drives a simulator, not a device. These numbers are the gap.
+
+**13. Time the Pikes Peak drill-in**
+Open the map slide, tap **Pikes Peak Region**, and count how long until pins appear.
+- ✅ Expect: under about a second — it should feel immediate, like opening any other slide.
+- ❌ Report the rough number if it is a visible wait (2 s, 5 s, longer). This is the single most
+  important measurement on the page: Pikes Peak holds ~3,570 of the pins.
+
+**14. Pan and pinch-zoom inside the Pikes Peak map**
+Drag around, then pinch to zoom in and out a few times.
+- ✅ Expect: smooth, keeps up with your finger.
+- ❌ Watch for: stutter, lag behind the finger, or the app briefly freezing.
+
+**15. Tap a pin in the dense area**
+Zoom into central Colorado Springs, where pins overlap heavily, and tap one.
+- ✅ Expect: one name opens, promptly, for the pin you actually hit.
+- ❌ Watch for: a delay before the popup, or a different pin's name opening.
+
+**16. Compare the other two regions**
+Open Southern Colorado and Denver Metro.
+- ✅ Expect: both noticeably faster than Pikes Peak (they hold far fewer pins).
+- ❌ If either is *slower* than Pikes Peak, say so — that would point at something other than
+  pin count and is worth knowing.
+
+**17. Back out and re-enter twice**
+Region → back to the list → region again, a couple of times.
+- ❌ Watch for: it getting slower each time (that would mean maps aren't being torn down properly).
+
+> If 13 or 14 are bad, the fallback is pin clustering — grouping nearby pins until you zoom in.
+> That was deliberately *not* built yet, because measuring showed the simple fix was enough on
+> desktop. Real numbers from this test decide whether it's needed.
+
+---
+
 ## Anything else worth reporting
 
 - Any spot where a tap needed a second attempt.

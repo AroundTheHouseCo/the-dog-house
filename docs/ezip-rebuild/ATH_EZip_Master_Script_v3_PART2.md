@@ -236,8 +236,8 @@ own street — that's the moment that lands, and it only happens if the rep stop
 
 ### Block 1
 
-> "We've completed projects all over the greater Colorado Springs area — Monument, Widefield,
-> Fountain, the Springs, out toward Peyton.
+> "We've completed projects all over the greater Colorado Springs area — Monument, Falcon, Black
+> Forest, the Springs, out toward Peyton.
 >
 > Every home is a little different, but at this point we've worked through just about every
 > scenario there is."
