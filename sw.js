@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-08-12.2";
+const TIER1_VERSION = "2026-08-14.1";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -99,6 +99,9 @@ const TIER1_URLS = [
   // so the Quote Builder — whose own card promises "works offline" — had no
   // offline copy of its script.
   "js/quote-builder.js",
+  // Raven capture client (feature/raven). Precached so the record control
+  // exists offline; uploads themselves are non-GET and bypass this SW.
+  "js/raven-capture.js",
   "js/app.js",
   "images/app-icon.svg",
   "images/icon-120.png",

@@ -1437,6 +1437,9 @@ function renderHome(){
   document.getElementById("homeGoPresent").onclick = ()=>{ appView = "presentations"; renderApp(); };
   document.getElementById("homeGoCenter").onclick = ()=>{ appView = "coaches"; renderApp(); };
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
+  // Raven (feature/raven): appends the rep-only record card. The home screen
+  // is Raven's ONLY surface — nothing renders in any deck view (§4.3).
+  if (typeof ravenMountHome === "function") ravenMountHome();
 }
 
 // Product picker — shared by Presentations and Training Center entry points.
