@@ -655,8 +655,15 @@ function renderSlide(){
       // scale-up rides the same s.bigThumbs opt-in rather than a bare class.
       pop.className="popover"+(s.bigThumbs?" cs-pop-big":"");
       pop.style.zIndex=20;
+      // The photo only gets its positioned wrapper when there's a badge to hang
+      // on it, so a deck without priceRange (Eclipse) renders the exact same
+      // bare <img> it always did — no wrapper, no layout shift.
+      const photoHTML = !r.popPhoto ? ""
+        : r.priceRange
+          ? `<div class="reason-pop-photo-wrap"><img class="reason-pop-img" src="${r.popPhoto}"><div class="cs-price-badge">${r.priceRange}</div></div>`
+          : `<img class="reason-pop-img" src="${r.popPhoto}">`;
       pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
-        ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}
+        ${photoHTML}
         <h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
       pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };

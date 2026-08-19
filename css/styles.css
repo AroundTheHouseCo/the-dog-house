@@ -1645,6 +1645,27 @@
   .cs-pop-big .reason-pop-img{max-height:290px;border-radius:10px;margin-bottom:16px;}
   .cs-pop-big .popover-close{top:18px;right:18px;}
 
+  /* Price-range badge on the costscale popover photo (Sunesta slide 22, Jack
+     2026-08-19). Only rungs carrying a priceRange get the wrapper + badge, so
+     Eclipse's popovers keep their bare <img>. Centered on the bottom edge
+     rather than corner-anchored on purpose: .reason-pop-img is object-fit:
+     contain, so a wide photo pillarboxes inside its box and a corner badge
+     would land on the letterbox background instead of the photo. The wrapper
+     inherits the img's old margin-bottom so vertical rhythm is unchanged. */
+  .reason-pop-photo-wrap{position:relative;display:block;margin-bottom:12px;}
+  .reason-pop-photo-wrap .reason-pop-img{margin-bottom:0;}
+  .cs-price-badge{
+    position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    max-width:88%;box-sizing:border-box;
+    background:rgba(16,16,16,.80);color:#fff;
+    font-weight:800;font-size:15px;letter-spacing:.01em;white-space:nowrap;
+    padding:6px 15px;border-radius:999px;
+    text-shadow:0 1px 2px rgba(0,0,0,.55);
+    box-shadow:0 2px 10px rgba(0,0,0,.38);
+  }
+  .cs-pop-big .reason-pop-photo-wrap{margin-bottom:16px;}
+  .cs-pop-big .cs-price-badge{font-size:19px;padding:8px 20px;bottom:14px;}
+
   /* ===== Home screen ===== */
   .home-screen{
     background:radial-gradient(circle at 50% 30%,#236648 0%,#12392a 100%);
