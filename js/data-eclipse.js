@@ -435,14 +435,16 @@ const ECLIPSE_DECK = {
     // object-fit:contain) will letterbox tier 2's portrait crop rather than
     // fill the width, which is expected given the source, not a bug.
     // Tier 1 photo credit (CC via Openverse/Flickr): "First Shot, New Lens"
-    // by tdlucas5000 (CC BY 2.0) — shared with Sunesta's price-conditioning slide.
+    // by tdlucas5000 (CC BY 2.0). This image used to be shared with Sunesta's
+    // price-conditioning slide; forked to its own ezPcTier1 file on 2026-08-18 when
+    // Sunesta's tier1 slot took a different photo, so the credit applies here only.
     id:"ez-pricecond", type:"costscale",
     bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-10)
     eyebrow:"Know the market — position, don't surprise",
     title:"Not All Shade Costs the Same",
     paragraph:"Four tiers of outdoor shade, from a bamboo roll-up to a full glass room. Tap any tier to see what that money actually buys.",
     rungs:[
-      {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"DIY & temporary",
+      {n:1, photo:IMAGES.ezPcTier1, popPhoto:IMAGES.ezPcTier1, label:"DIY & temporary",
        detail:"$500 – $1,000. Bamboo roll-ups, shade sails, outdoor curtains. Fine for a season — no engineering, no wind rating, no warranty to speak of."},
       {n:2, photo:IMAGES.ezPcTier2, popPhoto:IMAGES.ezPcTier2, label:"Low-end installed",
        detail:"$1,000 – $3,000 per opening. Usually manual, no zipper track, and a one-year warranty on components. This is the tier where the screen flaps in the wind and fails early."},

@@ -85,6 +85,9 @@ const IMAGES = {
   ezRefMapGeneric: "images/eclipse/refmap-generic.svg",
   ezPeopleInstalling: "images/eclipse/people-installing.jpg",
   ezLogoPhifer: "images/eclipse/logo-phifer.jpg",
+  // Forked out of the shared pcTier1 on 2026-08-18: Sunesta's tier1 slot took a new
+  // sagging-shade-sail photo, so Eclipse keeps its original shade-cloth shot here.
+  ezPcTier1: "images/eclipse/pricecond-tier1-shadecloth.jpg",
   ezPcTier2: "images/eclipse/pricecond-tier2-lowend.jpg",
   ezPcTier4: "images/eclipse/pricecond-tier4-hurricane.jpg",
   // Before/After/Inside — one project, three views. Cropped from slide 11 of
