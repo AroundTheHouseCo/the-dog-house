@@ -344,11 +344,13 @@ const DECK = {
       coach:"⏱ Keep this tight: 1.5–2 minutes, NOT 15 (Matt's explicit note). Tap a triangle logo for detail — the family and awning photos are in the popups. Service inclusions are DRAFT from Matt's outline — confirm before leaning on specifics."
     },
     {
-      // Photo credits (CC via Openverse/Flickr): tier1 "First Shot, New Lens" by tdlucas5000 (CC BY 2.0);
-      // tier2 "Fix broken awning frame, patch awning" by sf-dvs (CC BY 2.0); tier3 "Collapsed Awning" by
-      // Fire At Will [Photography] (CC BY-SA 2.0); tier4 "Red Retractable Awning" by ersshading (CC BY 2.0).
+      // Photo credits: tier1–tier3 are Jack-supplied replacements (2026-08-18) — sagging shade sail,
+      // pop-up canopy, collapsed retractable — so the CC attributions those three used to carry no
+      // longer apply. tier4 "Red Retractable Awning" by ersshading (CC BY 2.0, via Openverse/Flickr)
+      // is the dropped mid-tier rung's image: still in images/pricecond/, not rendered on this slide.
       // tier5 + tier6 are ATH's own photos (Sunesta beauty shot · Latitude pergola from aroundthehouseco.com).
       id:"pricecond", type:"costscale",
+      bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-18)
       eyebrow:"Know the market — position, don't surprise",
       title:"Not All Shade Costs the Same",
       paragraph:"Five tiers of shade, from a sail on poles to a motorized louvered roof. Tap any tier to see what your money actually buys.",
@@ -371,7 +373,7 @@ const DECK = {
       rungs:[
         {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"Shade sails / cheap manual overhead", detail:"Entry-level overhead fabric — no engineering, no wind rating, no real warranty to speak of."},
         {n:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"Buy online + handyman install", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
-        {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: a buckled arm and the fabric on the railing."},
+        {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: one arm lets go and the whole unit folds down onto the patio."},
         {n:4, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Professionally installed quality awning", athMarker:true, detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
         {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
       ],

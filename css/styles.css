@@ -1620,10 +1620,11 @@
     border-top:6px solid var(--orange);
   }
 
-  /* Doubled tier circles (Jack, 2026-08-10) — opt-in via s.bigThumbs so
-     Sunesta's own 5-rung costscale slide keeps its original 68px circles.
-     Node width grows with them so the wider circle never crowds its label,
-     and the track's own margins absorb the extra width at 4 rungs. */
+  /* Doubled tier circles (Jack, 2026-08-10) — opt-in via s.bigThumbs. Both
+     decks now opt in: Eclipse's 4-rung ez-pricecond and, as of 2026-08-18,
+     Sunesta's 5-rung costscale slide. Node width grows with them so the wider
+     circle never crowds its label, and the track's own margins absorb the
+     extra width at 4–5 rungs. */
   .cs-big .cs-thumb{
     width:136px;height:136px;
     border-width:6px;
