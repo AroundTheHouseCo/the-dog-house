@@ -357,8 +357,10 @@ const DECK = {
       // 5 rungs — matches the price-conditioning script's 5 price points
       // exactly (data/doghouse-content-v1.json, s22: blocks b2/b3/b4 walk
       // shade-sails -> online/handyman -> low-end-companies -> [pergolas
-      // top / our-tier middle]). No dollar figures here — the rep speaks
-      // the PRICE_* values live; the slide shows relative position only.
+      // top / our-tier middle]). Each rung's priceRange is rendered as a
+      // badge on that rung's popover photo (Jack, 2026-08-19) — the figures
+      // are ON the slide now, so keep them in step with what the rep says
+      // live and with the PRICE_* values in the script below.
       //
       // NOTE for Jack: the old 6-tile grid also carried a "Mid-tier —
       // hood, no cassette, fees after install" rung between low-end and
@@ -371,14 +373,14 @@ const DECK = {
       //   1–5 year motor warranties, and trip charges and service-call
       //   fees after the install."
       rungs:[
-        {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"Shade sails / cheap manual overhead", detail:"Entry-level overhead fabric — no engineering, no wind rating, no real warranty to speak of."},
-        {n:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"Buy online + handyman install", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
-        {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: one arm lets go and the whole unit folds down onto the patio."},
-        {n:4, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Professionally installed quality awning", athMarker:true, detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
-        {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
+        {n:1, photo:IMAGES.pcTier1, popPhoto:IMAGES.pcTier1, label:"Shade sails / cheap manual overhead", priceRange:"$200 – $1,000", detail:"Entry-level overhead fabric — no engineering, no wind rating, no real warranty to speak of."},
+        {n:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"Buy online + handyman install", priceRange:"$2,000 – $4,000", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
+        {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", priceRange:"$4,000 – $8,000", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: one arm lets go and the whole unit folds down onto the patio."},
+        {n:4, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Professionally installed quality awning", priceRange:"$6,000 – $12,000+", athMarker:true, detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
+        {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", priceRange:"$30,000 – $80,000+", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
       ],
       script:"Walk the ladder low to high — their quote should feel positioned, not surprising. Reference competitor estimates and photos as they're available.\n\n(LOW END — verbatim): \"If anyone comes in here and asks for $X.00 for a motorized retractable awning — ask them a lot of questions… How is it so cheap? How long have you been in business? Where do you get your installers? This is almost certainly an awning that will fail sooner than you'd like, and you may have to replace it within a few years.\"\n\n(HIGH END): \"If anyone comes in here and asks for $X.00 —\"\n🕳 UNFINISHED IN SOURCE — the high-end rebuttal cuts off exactly here in Matt's notes. Needs Matt's ending — don't improvise it.\n\n(MID TO UPSCALE — verbatim): \"A professionally installed, high-quality awning with a legitimate company and warranty will cost somewhere between $X and $X. We're typically going to fall somewhere in between this range…\"",
-      talkingPoints:["Position the market BEFORE your number lands","Low-end objection: ask a lot of questions — how is it so cheap?","Dollar figures stay verbal — nothing on the slide","Rungs 3–5 are where competitors live; we sit high-mid with lifetime arms + Smart Case standard","High-end rebuttal is unfinished — parked until Matt supplies the ending"],
+      talkingPoints:["Position the market BEFORE your number lands","Low-end objection: ask a lot of questions — how is it so cheap?","Each rung's range shows on its popover — tap the rung, let the number land, then talk to it","Rungs 3–5 are where competitors live; we sit high-mid with lifetime arms + Smart Case standard","High-end rebuttal is unfinished — parked until Matt supplies the ending"],
       coach:"Tier photos are in — CC-licensed finds plus our own Sunesta and Latitude shots (credits in js/data.js). Tap a rung and the popup shows the photo big. Still waiting on Matt: competitor ESTIMATE photos for the training layer, and the high-end rebuttal ending. Sets up the Transition to Pricing (see the Close reference in the Coach). ⚠️ FLAG FOR JACK — rebuilt as a 5-rung cost scale (was a 2x3 photo grid); the old grid's 4th tile (\"Mid-tier — hood, no cassette, fees after install\") had no home in the current 5-price-point script and was dropped — see the code comment above `rungs` in data-sunesta.js if you want it folded back in somewhere."
     }
   ]
