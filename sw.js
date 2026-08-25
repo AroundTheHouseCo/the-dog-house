@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-08-19.1";
+const TIER1_VERSION = "2026-08-25.2";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -99,6 +99,10 @@ const TIER1_URLS = [
   // so the Quote Builder — whose own card promises "works offline" — had no
   // offline copy of its script.
   "js/quote-builder.js",
+  // Raven (Start Appointment). Its API calls need a live connection, but the
+  // script must be present offline or renderApp() calls a missing renderRaven()
+  // — and the pending-upload retry queue can't run to drain itself.
+  "js/raven.js",
   "js/app.js",
   "images/app-icon.svg",
   "images/icon-120.png",

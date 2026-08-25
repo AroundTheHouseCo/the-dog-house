@@ -2542,3 +2542,82 @@
   .tc-editable.tc-edited{box-shadow:inset 2px 0 0 var(--orange);padding-left:6px;margin-left:-6px;}
   .tcv-edit-hint{font-size:11px;color:#a06b10;background:#fdf3e2;border:1px solid #f0dcae;
     border-radius:8px;padding:6px 10px;margin-bottom:10px;}
+
+  /* ---- Raven: Start Appointment (js/raven.js) ---- */
+  /* The recording indicator is deliberately the loudest thing on the screen.
+     iOS will not keep audio capture alive behind a standalone PWA, so the
+     only real mitigation is making it obvious the rep must stay put. */
+  /* PIN login. Sessions never expire, so this is a rare screen — plain on
+     purpose, it exists to be got through. */
+  .rv-login{display:flex;flex-direction:column;align-items:center;gap:14px;
+    padding:26px 20px;text-align:center;}
+  .rv-login-copy{margin:0;max-width:380px;font-size:13.5px;line-height:1.5;color:#777;}
+  .rv-pin{width:190px;text-align:center;letter-spacing:.42em;font-size:26px;
+    border:1px solid #d8d5cc;border-radius:12px;padding:14px 12px;background:#fff;
+    color:var(--charcoal);font-weight:800;}
+  .rv-pin:focus{outline:2px solid var(--green);outline-offset:1px;}
+  .rv-login .rv-error{max-width:340px;}
+
+  /* Who's signed in. Unobtrusive by design — it only matters when it's
+     wrong (a borrowed iPad), so it stays a quiet strip with an out. */
+  .rv-signed-in{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-bottom:12px;padding:8px 13px;border-radius:9px;background:#f4f7f4;
+    border:1px solid #e2e8e2;font-size:12.5px;color:#6b6b6b;}
+  .rv-signed-in b{color:var(--green-dark);font-weight:800;}
+  .rv-signout{border:none;background:none;padding:2px 4px;font-size:12.5px;
+    font-weight:800;color:var(--green-dark);text-decoration:underline;cursor:pointer;}
+  .rv-signout:hover{color:var(--orange);}
+  .rv-search-row{display:flex;gap:10px;margin-bottom:16px;}
+  .rv-search-row input{flex:1 1 auto;border:1px solid #d8d5cc;border-radius:10px;
+    padding:12px 14px;font-size:16px;color:var(--charcoal);background:#fff;}
+  .rv-search-row input:focus{outline:2px solid var(--green);outline-offset:1px;}
+
+  .rv-list{display:flex;flex-direction:column;gap:9px;}
+  .rv-job{display:block;width:100%;text-align:left;background:#fff;border:1px solid #e4e0d6;
+    border-radius:12px;padding:13px 15px;cursor:pointer;transition:.15s;}
+  .rv-job:hover{border-color:var(--green);transform:translateY(-1px);}
+  .rv-job-name{font-size:15.5px;font-weight:800;color:var(--charcoal);}
+  .rv-job-meta{font-size:12.5px;color:#777;margin-top:3px;}
+  .rv-job-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .rv-chip{font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+    background:#eef4ef;color:var(--green-dark);border-radius:999px;padding:3px 9px;}
+  .rv-chip.alt{background:#fdf3e2;color:#a06b10;}
+  .rv-empty{padding:30px 10px;text-align:center;font-size:13.5px;color:#888;}
+  .rv-error{padding:14px 16px;border-radius:10px;background:#fdecea;border:1px solid #f5c6c0;
+    color:#a32c1e;font-size:13px;}
+  .rv-pending-banner{padding:10px 14px;border-radius:10px;background:#fdf3e2;
+    border:1px solid #f0dcae;color:#a06b10;font-size:12.5px;margin-bottom:14px;}
+
+  .rv-recording-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;
+    padding:24px 20px;text-align:center;}
+  .rv-live{display:flex;align-items:center;gap:11px;background:#c62828;color:#fff;
+    border-radius:999px;padding:13px 26px;font-size:16px;font-weight:800;
+    box-shadow:0 4px 18px rgba(198,40,40,.32);}
+  .rv-live.lost{background:#6b6b6b;box-shadow:none;}
+  .rv-dot{width:12px;height:12px;border-radius:50%;background:#fff;flex:0 0 auto;
+    animation:rvPulse 1.4s ease-in-out infinite;}
+  .rv-live.lost .rv-dot{animation:none;opacity:.5;}
+  @keyframes rvPulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .rv-elapsed{font-size:52px;font-weight:800;color:var(--charcoal);
+    font-variant-numeric:tabular-nums;letter-spacing:1px;}
+  .rv-job-card{background:#fff;border:1px solid #e4e0d6;border-radius:12px;
+    padding:12px 18px;min-width:260px;}
+  .rv-warn-copy{margin:0;max-width:420px;font-size:13px;line-height:1.5;color:#a32c1e;}
+  .rv-gap-log{font-size:12px;color:#a06b10;background:#fdf3e2;border:1px solid #f0dcae;
+    border-radius:8px;padding:7px 12px;}
+
+  /* Returned-from-background warning: states the gap in plain language and
+     forces an explicit continue-or-stop choice rather than silently
+     resuming a recording with a hole in it. */
+  .rv-interrupt{background:#fff;border:2px solid var(--orange);border-radius:14px;
+    padding:16px 18px;max-width:460px;text-align:left;}
+  .rv-interrupt-title{font-size:15px;font-weight:800;color:#a06b10;margin-bottom:5px;}
+  .rv-interrupt p{margin:0 0 12px;font-size:13px;line-height:1.5;color:var(--charcoal);}
+  .rv-interrupt-actions{display:flex;gap:9px;flex-wrap:wrap;}
+  .rv-btn-ghost{border:1px solid #d8d5cc;background:#fff;border-radius:9px;
+    padding:10px 18px;font-size:13px;font-weight:800;color:var(--charcoal);cursor:pointer;}
+  .rv-btn-ghost:hover{border-color:#aaa;background:#f7f7f5;}
+
+  .rv-stop-btn{border:none;background:var(--charcoal);color:#fff;border-radius:12px;
+    padding:17px 44px;font-size:17px;font-weight:800;cursor:pointer;transition:.15s;}
+  .rv-stop-btn:hover{background:#2b2b2b;}
