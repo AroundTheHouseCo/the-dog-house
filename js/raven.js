@@ -33,6 +33,11 @@ const RAVEN_BASE = "https://ath-cockpit.onrender.com";
 // 5s slices: small enough that a crash costs almost nothing, large enough
 // that an hour-long appointment stays around 720 IndexedDB rows.
 const RAVEN_TIMESLICE_MS = 5000;
+// Cockpit rejects anything over 100MB (RAVEN_MAX_AUDIO_BYTES, server.js) —
+// not enforced client-side; an oversized file just fails the upload the
+// normal way and stays queued. This constant is only the client-side
+// give-up point so an upload can never hang the UI indefinitely.
+const RAVEN_UPLOAD_TIMEOUT_MS = 35000;
 // audio/mp4 is what iOS Safari actually produces; the fallbacks exist so a
 // desktop browser can still exercise the flow during development.
 const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio/webm;codecs=opus", "audio/webm"];
@@ -59,7 +64,7 @@ const RV = {
   startedAt: null,
   status: "idle",          // idle | starting | recording | stopping | uploading | uploaded | pending-upload | error
   errorMessage: null,
-  interruptions: [],       // [{at: ISO, ms: number, killedCapture: bool}]
+  interruptions: [],       // [{at: ISO, ms: number, offsetMs: number|null, killedCapture: bool}]
   hiddenAt: null,          // set while the app is backgrounded mid-recording
   pendingInterruption: null, // surfaced to the rep on return to foreground
   captureLost: false,      // true once the OS has actually killed the recorder
@@ -246,42 +251,55 @@ async function rvCreateAppointment(jnid){
   return id;
 }
 
-// Upload contract: base64 inside a JSON body, NOT multipart.
-// Rationale: Cockpit is a plain Node http server with no multipart parser
-// and no dependency to add one; hand-rolling a boundary parser there is the
-// error-prone option. A JSON body is what every other Cockpit POST already
-// takes, and it keeps the interruption metadata in the same object as the
-// audio instead of split across parts. Cost is base64's ~33% inflation on
-// the wire, which is acceptable for a one-shot post-appointment upload over
-// wifi and is the reason chunks are stored as raw Blobs locally and only
-// encoded at send time.
-function rvBlobToBase64(blob){
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => {
-      const s = String(fr.result);
-      const comma = s.indexOf(",");
-      resolve(comma >= 0 ? s.slice(comma + 1) : s);
-    };
-    fr.onerror = () => reject(fr.error || new Error("could not read audio blob"));
-    fr.readAsDataURL(blob);
-  });
+// Upload contract: multipart/form-data, matching Cockpit's actual route
+// (server.js, POST /api/raven/appointments/:id/audio — parseMultipart,
+// the same binary-safe parser already proven on /api/training/upload).
+// The audio binary goes under a field literally named `file`; the server
+// pulls its own recorded startedAt/mimeType from the appointment record it
+// already holds, so nothing else about the recording needs to travel here
+// except the interruption metadata: `interrupted` ("true"/"false") and
+// `interruptedAt` (JSON array of ms-offsets into the recording, filtered
+// server-side to numbers only). No base64 — the stored Blob goes straight
+// into the FormData part, which is also what avoids base64's ~33% size
+// inflation on a file that can already run into the tens of MB.
+function rvFileNameForMime(mimeType){
+  const m = String(mimeType || "");
+  if (m.indexOf("mp4") >= 0) return "recording.m4a";
+  if (m.indexOf("webm") >= 0) return "recording.webm";
+  if (m.indexOf("ogg") >= 0) return "recording.ogg";
+  return "recording.audio";
 }
 
 async function rvUploadAppointment(rec, blob){
-  const audioBase64 = await rvBlobToBase64(blob);
-  await rvApi(`/api/raven/appointments/${encodeURIComponent(rec.appointmentId)}/audio`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      mimeType: rec.mimeType,
-      interrupted: (rec.interruptions || []).length > 0,
-      interruptions: rec.interruptions || [],
-      startedAt: rec.startedAt,
-      endedAt: rec.endedAt || new Date().toISOString(),
-      audioBase64,
-    }),
-  });
+  const interruptions = rec.interruptions || [];
+  const form = new FormData();
+  form.append("file", blob, rvFileNameForMime(rec.mimeType));
+  form.append("interrupted", interruptions.length > 0 ? "true" : "false");
+  // Present even when empty; the server only reads it when interrupted is
+  // true. offsetMs is missing on any interruption logged before this fix
+  // (older shape had no offset) — JSON.stringify emits `null` for those,
+  // and the server's own `typeof n === 'number'` filter drops them, so an
+  // appointment queued from before this change still uploads its audio
+  // cleanly, just without full interruption offsets.
+  form.append("interruptedAt", JSON.stringify(interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null))));
+
+  // Explicit give-up point: Cockpit's route buffers the whole request body
+  // before responding, so a dropped connection mid-upload would otherwise
+  // hang this fetch (and the "Uploading…" screen) indefinitely.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), RAVEN_UPLOAD_TIMEOUT_MS);
+  try {
+    // No Content-Type header here on purpose — the browser sets
+    // multipart/form-data with the correct boundary itself; setting it
+    // manually would strip that boundary and break the server's parser.
+    await rvApi(`/api/raven/appointments/${encodeURIComponent(rec.appointmentId)}/audio`, {
+      method: "POST",
+      body: form,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
   return true;
 }
 
@@ -524,12 +542,18 @@ document.addEventListener("visibilitychange", () => {
     return;
   }
   if (RV.hiddenAt == null) return;
-  const ms = Date.now() - RV.hiddenAt;
+  const hiddenSince = RV.hiddenAt;   // wall-clock moment the gap started
+  const ms = Date.now() - hiddenSince;
   RV.hiddenAt = null;
   if (RV.status !== "recording" && RV.status !== "stopping") return;
 
   const stillLive = !!rvRecorder && rvRecorder.state === "recording";
-  const entry = { at: new Date().toISOString(), ms, killedCapture: !stillLive };
+  // offsetMs is elapsed time INTO the recording where it dropped — what
+  // Cockpit's interruptedAt field actually stores (server.js: "timestamp(s)
+  // into the recording where it dropped"). `ms` (the gap's own duration) is
+  // a different number and would be the wrong thing to send there.
+  const offsetMs = RV.startedAt ? Math.max(0, hiddenSince - new Date(RV.startedAt).getTime()) : null;
+  const entry = { at: new Date().toISOString(), ms, offsetMs, killedCapture: !stillLive };
   RV.interruptions.push(entry);
   RV.pendingInterruption = entry;
   if (!stillLive) {
