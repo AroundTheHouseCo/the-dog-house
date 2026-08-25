@@ -230,7 +230,7 @@ async function rvLogin(pin){
 
 async function rvSearchJobs(q){
   const d = await rvApi(`/api/raven/jobs/search?q=${encodeURIComponent(q)}`);
-  return (d && d.data) || [];
+  return (d && d.results) || [];
 }
 
 // The rep is attributed server-side from the token — this deliberately sends
@@ -241,7 +241,7 @@ async function rvCreateAppointment(jnid){
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ jnid }),
   });
-  const id = d && (d.appointmentId || (d.data && d.data.appointmentId));
+  const id = d && d.appointmentId;
   if (!id) throw rvErr("http", "Cockpit did not return an appointmentId");
   return id;
 }
