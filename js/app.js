@@ -1439,11 +1439,17 @@ function renderHome(){
         <div class="home-card-name">Quote Builder</div>
         <div class="home-card-sub">Live pricing from Cockpit — works offline</div>
       </div>
+      <div class="home-card secondary" id="homeGoRaven">
+        <div class="home-card-icon">${ICON.chat}</div>
+        <div class="home-card-name">Start Appointment</div>
+        <div class="home-card-sub">Find the job & record the visit</div>
+      </div>
     </div>
   `;
   document.getElementById("homeGoPresent").onclick = ()=>{ appView = "presentations"; renderApp(); };
   document.getElementById("homeGoCenter").onclick = ()=>{ appView = "coaches"; renderApp(); };
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
+  document.getElementById("homeGoRaven").onclick = ()=>{ appView = "raven"; renderApp(); };
 }
 
 // Product picker — shared by Presentations and Training Center entry points.
@@ -1649,6 +1655,11 @@ function renderTopbarNav(){
   } else if(appView==="quote"){
     const label = qbView==="picker" ? "Home" : "Quote Builder";
     html = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
+  } else if(appView==="raven"){
+    // No way out but Stop while capture is live — see js/raven.js.
+    html = (typeof rvIsRecording==="function" && rvIsRecording())
+      ? ""
+      : `<button class="back-btn" id="backRavenBtn">‹ Home</button>`;
   }
   // Deck views hide the top bar (full-bleed), so their exit/back control
   // renders into the slide-counter row instead. Exactly one container is
@@ -1660,13 +1671,21 @@ function renderTopbarNav(){
   const hm = document.getElementById("homeBtn");   if(hm) hm.onclick = goHome;
   const bc = document.getElementById("backCenterBtn"); if(bc) bc.onclick = ()=>{ appView="center"; centerView=null; renderApp(); };
   const bk = document.getElementById("backCoachesBtn"); if(bk) bk.onclick = ()=>{ appView="coaches"; centerView=null; libPhoto=null; renderApp(); };
+  const br = document.getElementById("backRavenBtn"); if(br) br.onclick = goHome;
   const bq = document.getElementById("backQuoteBtn"); if(bq) bq.onclick = ()=>{
     if(qbView==="picker"){ goHome(); }
     else { qbResetToPicker(); renderApp(); }
   };
 }
 
-function goHome(){ appView = "home"; centerView = null; libPhoto = null; if(typeof qbResetToPicker==="function") qbResetToPicker(); resetSlideState(); renderApp(); }
+function goHome(){
+  // Refuse to leave a live recording — the Stop control lives on that view.
+  if(appView==="raven" && typeof rvIsRecording==="function" && rvIsRecording()) return;
+  appView = "home"; centerView = null; libPhoto = null;
+  if(typeof qbResetToPicker==="function") qbResetToPicker();
+  if(typeof rvResetToSearch==="function") rvResetToSearch();
+  resetSlideState(); renderApp();
+}
 
 function renderApp(){
   const showDeck = appView==="present" || appView==="training-deck";
@@ -1678,6 +1697,7 @@ function renderApp(){
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";
   document.getElementById("quoteBuilder").style.display    = appView==="quote" ? "" : "none";
+  document.getElementById("ravenPanel").style.display      = appView==="raven" ? "" : "none";
   document.getElementById("stage").style.display          = showDeck ? "" : "none";
   document.querySelector(".slidebar").style.display       = showDeck ? "" : "none";
   document.getElementById("tabbar").style.display         = showDeck ? "" : "none";
@@ -1696,6 +1716,7 @@ function renderApp(){
   if(appView==="center") renderCenter();
   if(appView==="presentations" || appView==="coaches") renderPicker();
   if(appView==="quote") renderQuoteBuilder();
+  if(appView==="raven") renderRaven();
   if(showDeck){
     mode = appView==="training-deck" ? "rehearse" : "present";
     renderAll();
