@@ -1759,6 +1759,33 @@
       ]
     },
     {
+      "slide_id": "ref_predemo",
+      "section": "reference",
+      "title": "Pre-Demo Recap at the Table",
+      "status": "final",
+      "in_deck": false,
+      "coaching_note": "Before the deck — recap at the table and confirm understanding of the offer (the E-Zip screens vs. their outdoor space and logistics).",
+      "blocks": [
+        {
+          "block_id": "b1",
+          "script": [
+            "\"Before I show you the product — how long have you guys been in the home?\" (Or: \"You said you've been in the home X years, is that right?\")",
+            "\"And this space back here… is this where you spend most of your time outside, or where you'd like to be spending it?\"",
+            "\"Is this something you've been thinking about for a while?\"",
+            "👉 Tie back to the Accomplish List (subtle reminder): \"Perfect — so really getting more use out of this space, and cutting the wind and sun that's pushing you off it, is the goal.\"",
+            "OPENINGS RECAP: \"So let me walk you through what I measured, and you tell me if I've got it right — you've got X openings back here. The main one is X feet wide with about an X foot drop. Every screen is built to the exact opening, so those numbers are what we order to — nothing gets cut down on site.\"",
+            "TRACK AND MOUNT: \"For mounting, we'd be going X here, into X. The part that matters most on a screen system is that the tracks are perfectly level and perfectly parallel — if they're off even a little, the screen binds. That's why we take our time here.\"",
+            "POWER: \"These run on standard 110-volt power, so we'll plan to pull from this outlet here. We run the wire as discreetly as we can — down a post, along the trim, tucked into the soffit. If you've got paint on hand we can match it, or use one of the standard cover colors.\"",
+            "\"Do you have a preference on painting the wire versus the cover color options?\"",
+            "SUN ORIENTATION: \"Based on the way this faces, the sun's going to be hardest on you roughly X to X — that lines up with what you told me earlier.\"",
+            "👉 Reference sun/orientation photos if available.",
+            "\"Based on everything I just walked through — does this feel like the right approach for your space?\"",
+            "👉 GET A YES!!!!!! If it's a no, a maybe, or anything short of a yes — ask more questions, uncover the objection, and handle it during the presentation."
+          ]
+        }
+      ]
+    },
+    {
       "slide_id": "ref_faq",
       "section": "reference",
       "title": "FAQs & Objections",
@@ -1823,6 +1850,15 @@
             "Does their system use a true zipper retention track, or is the fabric only held top and bottom? What's the actual warranty — all four components, or split up by part with different terms? And is the fabric a name brand with published UV data?",
             "Those three questions will tell you a lot about what you're actually comparing.\""
           ]
+        },
+        {
+          "tag": "Objection",
+          "question": "What about a glass sunroom instead?",
+          "answer": [
+            "\"A glass sunroom. Beautiful product, genuinely. But it's a permanent structure, it starts around fifty thousand and goes up, and by design it traps heat. You're sitting in a glass box in Colorado sun — a lot of people end up air conditioning them just to use them. And you can't open it up when you want fresh air.",
+            "Totally different product for a totally different goal.\""
+          ],
+          "note": "Only bring up glass sunrooms if they're actually in play or the homeowner raises them. Don't hand someone a new idea to go price out."
         },
         {
           "tag": "Objection",
