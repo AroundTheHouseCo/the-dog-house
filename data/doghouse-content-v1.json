@@ -2264,6 +2264,25 @@
             "*90% of customers: \"For the difference in cost between the Sunesta and Sunstyle, we'd rather have the stronger awning.\"\n*10% of customers: \"Whatever is cheapest is good for us — we don't plan to be out there when it's windy.\"",
             "👉 NOT: \"What do you think?\" · \"Any questions?\"\nThe close is a preference question, not a yes/no."
           ]
+        },
+        {
+          "block_id": "b6",
+          "label": "Accomplish List — master Sunesta version",
+          "script": [
+            "☐ Use the outdoor space more — during the day, not just morning and evening",
+            "☐ Block harsh sun from the west / south / wherever it hits hardest",
+            "☐ Keep the view open — shade without feeling closed in",
+            "☐ Make the space comfortable for the whole family, including kids or grandkids",
+            "☐ Reduce heat and glare coming into the interior rooms",
+            "☐ Add privacy without boxing in the space",
+            "☐ Have something easy and convenient to operate",
+            "☐ Extend usability into the evening hours",
+            "☐ Make the space feel finished and intentional — not pieced together",
+            "☐ Protect the deck furniture and surfaces from UV damage",
+            "☐ Add wind protection so the space is comfortable more often",
+            "☐ Have something that holds up in Colorado weather long term"
+          ],
+          "stage_directions": []
         }
       ]
     },
