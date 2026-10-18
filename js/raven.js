@@ -36,8 +36,14 @@ const RAVEN_TIMESLICE_MS = 5000;
 // Cockpit rejects anything over 100MB (RAVEN_MAX_AUDIO_BYTES, server.js) —
 // not enforced client-side; an oversized file just fails the upload the
 // normal way and stays queued. This constant is only the client-side
-// give-up point so an upload can never hang the UI indefinitely.
-const RAVEN_UPLOAD_TIMEOUT_MS = 35000;
+// give-up point so an upload can never hang the UI indefinitely. Raised
+// from 35000 (Phase 0 diagnostic, RAVEN-UPLOAD-RELIABILITY-PHASE0-REPORT.md
+// in ath-cockpit): 35s is not enough to land a real multi-MB appointment
+// recording over a weak/throttled cellular upload, and every timeout here
+// was indistinguishable server-side from the mic-acquisition and
+// abandoned-recording gaps closed elsewhere in this file — this one still
+// needed its own fix.
+const RAVEN_UPLOAD_TIMEOUT_MS = 120000;
 // audio/mp4 is what iOS Safari actually produces; the fallbacks exist so a
 // desktop browser can still exercise the flow during development.
 const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio/webm;codecs=opus", "audio/webm"];
@@ -251,6 +257,28 @@ async function rvCreateAppointment(jnid){
   return id;
 }
 
+// Fix for the Phase 0 diagnostic's #1 root cause
+// (RAVEN-UPLOAD-RELIABILITY-PHASE0-REPORT.md, ath-cockpit): rvBeginAppointment
+// creates the Cockpit-side appointment BEFORE getUserMedia()/MediaRecorder
+// setup runs, so a failure there used to leave that appointment orphaned at
+// 'started' forever — nothing is ever written to IndexedDB for it, so it's
+// invisible to the retry queue below. Best-effort and fire-and-forget on
+// purpose: this is called from inside an error path that's already showing
+// the rep a real problem, and if the cancel call itself fails (offline, token
+// revoked), the appointment is still caught later by Cockpit's own
+// stale-appointment sweep — it just costs a day's delay, not a silent loss.
+async function rvCancelAppointment(appointmentId, reason){
+  try {
+    await rvApi(`/api/raven/appointments/${encodeURIComponent(appointmentId)}/cancel`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reason }),
+    });
+  } catch (e) {
+    console.warn("Raven: appointment cancel failed (will go stale server-side instead) —", e.message);
+  }
+}
+
 // Upload contract: multipart/form-data, matching Cockpit's actual route
 // (server.js, POST /api/raven/appointments/:id/audio — parseMultipart,
 // the same binary-safe parser already proven on /api/training/upload).
@@ -380,6 +408,10 @@ async function rvBeginAppointment(job){
     RV.status = "error";
     RV.errorMessage = "Microphone access was denied — recording cannot start. " + (err.name || "");
     renderRaven();
+    // appointmentId already exists on Cockpit at this point (rvCreateAppointment
+    // above succeeded) but nothing was ever written to IndexedDB for it — don't
+    // leave it orphaned at 'started' forever.
+    rvCancelAppointment(appointmentId, "getUserMedia failed: " + (err.name || err.message || "unknown"));
     return;
   }
 
@@ -391,6 +423,7 @@ async function rvBeginAppointment(job){
     RV.status = "error";
     RV.errorMessage = "This device can't record audio in a supported format.";
     renderRaven();
+    rvCancelAppointment(appointmentId, "MediaRecorder construction failed: " + (err.name || err.message || "unknown"));
     return;
   }
 
@@ -577,6 +610,33 @@ function rvDismissInterruption(){
   renderRaven();
 }
 
+// ── Abandoned-recording finalize ───────────────────────────────────────
+// Fix for the Phase 0 diagnostic's #2 root cause
+// (RAVEN-UPLOAD-RELIABILITY-PHASE0-REPORT.md, ath-cockpit): if the rep
+// closes/force-quits the app — or iOS kills the backgrounded tab outright
+// instead of merely hiding it — without ever tapping "Stop & Upload", the
+// appointment stays in IndexedDB at status:"recording" forever, with real
+// audio chunks sitting right next to it. rvRefreshPendingCount and
+// rvRetryPendingUploads below only ever look for status:"pending-upload", so
+// a "recording"-status row was invisible to both — the chunks were safe on
+// disk but permanently inert. Runs once at startup, before the
+// pending-upload scan, so anything it promotes is picked up by the normal
+// retry path immediately after. Module-level `rvRecorder`/`RV` reset on
+// every fresh page load, so any "recording"-status row this finds can only
+// be a genuinely abandoned one from a previous session — never the one
+// currently live.
+async function rvFinalizeAbandonedRecordings(){
+  let all;
+  try { all = await rvAllAppointments(); } catch (e) { return; }
+  const abandoned = all.filter((a) => a.status === "recording");
+  for (const rec of abandoned) {
+    rec.endedAt = rec.endedAt || new Date().toISOString();
+    rec.status = "pending-upload";
+    try { await rvPutAppointment(rec); }
+    catch (e) { console.warn("Raven: failed to finalize abandoned recording", rec.appointmentId, e.message); }
+  }
+}
+
 // ── Pending-upload retry ───────────────────────────────────────────────
 // Same posture as the Quote Builder's cache refresh: try on open, try again
 // when connectivity returns, never block the UI on either.
@@ -601,6 +661,25 @@ async function rvRetryPendingUploads(){
 }
 
 window.addEventListener("online", () => { rvRetryPendingUploads(); });
+
+// Page-load and the `online` event above were the only two retry triggers
+// that existed before this (Phase 0 diagnostic, RAVEN-UPLOAD-RELIABILITY-
+// PHASE0-REPORT.md) — a rep who leaves Dog House open/backgrounded across a
+// whole day of appointments, the normal way an installed home-screen PWA
+// gets used, got exactly one retry opportunity per cold start, plus whatever
+// offline→online transitions happened to fire (which a merely-slow
+// connection, as opposed to a genuinely dropped one, never triggers). This
+// adds a modest ticking safety net on top of both. Foreground-only by
+// `document.hidden` check — this can't and shouldn't try to run in the
+// background anyway, see the file-level comment on iOS PWA backgrounding —
+// and reuses rvRetryPendingUploads as-is, which already skips the live
+// in-progress recording on its own (see its own guard above), so this is
+// safe to tick even mid-appointment.
+const RAVEN_RETRY_TICK_MS = 4 * 60 * 1000;
+setInterval(() => {
+  if (document.hidden) return;
+  rvRetryPendingUploads();
+}, RAVEN_RETRY_TICK_MS);
 
 // ── Views ──────────────────────────────────────────────────────────────
 function rvEsc(s){
@@ -884,6 +963,11 @@ function rvIsRecording(){
   return RV.status === "recording" || RV.status === "stopping";
 }
 
-rvRefreshPendingCount().then(() => {
-  rvRetryPendingUploads();
+// Finalize any abandoned "recording"-status rows BEFORE the pending-upload
+// scan below, so anything it promotes is counted and retried immediately
+// rather than waiting for the next trigger.
+rvFinalizeAbandonedRecordings().then(() => {
+  rvRefreshPendingCount().then(() => {
+    rvRetryPendingUploads();
+  });
 });
