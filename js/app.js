@@ -1656,15 +1656,22 @@ function renderTopbarNav(){
     const label = qbView==="picker" ? "Home" : "Quote Builder";
     html = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
   } else if(appView==="raven"){
-    // No way out but Stop while capture is live — see js/raven.js.
-    html = (typeof rvIsRecording==="function" && rvIsRecording())
-      ? ""
-      : `<button class="back-btn" id="backRavenBtn">‹ Home</button>`;
+    // Recording keeps running in the background if the rep leaves this
+    // screen (see js/raven.js, rvIsRecording comment) — so Home is always
+    // reachable here now, not just once capture has stopped.
+    html = `<button class="back-btn" id="backRavenBtn">‹ Home</button>`;
   }
   // Deck views hide the top bar (full-bleed), so their exit/back control
   // renders into the slide-counter row instead. Exactly one container is
   // populated at a time, so the button ids stay unique either way.
   const inDeck = appView==="present" || appView==="training-deck";
+  // A quiet way back into a live recording from anywhere else in the app —
+  // deliberately excluded from deck/present mode (customer-facing, and the
+  // topbar is hidden there anyway) so it can never show on a screen a
+  // customer is looking at. See the .rv-resume-badge CSS comment.
+  if(!inDeck && appView!=="raven" && typeof rvIsRecording==="function" && rvIsRecording()){
+    html = `<button class="rv-resume-badge" id="rvResumeBadge"><span class="rv-resume-dot"></span>Appointment in progress — tap to return</button>` + html;
+  }
   nav.innerHTML     = inDeck ? "" : html;
   deckNav.innerHTML = inDeck ? html : "";
   const ex = document.getElementById("exitBtn");   if(ex) ex.onclick = goHome;
@@ -1676,14 +1683,19 @@ function renderTopbarNav(){
     if(qbView==="picker"){ goHome(); }
     else { qbResetToPicker(); renderApp(); }
   };
+  const rb = document.getElementById("rvResumeBadge"); if(rb) rb.onclick = ()=>{ appView="raven"; renderApp(); };
 }
 
 function goHome(){
-  // Refuse to leave a live recording — the Stop control lives on that view.
-  if(appView==="raven" && typeof rvIsRecording==="function" && rvIsRecording()) return;
+  // A live recording keeps running whichever screen is visible (see
+  // js/raven.js) — so leaving Raven no longer needs to be blocked. The one
+  // thing that must NOT happen is calling rvResetToSearch(), which would
+  // null out RV.appointmentId and strand the recording's own upload when it
+  // eventually stops; everything else about going home is unchanged.
+  const leavingLiveRecording = appView==="raven" && typeof rvIsRecording==="function" && rvIsRecording();
   appView = "home"; centerView = null; libPhoto = null;
   if(typeof qbResetToPicker==="function") qbResetToPicker();
-  if(typeof rvResetToSearch==="function") rvResetToSearch();
+  if(!leavingLiveRecording && typeof rvResetToSearch==="function") rvResetToSearch();
   resetSlideState(); renderApp();
 }
 

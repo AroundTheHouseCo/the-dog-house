@@ -892,14 +892,14 @@ function rvRenderRecording(el){
     <div class="rv-recording-wrap">
       <div class="rv-live ${RV.captureLost ? "lost" : ""}">
         <span class="rv-dot"></span>
-        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : "Recording — stay on this screen."}</span>
+        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : "Appointment in progress"}</span>
       </div>
       <div class="rv-elapsed" id="rvElapsed">${rvFormatElapsed(RV.startedAt ? Date.now() - new Date(RV.startedAt).getTime() : 0)}</div>
       <div class="rv-job-card">
         <div class="rv-job-name">${rvEsc(job.name || job.display_name || "")}</div>
         <div class="rv-job-meta">${rvEsc(job.address || "")}</div>
       </div>
-      ${!RV.captureLost ? `<p class="rv-warn-copy">Leaving this app — switching apps, or letting the screen lock — stops the recording. iOS does not let this app record in the background.</p>` : ""}
+      ${!RV.captureLost ? `<p class="rv-warn-copy">You can switch to another part of the app and come back — this picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
       ${RV.interruptions.length ? `<div class="rv-gap-log">${RV.interruptions.length} interruption${RV.interruptions.length === 1 ? "" : "s"} logged and sent with the recording.</div>` : ""}
       ${interruptionHTML}
       <button class="rv-stop-btn" id="rvStopBtn">${RV.status === "stopping" ? "Stopping…" : "Stop &amp; Upload"}</button>
@@ -956,9 +956,15 @@ function rvResetToSearch(){
   // silently offering a search that cannot work.
 }
 
-// True while a recording is live — app.js uses this to refuse navigation
-// away from the recording screen, since leaving it unmounts the only Stop
-// control the rep has.
+// True while a recording is live. app.js uses this to (a) decide whether to
+// show a quiet "Appointment in progress" way back into this screen from
+// elsewhere in the app, and (b) skip rvResetToSearch() on the way out, since
+// that would null RV.appointmentId out from under the still-running
+// MediaRecorder's onstop handler (rvFinishRecording reads RV.appointmentId,
+// not a closure variable) and strand the upload. The recorder itself keeps
+// running regardless of which screen is visible — navigating elsewhere in
+// this same page never touches rvStream/rvRecorder — so nothing here needs
+// to pause or resume capture, only the view needs to come back correctly.
 function rvIsRecording(){
   return RV.status === "recording" || RV.status === "stopping";
 }
