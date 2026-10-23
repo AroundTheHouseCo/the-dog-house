@@ -402,7 +402,7 @@ PRODUCT_DATA.sunesta = {
   deck: DECK,
   trainingContentFile: "data/doghouse-content-v1.json",
   logo: IMAGES.sunestaLogo,                                // brand node in videoloop / triangle / warrantyrecap
-  brandHTML: 'Around The House · <b>Sunesta® Awnings</b>', // present-mode topbar (customers see this, never DOGHOUSE)
+  brandHTML: 'Around The House · <b>Sunesta® Awnings</b>', // present-mode topbar (customers see this, never RAVEN)
   photoCats: ["sunesta","sunstyle","sunlight","awnings","screens"], // Photo Library pill order
   docs: DOC_LIBRARY,
   docsCard: {name:"Spec Sheets & Fabrics", sub:"Model spec sheets, fabric collection, color charts"}

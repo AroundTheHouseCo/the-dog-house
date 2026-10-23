@@ -1,4 +1,4 @@
-// THE DOGHOUSE icon set — one native-SVG visual language for the whole app.
+// RAVEN icon set — one native-SVG visual language for the whole app.
 //
 // Replaces the emoji that used to sit in the product picker, home cards,
 // coach cards and Quote Builder. Emoji were never really "ours": they
