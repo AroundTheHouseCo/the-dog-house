@@ -1,4 +1,4 @@
-// THE DOGHOUSE — Quote Builder. Mirrors Cockpit's pricing engine and catalog
+// RAVEN — Quote Builder. Mirrors Cockpit's pricing engine and catalog
 // data EXACTLY: nothing here reimplements pricing math. pricing-engine.js and
 // the 7 product catalogs are fetched live from Cockpit and cached (Tier 3 in
 // sw.js — see PRICING_CACHE there); this file only builds a UI around

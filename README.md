@@ -1,4 +1,4 @@
-# THE DOGHOUSE — ATHHS Sales Presentation & Training App
+# RAVEN — ATHHS Sales Presentation & Training App
 
 The all-product sales asset for Around The House Home Solutions reps: customer-facing
 presentations plus rep-only "Training Coach" resources, per product. Sunesta® Awnings
@@ -11,6 +11,11 @@ product ships).
 `AroundTheHouseCo/the-dog-house`, served from `main` `/` (root). Pushing to `main`
 redeploys (~30–60s). Installed on iPads via Add to Home Screen (PWA: standalone,
 branded icon). Plain HTML/CSS/JS — no build step, no dependencies.
+
+*(Oct 2026: the app itself is branded "Raven" in the UI/manifest/title. The repo name
+and live URL still say `the-dog-house` — that rename is a separate, deliberately
+deferred step, since it changes the URL and would break every rep's already-installed
+home-screen icon. See the Raven project notes for the full plan.)*
 
 ## Architecture
 

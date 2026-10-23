@@ -31,7 +31,7 @@ let activeTab = null;
 let activeIndex = 0;
 let mode = "present";
 let trainingView = "slide"; // persists across slides so a rep can keep FAQs open while advancing
-// THE DOGHOUSE app shell: home -> Presentations or Training Center -> product.
+// RAVEN app shell: home -> Presentations or Training Center -> product.
 // Customers never see training UI in present mode.
 // appView: "home" | "presentations" (product picker) | "coaches" (product picker)
 //        | "present" (in-home deck) | "center" (per-product Training Coach hub) | "training-deck"
@@ -1420,7 +1420,7 @@ function renderHome(){
   el.innerHTML = `
     <div class="home-hero">
       <img class="home-logo" src="${IMAGES.athLogo}" alt="Around The House">
-      <h1>THE DOGHOUSE</h1>
+      <h1>RAVEN</h1>
       <div class="home-sub">Around The House Home Solutions · Sales & Training</div>
     </div>
     <div class="home-cards">
@@ -1707,10 +1707,10 @@ function renderApp(){
   document.getElementById("prevBtn").style.display = showArrows ? "" : "none";
   document.getElementById("nextBtn").style.display = showArrows ? "" : "none";
   document.querySelector(".note").style.display           = appView==="home" ? "" : "none";
-  // customers see the product brand, not the internal DOGHOUSE name
+  // customers see the product brand, not the internal RAVEN app name
   document.getElementById("brandText").innerHTML = (appView==="present")
     ? (PROD.brandHTML || ('Around The House · <b>'+productInfo().name+'</b>'))
-    : 'Around The House · <b>THE DOGHOUSE</b>';
+    : 'Around The House · <b>RAVEN</b>';
   renderTopbarNav();
   if(appView==="home") renderHome();
   if(appView==="center") renderCenter();

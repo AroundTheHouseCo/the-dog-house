@@ -1,4 +1,4 @@
-// THE DOGHOUSE product registry.
+// RAVEN product registry.
 // Each product ships its own js/data-<key>.js which registers itself into
 // PRODUCT_DATA (deck, training, logo, brandHTML, photoCats, docs, …).
 // app.js binds the active product via setProduct(key) — nothing below is
