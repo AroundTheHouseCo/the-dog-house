@@ -11,7 +11,8 @@
 // still degrades gracefully when the map tiles can't load — the region list
 // answers "have you worked near me?" on its own, no network required.
 //
-// DATA: data/reference-map.json, built by tools/build-reference-map.mjs.
+// DATA: built by tools/build-reference-map.mjs, uploaded to Cockpit, and
+// fetched from Cockpit behind the Raven sign-in (see loadReferenceMap below).
 // Coordinates in that file are already jittered 100-300ft and names are
 // already abbreviated — this module does no privacy work of its own, it only
 // renders what the build step produced. Nothing here geocodes at runtime.
@@ -180,21 +181,60 @@ let refmapPin = null;       // active pin index within the region, or null
 let _leafletMap = null;     // live L.Map instance, torn down on view change
 let _tileFailed = false;
 
-// Kick the fetch off once at boot. Absent file (404) is a normal, expected
-// state — it means the dataset hasn't been produced yet, and the slide shows
-// its placeholder exactly as it did before this feature existed.
-function loadReferenceMap(){
-  fetch("data/reference-map.json", {cache:"no-cache"})
-    .then((r) => (r.ok ? r.json() : null))
-    .then((d) => {
-      REFMAP_DATA = (d && Array.isArray(d.towns) && d.towns.length) ? d : null;
-      if (typeof currentSlide === "function" && currentSlide()?.type === "refmap") renderSlide();
-    })
-    .catch(() => {
-      REFMAP_DATA = null;
-      if (typeof currentSlide === "function" && currentSlide()?.type === "refmap") renderSlide();
-    });
+// WHERE THE DATA COMES FROM (Nov 2026 security hotfix): the dataset is a list
+// of past customers, so it is no longer a static file on this public site. It
+// is served by Cockpit (GET /api/reference-map) to a rep signed in to Raven,
+// using the same per-rep device token as the appointment recorder. A copy is
+// kept in localStorage so the slide still works offline in a customer's home,
+// and that copy is wiped the moment the rep signs out or the token is revoked
+// (js/raven.js fires "raven-session-changed"). Not signed in and no copy →
+// the slide shows its placeholder, exactly as before this feature existed.
+const REFMAP_URL = "https://ath-cockpit.onrender.com/api/reference-map";
+const REFMAP_LS_KEY = "doghouse.refmap.v1";
+
+function refmapValid(d){ return !!(d && Array.isArray(d.towns) && d.towns.length); }
+function refmapRerender(){
+  if (typeof currentSlide === "function" && currentSlide()?.type === "refmap") renderSlide();
 }
+function refmapForget(){
+  try { localStorage.removeItem(REFMAP_LS_KEY); } catch (e) { /* nothing stored */ }
+  REFMAP_DATA = null;
+  refmapReset();
+  refmapRerender();
+}
+
+function loadReferenceMap(){
+  // 1. Offline copy first, so the slide is ready instantly and works with no signal.
+  if (REFMAP_DATA === undefined) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(REFMAP_LS_KEY) || "null");
+      REFMAP_DATA = refmapValid(cached) ? cached : null;
+    } catch (e) { REFMAP_DATA = null; }
+    refmapRerender();
+  }
+  // 2. Refresh from Cockpit when signed in. rvGetToken lives in js/raven.js.
+  const token = (typeof rvGetToken === "function") ? rvGetToken() : "";
+  if (!token || !navigator.onLine) return;
+  fetch(REFMAP_URL, { headers: { "X-Raven-Token": token }, cache: "no-store" })
+    .then((r) => {
+      if (r.status === 401) return { revoked: true };
+      return r.ok ? r.json() : null;
+    })
+    .then((j) => {
+      if (j && j.revoked) return; // raven.js owns the revoked-token path
+      const d = j && j.ok ? j.data : null;
+      if (!refmapValid(d)) return;  // keep whatever we already had
+      REFMAP_DATA = d;
+      try { localStorage.setItem(REFMAP_LS_KEY, JSON.stringify(d)); } catch (e) { /* storage full / private mode */ }
+      refmapRerender();
+    })
+    .catch(() => { /* offline or Cockpit down — keep the cached copy */ });
+}
+
+window.addEventListener("raven-session-changed", (e) => {
+  if (e && e.detail && e.detail.signedIn) loadReferenceMap();
+  else refmapForget();
+});
 
 function refmapReset(){
   refmapRegion = null;
@@ -343,4 +383,7 @@ function mountLeaflet(panel, r){
   setTimeout(() => map.invalidateSize(), 60);
 }
 
-loadReferenceMap();
+// After every script has run (js/raven.js loads after this file, and its
+// rvGetToken is needed for the Cockpit fetch).
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadReferenceMap);
+else loadReferenceMap();

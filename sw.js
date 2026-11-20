@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-10-20.1";
+const TIER1_VERSION = "2026-11-20.1";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -44,7 +44,9 @@ const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
 // re-driven on every online app open via postMessage (see js/quote-builder.js).
 const PRICING_CACHE = "doghouse-pricing-v1";
 const COCKPIT_BASE = "https://ath-cockpit.onrender.com";
-const PRICING_KEY = "ATH2026";
+// No shared pricing key here any more (Nov 2026 security hotfix — the old one
+// was a literal in this public file). Each sync carries the rep's own Raven
+// device token, handed over by the page in the SYNC_PRICING message.
 const PRICING_PRODUCT_IDS = [
   "sunesta", "sunstyle", "sunlight",
   "eclipse-ezip-4in-sunstopper", "eclipse-ezip-5in-sunstopper",
@@ -59,8 +61,8 @@ function pricingUrls(){
     `${COCKPIT_BASE}/pricing-engine.js`,
   ];
 }
-function pricingFetch(url){
-  return fetch(url, { headers: { "X-Pricing-Key": PRICING_KEY } });
+function pricingFetch(url, token){
+  return fetch(url, { headers: { "X-Raven-Token": token } });
 }
 
 const TIER1_URLS = [
@@ -82,10 +84,9 @@ const TIER1_URLS = [
   "data/training-content-shared.json",
   "data/company-settings.json",
   "js/reference-map.js",
-  // Reference Map dataset (jittered coords + abbreviated names, 13KB).
-  // Precached so the town list works offline; only the map tiles need a
-  // live connection.
-  "data/reference-map.json",
+  // The Reference Map DATASET is no longer a static file here (Nov 2026
+  // security hotfix): it is customer data, so it comes from Cockpit behind
+  // the rep's Raven sign-in and js/reference-map.js keeps its own offline copy.
   // Reference Map region tile backgrounds (CC BY — see js/reference-map.js)
   "images/regions/pikes-peak.jpg",
   "images/regions/southern-colorado.jpg",
@@ -176,17 +177,17 @@ const TIER1_URLS = [
   "images/proc-warranty.svg",
   "images/proc-service.svg",
   "images/eclipse/covered-patio-ezips.jpg",
-  "images/eclipse/byerly-2.jpg",
-  "images/eclipse/byerly-night.jpg",
+  "images/eclipse/ezip-half-deployed.jpg",
+  "images/eclipse/ezip-night.jpg",
   "images/eclipse/monument-18ft-up.jpg",
   "images/eclipse/monument-18ft-down.jpg",
   "images/eclipse/monument-18ft-down-outside.jpg",
-  "images/eclipse/garcia-inside.jpg",
+  "images/eclipse/ezip-inside-view.jpg",
   "images/eclipse/three-ezips-porch.jpg",
   "images/eclipse/ezip-with-awning.jpg",
   "images/eclipse/sunroom-drop-screen.jpg",
   "images/eclipse/part-way-up.jpg",
-  "images/eclipse/waterlander-full.jpg",
+  "images/eclipse/ezip-full-enclosure.jpg",
   "images/eclipse/recessed-stone.jpg",
   "images/eclipse/ez-how-it-works.svg",
   "images/eclipse/logo-somfy.png",
@@ -547,10 +548,10 @@ const TIER2_URLS = [
   "images/library/sunlight/thumb/gray-white-stripe-white-siding-wall-mount.jpg",
   "images/library/awnings/colorado-shades-awning.jpg",
   "images/library/awnings/thumb/colorado-shades-awning.jpg",
-  "images/library/awnings/fickel-awning-1.jpg",
-  "images/library/awnings/thumb/fickel-awning-1.jpg",
-  "images/library/awnings/fickle-awning-with-people-under-it.jpg",
-  "images/library/awnings/thumb/fickle-awning-with-people-under-it.jpg",
+  "images/library/awnings/awning-install-1.jpg",
+  "images/library/awnings/thumb/awning-install-1.jpg",
+  "images/library/awnings/awning-with-people-under-it.jpg",
+  "images/library/awnings/thumb/awning-with-people-under-it.jpg",
   "images/library/awnings/gray-black-stripe-black-indoor-showroom-display.jpg",
   "images/library/awnings/thumb/gray-black-stripe-black-indoor-showroom-display.jpg",
   "images/library/awnings/gray-white-stripe-black-siding-wall-mount.jpg",
@@ -571,14 +572,14 @@ const TIER2_URLS = [
   "images/library/screens/thumb/1469-hi-screen-1-image-3-v2.jpg",
   "images/library/screens/1497-hi-sunesta-screen-bug-and-privacy-1.jpg",
   "images/library/screens/thumb/1497-hi-sunesta-screen-bug-and-privacy-1.jpg",
-  "images/library/screens/22-1882229199-anderson-reda-install-2013-09-06-002.jpg",
-  "images/library/screens/thumb/22-1882229199-anderson-reda-install-2013-09-06-002.jpg",
+  "images/library/screens/screen-install-a.jpg",
+  "images/library/screens/thumb/screen-install-a.jpg",
   "images/library/screens/22-50910762-tulsa-area-screen-sunesta.jpg",
   "images/library/screens/thumb/22-50910762-tulsa-area-screen-sunesta.jpg",
-  "images/library/screens/22-578031152-reynolds-straight.jpg",
-  "images/library/screens/thumb/22-578031152-reynolds-straight.jpg",
-  "images/library/screens/22-60262557-anderson-reda-install-2013-09-06-007.jpg",
-  "images/library/screens/thumb/22-60262557-anderson-reda-install-2013-09-06-007.jpg",
+  "images/library/screens/screen-straight-on.jpg",
+  "images/library/screens/thumb/screen-straight-on.jpg",
+  "images/library/screens/screen-install-b.jpg",
+  "images/library/screens/thumb/screen-install-b.jpg",
   "images/library/screens/25-12-07-07-pm-1.jpg",
   "images/library/screens/thumb/25-12-07-07-pm-1.jpg",
   "images/library/screens/25-12-07-07-pm-2.jpg",
@@ -651,9 +652,12 @@ async function cacheTier2InBackground(){
 // function — a failed fetch (offline, Cockpit down) just leaves the
 // existing cache in place, and app.js's own online/offline branching
 // handles the user-facing state.
-async function syncPricingTier(){
+async function syncPricingTier(token){
+  // No Raven sign-in on this device → nothing to sync with (activate runs this
+  // with no token; the page re-drives it with one on every online open).
+  if (!token) return;
   try {
-    const liveVerResp = await pricingFetch(`${COCKPIT_BASE}/api/pricing/version`);
+    const liveVerResp = await pricingFetch(`${COCKPIT_BASE}/api/pricing/version`, token);
     if (!liveVerResp.ok) return;
     const liveVer = await liveVerResp.clone().json();
     // A bad key or disallowed origin answers HTTP 200 + {ok:false} — that
@@ -672,7 +676,7 @@ async function syncPricingTier(){
     if (!targets.length) return;
 
     const results = await Promise.allSettled(targets.map((u) =>
-      (u === `${COCKPIT_BASE}/api/pricing/version` ? Promise.resolve(liveVerResp) : pricingFetch(u))
+      (u === `${COCKPIT_BASE}/api/pricing/version` ? Promise.resolve(liveVerResp) : pricingFetch(u, token))
         .then((r) => { if (!r.ok) throw new Error(`bad status ${r.status} for ${u}`); return cache.put(u, r); })
     ));
     const failed = results.filter((r) => r.status === "rejected").length;
@@ -706,7 +710,7 @@ self.addEventListener("message", (event) => {
     event.waitUntil(cacheTier2InBackground());
   }
   if (event.data && event.data.type === "SYNC_PRICING") {
-    event.waitUntil(syncPricingTier());
+    event.waitUntil(syncPricingTier(event.data.token));
   }
 });
 

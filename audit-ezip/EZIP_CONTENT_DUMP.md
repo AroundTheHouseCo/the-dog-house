@@ -45,7 +45,7 @@ These fields drive what customers see. They are NOT in the training content JSON
 
 **id:** ez-intro
 
-**image:** images/eclipse/byerly-1.jpg
+**image:** (photo since removed from the repo)
 
 **imageRotate:** 1.3
 
@@ -728,12 +728,12 @@ These fields drive what customers see. They are NOT in the training content JSON
       x: 0.74
       y: 0.76
       label: Bugs & no-see-ums
-      photo: images/eclipse/waterlander-full.jpg
+      photo: images/eclipse/ezip-full-enclosure.jpg
       content: The tight SunTex weave and the hem bar's brush seal keep no-see-ums, mosquitoes, and other small insects out — evenings become enjoyable again.
 
 **id:** ez-reasons
 
-**image:** images/eclipse/garcia-inside.jpg
+**image:** images/eclipse/ezip-inside-view.jpg
 
 **title:** What's Pushing You Back Inside?
 
@@ -1882,7 +1882,7 @@ These fields drive what customers see. They are NOT in the training content JSON
   - images/eclipse/monument-18ft-up.jpg
   - images/eclipse/monument-18ft-down.jpg
   - images/eclipse/three-ezips-porch.jpg
-  - images/eclipse/byerly-night.jpg
+  - images/eclipse/ezip-night.jpg
   - images/eclipse/sunroom-drop-screen.jpg
   - images/eclipse/ezip-with-awning.jpg
 
@@ -2336,7 +2336,7 @@ These fields drive what customers see. They are NOT in the training content JSON
 
 **id:** ez-viewstays
 
-**image:** images/eclipse/byerly-2.jpg
+**image:** images/eclipse/ezip-half-deployed.jpg
 
 **subtext:** It's more like a wall you can make disappear whenever you want. The view stays — the sun, the wind, and the bugs don't.
 

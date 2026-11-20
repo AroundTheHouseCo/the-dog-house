@@ -1760,8 +1760,12 @@ if("serviceWorker" in navigator){
     if(navigator.onLine && reg.active){
       reg.active.postMessage({type:"CACHE_TIER2"});
       // Same idea for Tier 3 (Quote Builder pricing) — re-checks Cockpit's
-      // freshness stamp on every online open, not just first sync.
-      reg.active.postMessage({type:"SYNC_PRICING"});
+      // freshness stamp on every online open, not just first sync. Pricing
+      // rides the rep's Raven sign-in (Nov 2026 hotfix — no shared key), and
+      // the service worker can't read localStorage, so the token goes in the
+      // message. Signed out → nothing to sync; cached pricing still works.
+      const rvTok = (typeof rvGetToken === "function") ? rvGetToken() : "";
+      if (rvTok) reg.active.postMessage({type:"SYNC_PRICING", token: rvTok});
     }
   }).catch((err) => {
     console.warn("Service worker registration failed:", err);

@@ -184,7 +184,7 @@ const ECLIPSE_DECK = {
   {
     id:"ez-reasons", type:"reasonsphoto",
     title:"What's Pushing You Back Inside?",
-    image: IMAGES.ezGarciaInside,
+    image: IMAGES.ezInsideView,
     hotspots:[
       {x:0.30, y:0.20, label:"Harsh sun & glare", photo: IMAGES.ezSunroom,
        content:"Block the harsh afternoon or morning sun without losing the feel of being outside — and cut the heat and glare reaching the rooms behind the space."},
@@ -192,7 +192,7 @@ const ECLIPSE_DECK = {
        content:"The fabric edge is zipped into the side tracks, so the screen stays flat and taut instead of flapping — the space is actually comfortable to sit in."},
       {x:0.42, y:0.62, label:"Privacy", photo: IMAGES.ezMonDown,
        content:"A dark fabric reads almost like a mirror from outside during the day — neighbors can't see in, you can still see out."},
-      {x:0.74, y:0.76, label:"Bugs & no-see-ums", photo: IMAGES.ezWaterlander,
+      {x:0.74, y:0.76, label:"Bugs & no-see-ums", photo: IMAGES.ezFullEnclosure,
        content:"The tight SunTex weave and the hem bar's brush seal keep no-see-ums, mosquitoes, and other small insects out — evenings become enjoyable again."}
     ]
   },

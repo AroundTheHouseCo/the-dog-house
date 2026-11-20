@@ -639,14 +639,14 @@ const PHOTO_LIBRARY = {
     "c": "Colorado Shades Awning"
    },
    {
-    "f": "images/library/awnings/fickel-awning-1.jpg",
-    "t": "images/library/awnings/thumb/fickel-awning-1.jpg",
-    "c": "Fickel Awning 1"
+    "f": "images/library/awnings/awning-install-1.jpg",
+    "t": "images/library/awnings/thumb/awning-install-1.jpg",
+    "c": "Awning install 1"
    },
    {
-    "f": "images/library/awnings/fickle-awning-with-people-under-it.jpg",
-    "t": "images/library/awnings/thumb/fickle-awning-with-people-under-it.jpg",
-    "c": "Fickle Awning with People under it"
+    "f": "images/library/awnings/awning-with-people-under-it.jpg",
+    "t": "images/library/awnings/thumb/awning-with-people-under-it.jpg",
+    "c": "Awning with people under it"
    },
    {
     "f": "images/library/awnings/gray-black-stripe-black-indoor-showroom-display.jpg",
@@ -704,9 +704,9 @@ const PHOTO_LIBRARY = {
     "c": "1497 hi Sunesta Screen bug and privacy (1)"
    },
    {
-    "f": "images/library/screens/22-1882229199-anderson-reda-install-2013-09-06-002.jpg",
-    "t": "images/library/screens/thumb/22-1882229199-anderson-reda-install-2013-09-06-002.jpg",
-    "c": "22 1882229199 Anderson Reda Install 2013 09 06 002"
+    "f": "images/library/screens/screen-install-a.jpg",
+    "t": "images/library/screens/thumb/screen-install-a.jpg",
+    "c": "Screen install A"
    },
    {
     "f": "images/library/screens/22-50910762-tulsa-area-screen-sunesta.jpg",
@@ -714,14 +714,14 @@ const PHOTO_LIBRARY = {
     "c": "22 50910762 Tulsa Area Screen Sunesta"
    },
    {
-    "f": "images/library/screens/22-578031152-reynolds-straight.jpg",
-    "t": "images/library/screens/thumb/22-578031152-reynolds-straight.jpg",
-    "c": "22 578031152 reynolds straight"
+    "f": "images/library/screens/screen-straight-on.jpg",
+    "t": "images/library/screens/thumb/screen-straight-on.jpg",
+    "c": "Screen, straight on"
    },
    {
-    "f": "images/library/screens/22-60262557-anderson-reda-install-2013-09-06-007.jpg",
-    "t": "images/library/screens/thumb/22-60262557-anderson-reda-install-2013-09-06-007.jpg",
-    "c": "22 60262557 Anderson Reda Install 2013 09 06 007"
+    "f": "images/library/screens/screen-install-b.jpg",
+    "t": "images/library/screens/thumb/screen-install-b.jpg",
+    "c": "Screen install B"
    },
    {
     "f": "images/library/screens/25-12-07-07-pm-1.jpg",

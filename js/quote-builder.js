@@ -9,9 +9,17 @@
 // background self-healing sync (driven by the SYNC_PRICING message, see
 // bottom of js/app.js), this file owns bootstrapping the cache on a
 // never-synced device and reading from it to render the UI.
+//
+// AUTH (Nov 2026 security hotfix): there is NO shared key in this file any
+// more. The old one was a hardcoded string in public code, so anyone could
+// read Cockpit's pricing (dealer cost tables, labor, margins). Pricing now
+// rides the rep's OWN Raven sign-in (the device token from js/raven.js), the
+// same per-rep, revocable credential the appointment recorder already uses.
+// No sign-in → cached pricing still works offline; a fresh sync asks the rep
+// to sign in first. Signing out (or a revoked token) clears the pricing cache
+// from this device.
 const QB_CACHE = "doghouse-pricing-v1";
 const QB_BASE = "https://ath-cockpit.onrender.com";
-const QB_KEY = "ATH2026";
 const QB_PRODUCT_IDS = [
   "sunesta", "sunstyle", "sunlight",
   "eclipse-ezip-4in-sunstopper", "eclipse-ezip-5in-sunstopper",
@@ -33,9 +41,40 @@ function qbUrls(){
     `${QB_BASE}/pricing-engine.js`,
   ];
 }
+// rvGetToken lives in js/raven.js, which loads after this file — only ever
+// called at runtime, never at parse time.
+function qbToken(){ return (typeof rvGetToken === "function") ? rvGetToken() : ""; }
 function qbAuthedFetch(url){
-  return fetch(url, { headers: { "X-Pricing-Key": QB_KEY } });
+  const token = qbToken();
+  if (!token) {
+    return Promise.resolve(new Response(JSON.stringify({ ok: false, error: "not signed in", code: "unauthenticated" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }));
+  }
+  return fetch(url, { headers: { "X-Raven-Token": token } });
 }
+// Asks sw.js to run its background pricing sync. The service worker can't read
+// localStorage, so the token travels in the message.
+function qbRequestBackgroundSync(){
+  const token = qbToken();
+  if (!token || !navigator.onLine || !("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.ready
+    .then((reg) => { if (reg.active) reg.active.postMessage({ type: "SYNC_PRICING", token }); })
+    .catch(() => { /* no service worker — the page-side sync still runs */ });
+}
+// Raven sign-in / sign-out (dispatched by js/raven.js).
+window.addEventListener("raven-session-changed", (e) => {
+  const signedIn = !!(e && e.detail && e.detail.signedIn);
+  if (signedIn) {
+    if (QB.status === "signin" || QB.status === "error" || QB.status === "offline-empty") QB.status = "idle";
+    qbRequestBackgroundSync();
+  } else {
+    // Signed out or token revoked: pricing (cost tables) leaves this device.
+    try { caches.delete(QB_CACHE); } catch (err) { /* no Cache API */ }
+    QB.status = "idle"; QB.products = null; QB.catalogs = null; QB.syncedAt = null;
+    qbResetToPicker();
+  }
+  if (typeof appView !== "undefined" && appView === "quote") renderQuoteBuilder();
+});
 
 // ── State ───────────────────────────────────────────────────────────────
 const QB = { status: "idle", products: null, catalogs: null, syncedAt: null, errorMessage: null };
@@ -64,6 +103,7 @@ async function qbFetchAndCacheAll(){
 
 async function qbSyncNow(){
   if (!navigator.onLine) return { synced: false, reason: "offline" };
+  if (!qbToken()) return { synced: false, reason: "signed-out" };
   try {
     const verResp = await qbAuthedFetch(`${QB_BASE}/api/pricing/version`);
     if (!verResp.ok) return { synced: false, reason: `http-${verResp.status}` };
@@ -134,6 +174,10 @@ function qbEnsureEngine(text){
 async function qbLoadData(){
   let data = await qbLoadFromCache();
   if (!data) {
+    if (navigator.onLine && !qbToken()) {
+      QB.status = "signin";
+      return;
+    }
     if (navigator.onLine) {
       try {
         await qbFetchAndCacheAll();
@@ -200,6 +244,12 @@ function renderQuoteBuilder(){
     return;
   }
   if (QB.status === "loading") { el.innerHTML = qbLoadingHTML(); return; }
+  if (QB.status === "signin") {
+    el.innerHTML = qbSignInHTML();
+    const go = document.getElementById("qbGoSignIn");
+    if (go) go.onclick = () => { if (typeof appView !== "undefined") { appView = "raven"; renderApp(); } };
+    return;
+  }
   if (QB.status === "offline-empty" || QB.status === "error") {
     el.innerHTML = QB.status === "offline-empty" ? qbNeedsSyncHTML() : qbErrorHTML();
     const btn = document.getElementById("qbRetrySync");
@@ -218,6 +268,14 @@ function qbResetToPicker(){
 
 function qbLoadingHTML(){
   return `<div class="qb-status"><div class="qb-status-icon">⏳</div><div>Loading live pricing from Cockpit…</div></div>`;
+}
+function qbSignInHTML(){
+  return `<div class="qb-status">
+    <div class="qb-status-icon">${ICON.warn}</div>
+    <h2>Sign in to load pricing</h2>
+    <p>Pricing now comes from Cockpit using your own Raven sign-in. Sign in once with your PIN under Start Appointment, then come back here. After that it keeps working offline.</p>
+    <button class="qb-btn-primary" id="qbGoSignIn">Sign in</button>
+  </div>`;
 }
 function qbNeedsSyncHTML(){
   return `<div class="qb-status">

@@ -22,8 +22,8 @@
 // involved (Raven is live-only data, nothing to precache).
 
 // ── Config ─────────────────────────────────────────────────────────────
-// Unlike the Quote Builder (which ships a static X-Pricing-Key constant),
-// Raven carries NO shared secret in this file. The rep signs in with a PIN,
+// Raven carries NO shared secret in this file (and since the Nov 2026 hotfix
+// neither does the Quote Builder — it now rides this same sign-in). The rep signs in with a PIN,
 // Cockpit hands back a per-rep token, and that token authenticates every
 // later call via X-Raven-Token. There is deliberately nothing here to fill
 // in before shipping — a key baked into a public static site is exactly
@@ -350,9 +350,20 @@ function rvSetSession(token, repName){
   try {
     localStorage.setItem(RAVEN_SESSION_LS_KEY, JSON.stringify({ token, repName }));
   } catch (e) { /* private mode — the session just won't survive a reload */ }
+  rvAnnounceSession(true);
 }
 function rvClearSession(){
   try { localStorage.removeItem(RAVEN_SESSION_LS_KEY); } catch (e) { /* nothing to drop */ }
+  rvAnnounceSession(false);
+}
+// Since the Nov 2026 security hotfix the Raven sign-in also unlocks the Quote
+// Builder's pricing (js/quote-builder.js) and the Reference Map's customer
+// data (js/reference-map.js). They listen for this to fetch on sign-in and to
+// wipe their cached copies on sign-out or a revoked token (rvCheck's 401 path
+// calls rvClearSession, so revocation reaches them too).
+function rvAnnounceSession(signedIn){
+  try { window.dispatchEvent(new CustomEvent("raven-session-changed", { detail: { signedIn } })); }
+  catch (e) { /* listener errors must never break sign-in */ }
 }
 
 // ── Recording ──────────────────────────────────────────────────────────

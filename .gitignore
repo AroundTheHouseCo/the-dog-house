@@ -22,3 +22,9 @@ Desktop.ini
 
 # geocode cache for tools/build-reference-map.mjs (local, regenerable)
 tools/.geocode-cache.json
+
+# Reference Map dataset is CUSTOMER DATA (Nov 2026 security hotfix): it lives on
+# Cockpit behind the Raven sign-in, never in this public repo. The build tool
+# writes to tools/out/; upload that file to Cockpit (see the tool header).
+data/reference-map.json
+tools/out/

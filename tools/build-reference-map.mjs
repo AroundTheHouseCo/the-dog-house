@@ -10,7 +10,16 @@
  * the baked file.
  *
  * ---------------------------------------------------------------------------
- * PRIVACY — this data ends up on a PUBLIC website. Three deliberate defenses:
+ * WHERE THE OUTPUT GOES (Nov 2026 security hotfix): NOT into this repo. The
+ * default output is tools/out/reference-map.json (git-ignored). Upload it to
+ * Cockpit, which serves it only to reps signed in to Raven:
+ *   • on the Render Shell:  node import-reference-map.js <path-or-https-url>
+ *   • or as a Master Admin: POST the file to /api/reference-map from a
+ *     signed-in Cockpit browser session.
+ * The file used to be published on the public GitHub Pages site; that is why
+ * the defenses below were written for a public file. They still apply.
+ *
+ * PRIVACY — three deliberate defenses:
  *
  *  1. Jitter. Every pin is displaced 100–300 ft on a random bearing, so a pin
  *     lands on the right block but never on the customer's parcel.
@@ -21,10 +30,11 @@
  *     the offsets and recover the true coordinate. Stable jitter closes that.
  *
  *  3. Abbreviated names. Only the given name(s) plus a last initial are
- *     written to the JSON — "Dale & Regina Hitchcock" ships as
- *     "Dale & Regina H." The file is publicly fetchable, so anything written
- *     here is effectively published in bulk regardless of how the UI reveals
- *     it. Pass --full-names to override (see the note in the final report).
+ *     written to the JSON — "Jane & John Sample" ships as "Jane & John S."
+ *     Every signed-in rep can read the whole file, so anything written here
+ *     is shared in bulk regardless of how the UI reveals it. Pass
+ *     --full-names to override (Cockpit refuses a full-name upload unless
+ *     told to accept one).
  *
  * Street addresses are used for geocoding and are then DISCARDED — they are
  * never written to the output file.
@@ -67,7 +77,7 @@ const KEEP_STATUS = arg("keep-status", null);       // "|"- or ","-separated all
 const STATUS_CSV = arg("status-csv", null);
 const JOIN_COL   = arg("join-col", "Name");
 const STATE      = arg("state", "CO");
-const OUT        = arg("out", "data/reference-map.json");
+const OUT        = arg("out", "tools/out/reference-map.json");  // git-ignored; upload to Cockpit
 const CACHE      = arg("cache", "tools/.geocode-cache.json");
 const LIMIT      = parseInt(arg("limit", "0"), 10) || 0;
 const FULL_NAMES = flag("full-names");
@@ -371,7 +381,7 @@ console.log(`  usable        ${usable.length}${LIMIT ? `  (limited to ${work.len
 console.log(`  skipped       ${Object.entries(skipped).filter(([, v]) => v).map(([k, v]) => `${k}=${v}`).join("  ") || "none"}`);
 if (joinStats) console.log(`  status join   ${joinStats.matched} matched, ${joinStats.ambiguous} ambiguous, ${joinStats.missed} unmatched  (from ${joinStats.from})`);
 if (!keep) console.log(`  NOTE          no status filter applied — every usable row will be plotted`);
-if (FULL_NAMES) console.log(`  NOTE          --full-names: full customer names will be written to a PUBLIC file`);
+if (FULL_NAMES) console.log(`  NOTE          --full-names: full customer names will be written (Cockpit refuses these unless allowFullNames is set)`);
 
 if (DRY) {
   const byCity = {};
