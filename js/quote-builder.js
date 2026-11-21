@@ -44,21 +44,25 @@ function qbUrls(){
 // rvGetToken lives in js/raven.js, which loads after this file — only ever
 // called at runtime, never at parse time.
 function qbToken(){ return (typeof rvGetToken === "function") ? rvGetToken() : ""; }
+// rvAuthedFetch (js/raven.js) attaches whichever sign-in this device has —
+// account (Bearer, refreshed as needed) or PIN — and runs the sign-out path
+// if Cockpit says it's over.
 function qbAuthedFetch(url){
-  const token = qbToken();
-  if (!token) {
+  if (!qbToken() || typeof rvAuthedFetch !== "function") {
     return Promise.resolve(new Response(JSON.stringify({ ok: false, error: "not signed in", code: "unauthenticated" }),
       { status: 401, headers: { "Content-Type": "application/json" } }));
   }
-  return fetch(url, { headers: { "X-Raven-Token": token } });
+  return rvAuthedFetch(url);
 }
 // Asks sw.js to run its background pricing sync. The service worker can't read
-// localStorage, so the token travels in the message.
-function qbRequestBackgroundSync(){
-  const token = qbToken();
-  if (!token || !navigator.onLine || !("serviceWorker" in navigator)) return;
+// localStorage, so fresh sign-in headers travel in the message.
+async function qbRequestBackgroundSync(){
+  if (!qbToken() || !navigator.onLine || !("serviceWorker" in navigator) || typeof rvAuthHeaders !== "function") return;
+  let headers = null;
+  try { headers = await rvAuthHeaders(); } catch (e) { headers = null; }
+  if (!headers) return;
   navigator.serviceWorker.ready
-    .then((reg) => { if (reg.active) reg.active.postMessage({ type: "SYNC_PRICING", token }); })
+    .then((reg) => { if (reg.active) reg.active.postMessage({ type: "SYNC_PRICING", headers }); })
     .catch(() => { /* no service worker — the page-side sync still runs */ });
 }
 // Raven sign-in / sign-out (dispatched by js/raven.js).
@@ -273,7 +277,7 @@ function qbSignInHTML(){
   return `<div class="qb-status">
     <div class="qb-status-icon">${ICON.warn}</div>
     <h2>Sign in to load pricing</h2>
-    <p>Pricing now comes from Cockpit using your own Raven sign-in. Sign in once with your PIN under Start Appointment, then come back here. After that it keeps working offline.</p>
+    <p>Pricing comes from Cockpit using your own RAVN sign-in. Sign in once under Start Appointment, then come back here. After that it keeps working offline.</p>
     <button class="qb-btn-primary" id="qbGoSignIn">Sign in</button>
   </div>`;
 }

@@ -1420,7 +1420,7 @@ function renderHome(){
   el.innerHTML = `
     <div class="home-hero">
       <img class="home-logo" src="${IMAGES.athLogo}" alt="Around The House">
-      <h1>RAVEN</h1>
+      <h1>RAVN</h1>
       <div class="home-sub">Around The House Home Solutions · Sales & Training</div>
     </div>
     <div class="home-cards">
@@ -1722,7 +1722,7 @@ function renderApp(){
   // customers see the product brand, not the internal RAVEN app name
   document.getElementById("brandText").innerHTML = (appView==="present")
     ? (PROD.brandHTML || ('Around The House · <b>'+productInfo().name+'</b>'))
-    : 'Around The House · <b>RAVEN</b>';
+    : 'Around The House · <b>RAVN</b>';
   renderTopbarNav();
   if(appView==="home") renderHome();
   if(appView==="center") renderCenter();
@@ -1764,8 +1764,7 @@ if("serviceWorker" in navigator){
       // rides the rep's Raven sign-in (Nov 2026 hotfix — no shared key), and
       // the service worker can't read localStorage, so the token goes in the
       // message. Signed out → nothing to sync; cached pricing still works.
-      const rvTok = (typeof rvGetToken === "function") ? rvGetToken() : "";
-      if (rvTok) reg.active.postMessage({type:"SYNC_PRICING", token: rvTok});
+      if (typeof qbRequestBackgroundSync === "function") qbRequestBackgroundSync();
     }
   }).catch((err) => {
     console.warn("Service worker registration failed:", err);

@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-11-21.1";
+const TIER1_VERSION = "2026-11-21.2";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -64,8 +64,12 @@ function pricingUrls(){
     `${COCKPIT_BASE}/pricing-engine.js`,
   ];
 }
-function pricingFetch(url, token){
-  return fetch(url, { headers: { "X-Raven-Token": token } });
+// `auth` is the sign-in headers object the page sends (RAVN step 3: either
+// Authorization: Bearer … or X-Raven-Token), or — from a page that hasn't
+// updated yet — a bare PIN device token.
+function pricingFetch(url, auth){
+  const headers = typeof auth === "string" ? { "X-Raven-Token": auth } : auth;
+  return fetch(url, { headers });
 }
 
 const TIER1_URLS = [
@@ -714,7 +718,7 @@ self.addEventListener("message", (event) => {
     event.waitUntil(cacheTier2InBackground());
   }
   if (event.data && event.data.type === "SYNC_PRICING") {
-    event.waitUntil(syncPricingTier(event.data.token));
+    event.waitUntil(syncPricingTier(event.data.headers || event.data.token));
   }
 });
 

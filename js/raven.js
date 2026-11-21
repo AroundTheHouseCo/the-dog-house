@@ -51,13 +51,17 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
-// persists until a call comes back 401 or the rep taps "Not you?".
+// persists until Cockpit says the sign-in is over or the rep taps "Sign out".
 const RAVEN_SESSION_LS_KEY = "doghouse.raven.session";
 
 // ── State ──────────────────────────────────────────────────────────────
 const RV = {
   view: "search",          // "login" | "search" | "recording" | "review"
   pin: "",                 // never persisted — cleared the moment it is exchanged for a token
+  loginMode: "account",    // "account" (email + password + 2FA) | "pin" (kept until PINs are retired)
+  email: "",               // remembered between screens; the password never is
+  mfa: null,               // {challenge, backup} while waiting for a 2FA code
+  signedOutReason: null,   // "revoked" | "credentials" | "expired" — shown on the sign-in screen
   authBusy: false,
   authError: null,         // wrong-PIN / unreachable copy for the login screen
   disabled: false,         // RAVEN_ENABLED is off on Cockpit (503) — distinct from any error
@@ -178,10 +182,12 @@ async function rvClearAppointment(appointmentId){
 // a wrong/revoked credential, the whole feature being switched off, and an
 // ordinary network failure. Collapsing "capture is disabled" into a generic
 // error would tell a rep with perfectly good credentials that something is
-// broken, when nothing is.
-function rvErr(kind, message){
+// broken, when nothing is. `code` and `body` carry Cockpit's own answer.
+function rvErr(kind, message, code, body){
   const e = new Error(message);
   e.kind = kind; // "auth" | "disabled" | "network" | "http"
+  e.code = code || null;
+  e.body = body || null;
   return e;
 }
 
@@ -189,39 +195,141 @@ async function rvReadJson(r){
   try { return await r.json(); } catch (e) { return null; }
 }
 
-// clearTokenOn401: true for every authenticated route (a 401 there means the
-// stored token was revoked, so drop it), false for /auth itself (a 401 there
-// just means the rep mistyped the PIN — there is no session to discard).
-async function rvCheck(r, clearTokenOn401){
+async function rvCheck(r){
   const d = await rvReadJson(r);
-  if (r.status === 503) throw rvErr("disabled", (d && d.error) || "Raven capture is disabled");
-  if (r.status === 401) {
-    if (clearTokenOn401) rvClearSession();
-    throw rvErr("auth", (d && d.error) || "invalid or revoked token");
-  }
-  if (!r.ok) throw rvErr("http", (d && d.error) || `HTTP ${r.status}`);
-  if (d && d.ok === false) throw rvErr("http", d.error || "request rejected by Cockpit");
+  if (r.status === 503) throw rvErr("disabled", (d && d.error) || "RAVN capture is disabled", "disabled", d);
+  if (r.status === 401) throw rvErr("auth", (d && d.error) || "not signed in", d && d.code, d);
+  if (!r.ok) throw rvErr("http", (d && d.error) || `HTTP ${r.status}`, d && d.code, d);
+  if (d && d.ok === false) throw rvErr("http", d.error || "request rejected by Cockpit", d.code, d);
   return d;
 }
 
-// Every authenticated Raven call goes through here, so token attachment,
-// revocation handling and the disabled-feature check exist in exactly one place.
-async function rvApi(path, opts){
-  const token = rvGetToken();
-  if (!token) throw rvErr("auth", "not signed in");
-  const o = opts || {};
-  let r;
-  try {
-    r = await fetch(`${RAVEN_BASE}${path}`, Object.assign({}, o, {
-      headers: Object.assign({ "X-Raven-Token": token }, o.headers || {}),
-    }));
-  } catch (e) {
-    throw rvErr("network", e.message || "network request failed");
-  }
-  return rvCheck(r, true);
+// ── Sign-in (RAVN step 3) ──────────────────────────────────────────────
+// Two kinds of sign-in live side by side until Jack retires PINs:
+//   account: email + password (+ 2FA) → a 15-minute access token, renewed
+//            with a refresh token. Sent as Authorization: Bearer.
+//   pin:     the original per-rep PIN → a device token (X-Raven-Token).
+// Every Cockpit call in the app goes through rvAuthedFetch, so refreshing,
+// revocation and the wipe each exist in exactly one place.
+//
+// THE WIPE NEVER TOUCHES A RECORDING. Signing out — by choice, or because an
+// owner revoked this device — clears pricing, the reference map and the
+// tokens. Recordings live in IndexedDB and are only ever deleted after
+// Cockpit confirms it has them (rvTryUpload). Before clearing anything, the
+// app tries once more to upload what is waiting; whatever can't go up stays
+// on the device and uploads when someone signs back in.
+function rvSessionKind(){ const s = rvGetSession(); return s ? (s.kind === "account" ? "account" : "pin") : null; }
+
+let rvRefreshing = null;   // single-flight: one refresh at a time, everyone waits on it
+async function rvRefreshNow(){
+  if (rvRefreshing) return rvRefreshing;
+  rvRefreshing = (async () => {
+    const s = rvGetSession();
+    if (!s || s.kind !== "account" || !s.refresh) throw rvErr("auth", "not signed in", "unauthenticated");
+    let r;
+    try {
+      r = await fetch(`${RAVEN_BASE}/api/raven/app/refresh`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken: s.refresh }),
+      });
+    } catch (e) { throw rvErr("network", e.message || "network request failed"); }
+    const d = await rvReadJson(r);
+    if (!r.ok || !d || !d.ok) {
+      if (r.status === 401) throw rvErr("auth", (d && d.error) || "Sign in again.", d && d.code, d);
+      throw rvErr("http", (d && d.error) || `HTTP ${r.status}`);
+    }
+    rvSaveAccountSession(d, false);
+    return d;
+  })();
+  try { return await rvRefreshing; } finally { rvRefreshing = null; }
 }
 
-// PIN → token. The only unauthenticated Raven route.
+// Headers for one Cockpit call. Refreshes an access token that is about to
+// lapse. A network failure while refreshing is NOT a sign-out — the call
+// just goes out with what we have and fails like any offline call would.
+async function rvAuthHeaders(){
+  const s = rvGetSession();
+  if (!s) return null;
+  if (s.kind !== "account") return { "X-Raven-Token": s.token };
+  if (!s.access || !s.accessExp || s.accessExp - Date.now() < 60000) {
+    try { await rvRefreshNow(); }
+    catch (e) {
+      if (e.kind === "auth") { await rvSignedOutByServer(e.code, e.body && e.body.wipe); return null; }
+    }
+  }
+  const s2 = rvGetSession();
+  return s2 && s2.access ? { Authorization: "Bearer " + s2.access } : null;
+}
+
+function rvRawAuthHeaders(){
+  const s = rvGetSession();
+  if (!s) return null;
+  if (s.kind !== "account") return { "X-Raven-Token": s.token };
+  return s.access ? { Authorization: "Bearer " + s.access } : null;
+}
+
+// fetch() with the current sign-in attached. Retries once after a refresh if
+// Cockpit says the access token lapsed. A final "you're signed out / revoked"
+// answer runs the sign-out path (upload first, then wipe). Returns the
+// Response; callers read it as they always did.
+async function rvAuthedFetch(url, opts, _retried){
+  const o = opts || {};
+  // Uploads use the stored credential as-is: Cockpit accepts a lapsed access
+  // token (and a just-revoked one, for a week) on the audio route, so an
+  // upload never waits on — or is blocked by — a refresh.
+  const auth = o._raw ? rvRawAuthHeaders() : await rvAuthHeaders();
+  if (!auth) {
+    return new Response(JSON.stringify({ ok: false, error: "not signed in", code: "unauthenticated" }),
+      { status: 401, headers: { "Content-Type": "application/json" } });
+  }
+  const fo = Object.assign({}, o, { headers: Object.assign({}, o.headers || {}, auth) });
+  delete fo._raw; delete fo._noSignOut;
+  const r = await fetch(url, fo);
+  if (r.status !== 401) return r;
+  const d = await rvReadJson(r.clone());
+  const code = d && d.code;
+  // invalid_token too: if Cockpit's signing key ever changes, the refresh
+  // token (stored separately) still gets a fresh access token — nobody is
+  // signed out by a key change.
+  if ((code === "token_expired" || code === "invalid_token") && !_retried && !o._noSignOut && rvSessionKind() === "account") {
+    try { await rvRefreshNow(); } catch (e) {
+      if (e.kind === "auth") await rvSignedOutByServer(e.code, e.body && e.body.wipe);
+      return r;
+    }
+    return rvAuthedFetch(url, opts, true);
+  }
+  // Grace uploads answer normally, so a 401 here is final for this sign-in.
+  if (!o._noSignOut) await rvSignedOutByServer(code, d && d.wipe);
+  return r;
+}
+
+// Every authenticated RAVN call goes through here.
+async function rvApi(path, opts){
+  if (!rvGetSession()) throw rvErr("auth", "not signed in", "unauthenticated");
+  let r;
+  try { r = await rvAuthedFetch(`${RAVEN_BASE}${path}`, opts); }
+  catch (e) { throw rvErr("network", e.message || "network request failed"); }
+  return rvCheck(r);
+}
+
+// Cockpit said this sign-in is over (revoked, disabled, password changed…).
+// Upload what's waiting while the old credential still gets the upload grace,
+// THEN clear tokens and cached pricing/map. Recordings are never deleted here.
+let rvSigningOut = null;
+async function rvSignedOutByServer(code, wipe){
+  if (rvSigningOut) return rvSigningOut;
+  if (!rvGetSession()) return;
+  rvSigningOut = (async () => {
+    RV.signedOutReason = wipe ? "revoked" : (code === "credentials_changed" ? "credentials" : "expired");
+    try { await rvRetryPendingUploads({ grace: true }); } catch (e) { /* keep going — the recordings stay local */ }
+    rvClearSession();
+    await rvRefreshPendingCount();
+    if (typeof appView !== "undefined" && appView === "raven") renderRaven();
+  })();
+  try { await rvSigningOut; } finally { rvSigningOut = null; }
+}
+
+// PIN → device token. Kept until Jack retires PINs.
 async function rvLogin(pin){
   let r;
   try {
@@ -233,10 +341,49 @@ async function rvLogin(pin){
   } catch (e) {
     throw rvErr("network", e.message || "network request failed");
   }
-  const d = await rvCheck(r, false);
+  const d = await rvCheck(r);
   if (!d || !d.token) throw rvErr("http", "Cockpit did not return a token");
   rvSetSession(d.token, d.repName || "");
   return d;
+}
+
+function rvDeviceLabel(){
+  const ua = navigator.userAgent || "";
+  // iPadOS reports itself as a Mac; touch support gives it away.
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "iPad";
+  if (/iPhone/.test(ua)) return "iPhone";
+  if (/Android/.test(ua)) return "Android";
+  return "Browser";
+}
+
+// Email + password. Returns {mfa:{challenge,…}} when a code is needed next,
+// or signs in and returns the identity.
+async function rvAccountLogin(email, password){
+  let r;
+  try {
+    r = await fetch(`${RAVEN_BASE}/api/raven/app/login`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, device: rvDeviceLabel() }),
+    });
+  } catch (e) { throw rvErr("network", e.message || "network request failed"); }
+  const d = await rvReadJson(r);
+  if (!r.ok || !d || !d.ok) throw rvErr(r.status === 401 ? "auth" : "http", (d && d.error) || `HTTP ${r.status}`, d && d.code, d);
+  if (d.mfa) return { mfa: d.mfa };
+  rvSaveAccountSession(d, true);
+  return { identity: d.identity };
+}
+async function rvAccount2fa(challenge, code, backup){
+  let r;
+  try {
+    r = await fetch(`${RAVEN_BASE}/api/raven/app/2fa`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ challenge, code, backup: !!backup }),
+    });
+  } catch (e) { throw rvErr("network", e.message || "network request failed"); }
+  const d = await rvReadJson(r);
+  if (!r.ok || !d || !d.ok) throw rvErr(r.status === 401 ? "auth" : "http", (d && d.error) || `HTTP ${r.status}`, d && d.code, d);
+  rvSaveAccountSession(d, true);
+  return { identity: d.identity };
 }
 
 async function rvSearchJobs(q){
@@ -324,7 +471,15 @@ async function rvUploadAppointment(rec, blob){
       method: "POST",
       body: form,
       signal: controller.signal,
+      _raw: true,
+      _noSignOut: !!(rec && rec._grace),
     });
+  } catch (err) {
+    // Cockpit already holds audio for this appointment. Only if it is the
+    // SAME size as ours (a retry after a lost response) is it safe to let
+    // go of the local copy; anything else stays on the device.
+    if (err.code === "already_uploaded" && err.body && err.body.bytes === blob.size) return true;
+    throw err;
   } finally {
     clearTimeout(timeoutId);
   }
@@ -332,25 +487,43 @@ async function rvUploadAppointment(rec, blob){
 }
 
 // ── Session ────────────────────────────────────────────────────────────
-// {token, repName} from /api/raven/auth. Persisted because the backend
-// issues non-expiring tokens: re-prompting on every app open would be noise
-// at a customer's kitchen table. It is dropped only on a 401 (revoked) or
-// when the rep explicitly signs out.
+// Stored in localStorage under the original key (renaming it would sign
+// every device out on update). Two shapes:
+//   PIN:     {token, repName}
+//   account: {kind:"account", access, accessExp, refresh, repName, userId, identity}
+// Dropped when the rep signs out or Cockpit says the sign-in is over.
 function rvGetSession(){
   try {
     const raw = localStorage.getItem(RAVEN_SESSION_LS_KEY);
     if (!raw) return null;
     const s = JSON.parse(raw);
+    if (s && s.kind === "account") return s.refresh ? s : null;
     return (s && s.token) ? s : null;
   } catch (e) { return null; }
 }
-function rvGetToken(){ const s = rvGetSession(); return s ? s.token : ""; }
+// "Is anyone signed in?" — callers only test it for truthiness. The real
+// credential for a call always comes from rvAuthHeaders().
+function rvGetToken(){ const s = rvGetSession(); return s ? (s.token || s.refresh || "") : ""; }
 function rvRepName(){ const s = rvGetSession(); return (s && s.repName) || ""; }
+function rvUserId(){ const s = rvGetSession(); return (s && s.userId) || null; }
+function rvIdentity(){ const s = rvGetSession(); return (s && s.identity) || null; }
 function rvSetSession(token, repName){
   try {
     localStorage.setItem(RAVEN_SESSION_LS_KEY, JSON.stringify({ token, repName }));
   } catch (e) { /* private mode — the session just won't survive a reload */ }
+  RV.signedOutReason = null;
   rvAnnounceSession(true);
+}
+function rvSaveAccountSession(d, announce){
+  const prev = rvGetSession() || {};
+  const id = d.identity || prev.identity || {};
+  try {
+    localStorage.setItem(RAVEN_SESSION_LS_KEY, JSON.stringify({
+      kind: "account", access: d.accessToken, accessExp: d.accessExpiresAt, refresh: d.refreshToken,
+      repName: id.name || prev.repName || "", userId: id.userId || prev.userId || null, identity: id,
+    }));
+  } catch (e) { /* private mode */ }
+  if (announce) { RV.signedOutReason = null; rvAnnounceSession(true); }
 }
 function rvClearSession(){
   try { localStorage.removeItem(RAVEN_SESSION_LS_KEY); } catch (e) { /* nothing to drop */ }
@@ -455,6 +628,7 @@ async function rvBeginAppointment(job){
     jnid: job.jnid,
     jobLabel: job.name || job.display_name || "",
     repName: rvRepName(),   // local label only — Cockpit attributes from the token
+    ownerUserId: rvUserId(),   // which sign-in this recording belongs to (null for a PIN)
     startedAt: RV.startedAt,
     mimeType: RV.mimeType,
     status: "recording",
@@ -565,12 +739,31 @@ async function rvTryUpload(rec){
     }
     const blob = new Blob(chunks.map((c) => c.blob), { type: rec.mimeType || "audio/mp4" });
     await rvUploadAppointment(rec, blob);
+    // The ONLY place a recording is deleted: after Cockpit confirmed it.
     await rvClearAppointment(rec.appointmentId);
     return true;
   } catch (err) {
-    console.warn("Raven: upload failed, keeping local copy —", err.message);
+    console.warn("RAVN: upload failed, keeping local copy —", err.message);
+    // Remember answers that won't change on a retry, so the 4-minute tick
+    // stops re-sending a big file Cockpit will refuse. The recording stays.
+    if (err.code === "not_owner" || err.code === "already_uploaded") {
+      try {
+        const cur = await rvGetAppointment(rec.appointmentId);
+        if (cur) { cur.uploadConflict = err.code; cur.uploadConflictBy = rvUserId() || rvRepName(); await rvPutAppointment(cur); }
+      } catch (e) { /* best effort */ }
+    }
     return false;
   }
+}
+
+// Does this saved recording belong to whoever is signed in now? On a shared
+// iPad, recordings wait for their own rep. Older recordings with no owner
+// recorded are tried for anyone (Cockpit has the final say).
+function rvRecordingIsMine(rec){
+  if (rec.ownerUserId && rvUserId()) return rec.ownerUserId === rvUserId();
+  const a = String(rec.repName || "").trim().toLowerCase();
+  const b = String(rvRepName() || "").trim().toLowerCase();
+  return !a || !b || a === b;
 }
 
 // ── The backgrounding safety net ───────────────────────────────────────
@@ -658,14 +851,18 @@ async function rvRefreshPendingCount(){
   } catch (e) { RV.pendingCount = 0; }
 }
 
-async function rvRetryPendingUploads(){
-  if (!navigator.onLine) return;
+async function rvRetryPendingUploads(opts){
+  if (!navigator.onLine || !rvGetSession()) return;
+  const grace = !!(opts && opts.grace);
   let all;
   try { all = await rvAllAppointments(); } catch (e) { return; }
-  const pending = all.filter((a) => a.status === "pending-upload");
+  const me = rvUserId() || rvRepName();
+  const pending = all.filter((a) => a.status === "pending-upload")
+    .filter((a) => rvRecordingIsMine(a))
+    .filter((a) => !(a.uploadConflict && a.uploadConflictBy === me));
   for (const rec of pending) {
     if (rec.appointmentId === RV.appointmentId && RV.status === "recording") continue;
-    await rvTryUpload(rec);
+    await rvTryUpload(grace ? Object.assign({}, rec, { _grace: true }) : rec);
   }
   await rvRefreshPendingCount();
   if (typeof appView !== "undefined" && appView === "raven") renderRaven();
@@ -714,28 +911,72 @@ function renderRaven(){
 }
 
 function rvRenderLogin(el){
+  const reason = {
+    revoked: "This device was signed out by an owner. Any recordings saved on it are kept and will upload after you sign in.",
+    credentials: "Your password or two-factor changed — please sign in again.",
+    expired: "Please sign in again.",
+  }[RV.signedOutReason] || "";
+  const waiting = RV.pendingCount
+    ? `<div class="rv-pending-banner">${RV.pendingCount} recording${RV.pendingCount === 1 ? "" : "s"} saved on this device ${RV.pendingCount === 1 ? "is" : "are"} waiting to upload. ${RV.pendingCount === 1 ? "It" : "They"} will go up after you sign in.</div>` : "";
+  const err = RV.authError ? `<div class="rv-error">${rvEsc(RV.authError)}</div>` : "";
+  const busy = RV.authBusy;
+  let body;
+  if (RV.loginMode === "pin") {
+    body = `
+      <p class="rv-login-copy">Enter your PIN.</p>
+      <input id="rvPin" class="rv-pin" type="password" inputmode="numeric" pattern="[0-9]*"
+             autocomplete="off" placeholder="••••" value="${rvEsc(RV.pin)}">
+      ${err}
+      <button class="qb-btn-primary" id="rvGoBtn"${busy ? " disabled" : ""}>${busy ? "Checking…" : "Sign in"}</button>
+      <button class="rv-link" id="rvModeBtn" type="button">Sign in with email instead</button>`;
+  } else if (RV.mfa) {
+    body = `
+      <p class="rv-login-copy">${RV.mfa.backup ? "Enter one of your backup codes." : "Enter the 6-digit code from your authenticator app."}</p>
+      <input id="rvCode" class="rv-pin" type="text" ${RV.mfa.backup ? 'autocapitalize="characters"' : 'inputmode="numeric" pattern="[0-9]*"'}
+             autocomplete="one-time-code" placeholder="${RV.mfa.backup ? "XXXX-XXXX" : "123456"}" value="">
+      ${err}
+      <button class="qb-btn-primary" id="rvGoBtn"${busy ? " disabled" : ""}>${busy ? "Checking…" : "Verify"}</button>
+      <button class="rv-link" id="rvBackupBtn" type="button">${RV.mfa.backup ? "Use my authenticator app" : "Use a backup code"}</button>
+      <button class="rv-link" id="rvStartOverBtn" type="button">Start over</button>`;
+  } else {
+    body = `
+      <p class="rv-login-copy">Sign in with your Cockpit email and password. You'll stay signed in on this ${rvDeviceLabel() === "iPhone" ? "phone" : "device"}.</p>
+      <input id="rvEmail" class="rv-input" type="email" autocomplete="username" autocapitalize="off" placeholder="Email" value="${rvEsc(RV.email || "")}">
+      <input id="rvPassword" class="rv-input" type="password" autocomplete="current-password" placeholder="Password">
+      ${err}
+      <button class="qb-btn-primary" id="rvGoBtn"${busy ? " disabled" : ""}>${busy ? "Signing in…" : "Sign in"}</button>
+      <button class="rv-link" id="rvModeBtn" type="button">Use PIN instead</button>`;
+  }
   el.innerHTML = `
     <div class="center-head">
       <div class="eyebrow">Rep-only</div>
-      <h1>Sign in to Raven</h1>
+      <h1>Sign in to RAVN</h1>
     </div>
     <div class="rv-login">
-      <p class="rv-login-copy">Enter your PIN to record appointments. You'll stay signed in on this iPad.</p>
-      <input id="rvPin" class="rv-pin" type="password" inputmode="numeric" pattern="[0-9]*"
-             autocomplete="off" placeholder="••••" value="${rvEsc(RV.pin)}">
-      ${RV.authError ? `<div class="rv-error">${rvEsc(RV.authError)}</div>` : ""}
-      <button class="qb-btn-primary" id="rvPinBtn"${RV.authBusy ? " disabled" : ""}>${RV.authBusy ? "Checking…" : "Sign in"}</button>
+      ${reason ? `<div class="rv-note">${rvEsc(reason)}</div>` : ""}
+      ${waiting}
+      ${body}
     </div>`;
-  const pinEl = document.getElementById("rvPin");
+
+  const $ = (id) => document.getElementById(id);
   const go = () => {
-    const pin = pinEl.value.trim();
-    if (!pin || RV.authBusy) return;
-    rvDoLogin(pin);
+    if (RV.authBusy) return;
+    if (RV.loginMode === "pin") { const pin = $("rvPin").value.trim(); if (pin) rvDoLogin(pin); return; }
+    if (RV.mfa) { const code = $("rvCode").value.trim(); if (code) rvDoCode(code); return; }
+    const email = $("rvEmail").value.trim(), pw = $("rvPassword").value;
+    RV.email = email;
+    if (email && pw) rvDoAccountLogin(email, pw);
   };
-  document.getElementById("rvPinBtn").onclick = go;
-  pinEl.onkeydown = (e) => { if (e.key === "Enter") go(); };
-  pinEl.oninput = () => { RV.pin = pinEl.value; };
-  if (!RV.authBusy) { try { pinEl.focus(); } catch (e) { /* not focusable yet */ } }
+  $("rvGoBtn").onclick = go;
+  ["rvPin", "rvCode", "rvEmail", "rvPassword"].forEach((id) => { const f = $(id); if (f) f.onkeydown = (e) => { if (e.key === "Enter") go(); }; });
+  if ($("rvPin")) $("rvPin").oninput = () => { RV.pin = $("rvPin").value; };
+  if ($("rvModeBtn")) $("rvModeBtn").onclick = () => { RV.loginMode = RV.loginMode === "pin" ? "account" : "pin"; RV.authError = null; RV.pin = ""; renderRaven(); };
+  if ($("rvBackupBtn")) $("rvBackupBtn").onclick = () => { RV.mfa.backup = !RV.mfa.backup; RV.authError = null; renderRaven(); };
+  if ($("rvStartOverBtn")) $("rvStartOverBtn").onclick = () => { RV.mfa = null; RV.authError = null; renderRaven(); };
+  if (!RV.authBusy) {
+    const f = $("rvPin") || $("rvCode") || (RV.email ? $("rvPassword") : $("rvEmail"));
+    try { f && f.focus(); } catch (e) { /* not focusable yet */ }
+  }
 }
 
 // RAVEN_ENABLED is off on Cockpit. Deliberately NOT worded as an error:
@@ -745,11 +986,25 @@ function rvRenderDisabled(el){
   el.innerHTML = `
     <div class="qb-status">
       <div class="qb-status-icon">${ICON.lock}</div>
-      <h2>Raven capture is currently turned off</h2>
+      <h2>RAVN recording is currently turned off</h2>
       <p>Appointment recording has been switched off on Cockpit. This isn't a problem with this iPad or your sign-in — try again later.</p>
       <button class="qb-btn-primary" id="rvDisabledRetry">Try again</button>
     </div>`;
   document.getElementById("rvDisabledRetry").onclick = () => { RV.disabled = false; renderRaven(); };
+}
+
+function rvAuthErrorText(err, fallback){
+  if (err.kind === "network") {
+    return navigator.onLine ? "Couldn't reach Cockpit — check your connection and try again."
+                            : "You're offline — signing in needs a connection.";
+  }
+  if (err.code === "throttled") return "Too many attempts. Wait 15 minutes and try again.";
+  return err.message || fallback;
+}
+function rvAfterSignIn(){
+  RV.pin = ""; RV.mfa = null; RV.authError = null; RV.disabled = false;
+  RV.signedOutReason = null; RV.view = "search";
+  rvRetryPendingUploads();   // recordings that waited for this person go up now
 }
 
 async function rvDoLogin(pin){
@@ -757,9 +1012,7 @@ async function rvDoLogin(pin){
   renderRaven();
   try {
     await rvLogin(pin);
-    RV.pin = "";           // never keep the PIN around once it's a token
-    RV.disabled = false;
-    RV.view = "search";
+    rvAfterSignIn();
   } catch (err) {
     if (err.kind === "disabled") {
       // Correct PIN is entirely possible here — the feature is just off.
@@ -767,23 +1020,78 @@ async function rvDoLogin(pin){
       RV.pin = "";
     } else if (err.kind === "auth") {
       RV.authError = "Incorrect PIN, try again";
-    } else if (err.kind === "network") {
-      RV.authError = navigator.onLine
-        ? "Couldn't reach Cockpit — check your connection and try again."
-        : "You're offline — signing in needs a connection.";
     } else {
-      RV.authError = err.message;
+      RV.authError = rvAuthErrorText(err, "Couldn't sign in.");
     }
   }
   RV.authBusy = false;
   renderRaven();
 }
 
-function rvSignOut(){
-  rvClearSession();
-  RV.pin = ""; RV.authError = null; RV.results = null; RV.searchError = null;
-  RV.view = "search";   // renderRaven falls through to the login screen
+async function rvDoAccountLogin(email, password){
+  RV.authBusy = true; RV.authError = null;
   renderRaven();
+  try {
+    const r = await rvAccountLogin(email, password);
+    if (r.mfa) RV.mfa = { challenge: r.mfa.challenge, backup: false };
+    else rvAfterSignIn();
+  } catch (err) {
+    RV.authError = rvAuthErrorText(err, "Couldn't sign in.");
+  }
+  RV.authBusy = false;
+  renderRaven();
+}
+
+async function rvDoCode(code){
+  RV.authBusy = true; RV.authError = null;
+  renderRaven();
+  try {
+    await rvAccount2fa(RV.mfa.challenge, code, RV.mfa.backup);
+    rvAfterSignIn();
+  } catch (err) {
+    if (err.code === "no_challenge" || err.code === "challenge_exhausted") RV.mfa = null;
+    RV.authError = rvAuthErrorText(err, "That code didn't work.");
+  }
+  RV.authBusy = false;
+  renderRaven();
+}
+
+// Sign out by choice. Uploads first; anything that can't go up stays on the
+// device (never deleted) and the rep is told so before anything is cleared.
+async function rvSignOut(){
+  await rvRetryPendingUploads();
+  let mine = 0;
+  try { mine = (await rvAllAppointments()).filter((a) => a.status === "pending-upload" && rvRecordingIsMine(a)).length; } catch (e) { mine = 0; }
+  if (mine && !window.confirm(`${mine} recording${mine === 1 ? " hasn't" : "s haven't"} uploaded yet. ${mine === 1 ? "It stays" : "They stay"} on this device and will upload when you sign back in. Sign out now?`)) return;
+  const s = rvGetSession();
+  if (s && s.kind === "account" && s.access) {
+    try {
+      await fetch(`${RAVEN_BASE}/api/raven/app/logout`, { method: "POST", headers: { Authorization: "Bearer " + s.access } });
+    } catch (e) { /* offline — the token simply lapses; the refresh token is dropped below */ }
+  }
+  rvClearSession();
+  RV.pin = ""; RV.mfa = null; RV.authError = null; RV.results = null; RV.searchError = null;
+  RV.signedOutReason = null;
+  RV.loginMode = "account";   // email sign-in is the default; PIN stays one tap away
+  RV.view = "search";   // renderRaven falls through to the login screen
+  await rvRefreshPendingCount();
+  renderRaven();
+}
+
+// On open: pick up any change an owner made (Sales Manager switches, a
+// revoke, a disabled account) without waiting for the next real call.
+async function rvRefreshIdentity(){
+  const s = rvGetSession();
+  if (!s || s.kind !== "account" || !navigator.onLine) return;
+  try {
+    const r = await rvAuthedFetch(`${RAVEN_BASE}/api/raven/app/me`);
+    const d = await rvReadJson(r);
+    const cur = rvGetSession();
+    if (r.ok && d && d.identity && cur && cur.kind === "account") {
+      cur.identity = d.identity; cur.repName = d.identity.name || cur.repName;
+      try { localStorage.setItem(RAVEN_SESSION_LS_KEY, JSON.stringify(cur)); } catch (e) { /* private mode */ }
+    }
+  } catch (e) { /* offline — try next open */ }
 }
 
 function rvRenderSearch(el){
@@ -815,7 +1123,7 @@ function rvRenderSearch(el){
     ${RV.pendingCount ? `<div class="rv-pending-banner">${RV.pendingCount} recording${RV.pendingCount === 1 ? "" : "s"} still waiting to upload. ${navigator.onLine ? "Retrying now…" : "Will send automatically once you're back online."}</div>` : ""}
     <div class="rv-signed-in">
       <span>Signed in as <b>${rvEsc(rvRepName() || "this iPad")}</b></span>
-      <button class="rv-signout" id="rvSignOut">Not you?</button>
+      <button class="rv-signout" id="rvSignOut">Sign out</button>
     </div>
     <div class="rv-search-row">
       <input id="rvQuery" type="search" value="${rvEsc(RV.query)}" placeholder="Customer name or address" autocomplete="off" autocapitalize="words">
@@ -988,3 +1296,4 @@ rvFinalizeAbandonedRecordings().then(() => {
     rvRetryPendingUploads();
   });
 });
+rvRefreshIdentity();

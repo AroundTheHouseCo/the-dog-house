@@ -214,8 +214,8 @@ function loadReferenceMap(){
   }
   // 2. Refresh from Cockpit when signed in. rvGetToken lives in js/raven.js.
   const token = (typeof rvGetToken === "function") ? rvGetToken() : "";
-  if (!token || !navigator.onLine) return;
-  fetch(REFMAP_URL, { headers: { "X-Raven-Token": token }, cache: "no-store" })
+  if (!token || !navigator.onLine || typeof rvAuthedFetch !== "function") return;
+  rvAuthedFetch(REFMAP_URL, { cache: "no-store" })
     .then((r) => {
       if (r.status === 401) return { revoked: true };
       return r.ok ? r.json() : null;
