@@ -189,7 +189,7 @@ let _tileFailed = false;
 // and that copy is wiped the moment the rep signs out or the token is revoked
 // (js/raven.js fires "raven-session-changed"). Not signed in and no copy →
 // the slide shows its placeholder, exactly as before this feature existed.
-const REFMAP_URL = "https://ath-cockpit.onrender.com/api/reference-map";
+const REFMAP_URL = (self.RAVN_API_BASE || "https://ath-cockpit.onrender.com") + "/api/reference-map";   // js/env.js picks prod vs staging
 const REFMAP_LS_KEY = "doghouse.refmap.v1";
 
 function refmapValid(d){ return !!(d && Array.isArray(d.towns) && d.towns.length); }

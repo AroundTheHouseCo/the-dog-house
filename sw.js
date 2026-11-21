@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-11-20.1";
+const TIER1_VERSION = "2026-11-21.1";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -43,7 +43,10 @@ const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
 // Tier 2: Promise.allSettled so one failed file doesn't block the rest,
 // re-driven on every online app open via postMessage (see js/quote-builder.js).
 const PRICING_CACHE = "doghouse-pricing-v1";
-const COCKPIT_BASE = "https://ath-cockpit.onrender.com";
+// js/env.js decides prod vs staging Cockpit — same file the pages load, so the
+// worker and the pages can never disagree about which server to call.
+try { importScripts("js/env.js"); } catch (e) { /* offline first install: fall back to production */ }
+const COCKPIT_BASE = self.RAVN_API_BASE || "https://ath-cockpit.onrender.com";
 // No shared pricing key here any more (Nov 2026 security hotfix — the old one
 // was a literal in this public file). Each sync carries the rep's own Raven
 // device token, handed over by the page in the SYNC_PRICING message.
@@ -105,6 +108,7 @@ const TIER1_URLS = [
   // — and the pending-upload retry queue can't run to drain itself.
   "js/raven.js",
   "js/app.js",
+  "js/env.js",
   "images/app-icon.svg",
   "images/icon-120.png",
   "images/icon-152.png",

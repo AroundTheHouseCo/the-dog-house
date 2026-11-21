@@ -19,7 +19,7 @@
 // to sign in first. Signing out (or a revoked token) clears the pricing cache
 // from this device.
 const QB_CACHE = "doghouse-pricing-v1";
-const QB_BASE = "https://ath-cockpit.onrender.com";
+const QB_BASE = self.RAVN_API_BASE || "https://ath-cockpit.onrender.com";   // js/env.js picks prod vs staging
 const QB_PRODUCT_IDS = [
   "sunesta", "sunstyle", "sunlight",
   "eclipse-ezip-4in-sunstopper", "eclipse-ezip-5in-sunstopper",
