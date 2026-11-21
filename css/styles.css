@@ -2588,6 +2588,16 @@
     color:var(--charcoal);font-weight:800;}
   .rv-pin:focus{outline:2px solid var(--green);outline-offset:1px;}
   .rv-login .rv-error{max-width:340px;}
+  /* RAVN step 3: email + password sign-in. 16px+ font so iOS doesn't zoom. */
+  .rv-input{width:100%;max-width:340px;box-sizing:border-box;font-size:18px;
+    border:1px solid #d8d5cc;border-radius:12px;padding:13px 14px;background:#fff;color:var(--charcoal);}
+  .rv-input:focus{outline:2px solid var(--green);outline-offset:1px;}
+  .rv-link{border:none;background:none;padding:4px 6px;font-size:15px;font-weight:700;
+    color:var(--green-dark);text-decoration:underline;cursor:pointer;}
+  .rv-link:hover{color:var(--orange);}
+  .rv-note{max-width:340px;padding:12px 14px;border-radius:10px;background:#eef4f0;
+    border:1px solid #cfe0d6;color:#1b5e3f;font-size:15px;line-height:1.45;}
+  .rv-login .rv-pending-banner{max-width:340px;margin-bottom:0;}
 
   /* Who's signed in. Unobtrusive by design — it only matters when it's
      wrong (a borrowed iPad), so it stays a quiet strip with an out. */
