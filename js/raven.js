@@ -28,7 +28,7 @@
 // later call via X-Raven-Token. There is deliberately nothing here to fill
 // in before shipping — a key baked into a public static site is exactly
 // what this replaced.
-const RAVEN_BASE = "https://ath-cockpit.onrender.com";
+const RAVEN_BASE = self.RAVN_API_BASE || "https://ath-cockpit.onrender.com";   // js/env.js picks prod vs staging
 
 // 5s slices: small enough that a crash costs almost nothing, large enough
 // that an hour-long appointment stays around 720 IndexedDB rows.
