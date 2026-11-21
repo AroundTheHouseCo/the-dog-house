@@ -1374,7 +1374,9 @@ function renderRehearsal(){
       // JSON). Showing a rep pre-rewrite script is worse than showing nothing,
       // so this state is now the banner alone.
       body = `
-        <div class="tc-loadfail">${ICON.warn} Training content file failed to load — no script available for this slide. Reconnect or reinstall the app.</div>
+        <div class="tc-loadfail">${ICON.warn} ${(typeof tcSignedIn === "function" && !tcSignedIn())
+          ? "Training content needs your RAVN sign-in. Sign in under Start Appointment, then come back."
+          : "Training content couldn't load — check your connection and try again."}</div>
         <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
         <h2>${s.title}</h2>`;
     } else {
@@ -1444,12 +1446,19 @@ function renderHome(){
         <div class="home-card-name">Start Appointment</div>
         <div class="home-card-sub">Find the job & record the visit</div>
       </div>
+      ${(typeof caIsOwner === "function" && caIsOwner()) ? `
+      <div class="home-card secondary" id="homeGoContent">
+        <div class="home-card-icon">${ICON.pencil}</div>
+        <div class="home-card-name">Content</div>
+        <div class="home-card-sub">Owners — import, approve & edit training</div>
+      </div>` : ""}
     </div>
   `;
   document.getElementById("homeGoPresent").onclick = ()=>{ appView = "presentations"; renderApp(); };
   document.getElementById("homeGoCenter").onclick = ()=>{ appView = "coaches"; renderApp(); };
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
   document.getElementById("homeGoRaven").onclick = ()=>{ appView = "raven"; renderApp(); };
+  const gc = document.getElementById("homeGoContent"); if(gc) gc.onclick = ()=>{ appView = "content"; renderApp(); };
 }
 
 // Product picker — shared by Presentations and Training Center entry points.
@@ -1616,13 +1625,15 @@ function renderCenter(){
     // through here — one place to wire instead of eight. Both are inert
     // no-ops on views with no editable text (setup/cflags), so there's no
     // need to special-case them out.
-    const showEditControls = typeof tcReady === "function" && tcReady();
+    // RAVN step 4: editing is for owners only now, and saves to RAVN for
+    // every device (tcCanEdit / tcSaveToRavn in js/training-coach.js).
+    const showEditControls = typeof tcReady === "function" && tcReady() && typeof tcCanEdit === "function" && tcCanEdit();
     el.innerHTML = `
       <div class="center-head resource">
         <button class="back-btn" id="resourceBack">‹ ${productInfo().coach} Coach</button>
         ${showEditControls ? `<div class="resource-actions">${tcEditToggleHTML()}${tcExportButtonHTML()}</div>` : ""}
       </div>
-      ${(typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${ICON.pencil} Edit Mode is on — tap any highlighted text to edit it. Enter saves, Shift+Enter for a new line, Esc cancels.</div>` : ""}
+      ${(showEditControls && typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${ICON.pencil} Edit Mode is on — tap any highlighted text to change it (Enter keeps it, Shift+Enter for a new line, Esc cancels). Your changes are only on this device until you tap <b>Save to RAVN</b>.${typeof tcUnsavedCount === "function" && tcUnsavedCount() ? ` <b>${tcUnsavedCount()} unsaved.</b>` : ""}</div>` : ""}
       <div class="resource-page">${trainingBodyHTML(centerView)}</div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
@@ -1655,6 +1666,8 @@ function renderTopbarNav(){
   } else if(appView==="quote"){
     const label = qbView==="picker" ? "Home" : "Quote Builder";
     html = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
+  } else if(appView==="content"){
+    html = `<button class="back-btn" id="backContentBtn">‹ Home</button>`;
   } else if(appView==="raven"){
     // Recording keeps running in the background if the rep leaves this
     // screen (see js/raven.js, rvIsRecording comment) — so Home is always
@@ -1679,6 +1692,7 @@ function renderTopbarNav(){
   const bc = document.getElementById("backCenterBtn"); if(bc) bc.onclick = ()=>{ appView="center"; centerView=null; renderApp(); };
   const bk = document.getElementById("backCoachesBtn"); if(bk) bk.onclick = ()=>{ appView="coaches"; centerView=null; libPhoto=null; renderApp(); };
   const br = document.getElementById("backRavenBtn"); if(br) br.onclick = goHome;
+  const bct = document.getElementById("backContentBtn"); if(bct) bct.onclick = goHome;
   const bq = document.getElementById("backQuoteBtn"); if(bq) bq.onclick = ()=>{
     if(qbView==="picker"){ goHome(); }
     else { qbResetToPicker(); renderApp(); }
@@ -1710,6 +1724,7 @@ function renderApp(){
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";
   document.getElementById("quoteBuilder").style.display    = appView==="quote" ? "" : "none";
   document.getElementById("ravenPanel").style.display      = appView==="raven" ? "" : "none";
+  document.getElementById("contentPanel").style.display    = appView==="content" ? "" : "none";
   document.getElementById("stage").style.display          = showDeck ? "" : "none";
   document.querySelector(".slidebar").style.display       = showDeck ? "" : "none";
   document.getElementById("tabbar").style.display         = showDeck ? "" : "none";
@@ -1729,6 +1744,7 @@ function renderApp(){
   if(appView==="presentations" || appView==="coaches") renderPicker();
   if(appView==="quote") renderQuoteBuilder();
   if(appView==="raven") renderRaven();
+  if(appView==="content" && typeof renderContentAdmin==="function") renderContentAdmin();
   if(showDeck){
     mode = appView==="training-deck" ? "rehearse" : "present";
     renderAll();

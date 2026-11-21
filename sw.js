@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-11-21.2";
+const TIER1_VERSION = "2026-11-21.3";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -83,12 +83,10 @@ const TIER1_URLS = [
   "vendor/leaflet.css",
   "vendor/leaflet.js",
   "js/icons.js",
+  "js/ravn-md.js",
   "js/training-content.js",
   "js/training-render.js",
   "js/training-coach.js",
-  "data/doghouse-content-v1.json",
-  "data/training-content-eclipse.json",
-  "data/training-content-shared.json",
   "data/company-settings.json",
   "js/reference-map.js",
   // The Reference Map DATASET is no longer a static file here (Nov 2026
@@ -101,6 +99,7 @@ const TIER1_URLS = [
   "js/registry.js",
   "js/data-sunesta.js",
   "js/data-eclipse.js",
+  "js/content-admin.js",
   "js/images-map.js",
   "js/library-data.js",
   // quote-builder.js is loaded by index.html but was missing from this list,
@@ -700,7 +699,9 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
       .then((names) => Promise.all(
-        names.filter((n) => n !== TIER1_CACHE && n !== TIER2_CACHE && n !== PRICING_CACHE).map((n) => caches.delete(n))
+        // doghouse-training-v1 is the signed-in training copy (js/training-content.js);
+        // it is wiped on sign-out by the page, never by an app update.
+        names.filter((n) => n !== TIER1_CACHE && n !== TIER2_CACHE && n !== PRICING_CACHE && n !== "doghouse-training-v1").map((n) => caches.delete(n))
       ))
       .then(() => self.clients.claim())
       .then(() => cacheTier2InBackground())
