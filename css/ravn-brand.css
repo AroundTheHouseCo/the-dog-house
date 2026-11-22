@@ -144,3 +144,11 @@ body.ravn-page{background:#FBF6EA;}
 .ravn-ui .rb-res{border-left:1px solid var(--rb-line);}
 .ravn-ui .rb-res.wrong{border-left-color:var(--rb-line);}
 .ravn-ui .rb-res .rb-meta,.ravn-ui .rb-res,.ravn-ui .rb-expl,.ravn-ui .cp-result-note{font-size:18px;}
+
+/* Jack, 2026-11-22: the results score line is a plain label, not a pill that
+   looks tappable; a passed score's bar is green (brand green = done). */
+.ravn-ui .cp-verdict{margin:0;}
+.ravn-ui .rb-res-verdict.wrong .lc{color:#8C1D18;}
+.ravn-ui .rb-bar.is-done .rb-bar-fill{background:var(--rb-green);}
+.ravn-ui .cp-scorecard .rb-score{flex-direction:column;align-items:flex-start;gap:4px;}
+.ravn-ui .cp-verdict{white-space:nowrap;}

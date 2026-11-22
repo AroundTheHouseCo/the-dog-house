@@ -57,9 +57,9 @@ function cpFindLesson(id){
   }
   return null;
 }
-function cpBar(pct, label){
+function cpBar(pct, label, done){
   const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
-  return `<div class="rb-bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100" aria-label="${cpE(label || "Progress")}">
+  return `<div class="rb-bar${done ? " is-done" : ""}" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100" aria-label="${cpE(label || "Progress")}">
     <div class="rb-bar-fill" style="width:${p}%"></div></div>`;
 }
 const cpI = (name) => (typeof LUCIDE !== "undefined" && LUCIDE[name]) || "";
@@ -222,9 +222,9 @@ function cpResultHTML(){
     ? (m && m.complete ? "Nice work. This module is complete." : "Nice work.")
     : `You need ${g.pass}% to pass. Read the answers below, then take it again. There's no limit.`;
   return `${cpHead(r.quiz.title, g.passed ? `Passed: ${g.score}%` : `Not passed yet: ${g.score}%`)}
-    <div class="rb-card cp-scorecard"><div class="rb-score">${g.passed ? `<span class="rb-tag done">${cpI("circleCheck")}Passed</span>` : `<span class="rb-tag go">${cpI("rotateCcw")}Try again</span>`}
+    <div class="rb-card cp-scorecard"><div class="rb-score">${g.passed ? `<span class="rb-res-verdict right cp-verdict">${cpI("circleCheck")}Passed</span>` : `<span class="rb-res-verdict wrong cp-verdict">${cpI("circleX")}Not passed yet</span>`}
       <span class="rb-meta">${g.right} of ${g.total} right · pass mark ${g.pass}%</span></div>
-      ${cpBar(g.score, "Your score")}<p class="rb-meta cp-result-note" style="margin:8px 0 0">${note}</p></div>
+      ${cpBar(g.score, "Your score", g.passed)}<p class="rb-meta cp-result-note" style="margin:8px 0 0">${note}</p></div>
     ${rows}
     <div class="rb-actions cp-actions">
       ${g.passed ? "" : `<button class="rb-btn" data-cp="open-quiz" data-id="${cpE(r.quiz.moduleId)}">${cpI("rotateCcw")}Retake the quiz</button>`}
