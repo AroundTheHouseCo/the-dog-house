@@ -13,7 +13,7 @@ const DECK = {
     {
       id:"dealer", type:"splittext", image: IMAGES.dealerFamily,
       title:"Your Exclusive Sunesta Dealer",
-      bullets:["Family-owned & operated — founded 2004, based in Monument","20+ years · thousands of projects across southern Colorado","Exclusive Sunesta dealer for Southern Colorado","You call us, you get us — local design, install & service"],
+      bullets:["Family-owned & operated since 2004, based in Monument","20+ years · thousands of projects across southern Colorado","Exclusive Sunesta dealer for Southern Colorado","You call us, you get us: local design, install & service"],
       script:"A quick background on us —\n\nWe are Around the House Home Solutions. We're a local, family-owned company based right up in Monument. We've been in business since 2004 — a little over 20 years — and in that time we've completed thousands of projects throughout southern Colorado, so this isn't something we just picked up last year.\n\nOur focus is the exterior of the house — high-quality shade solutions so homeowners can enjoy their outdoor living space, and living in Colorado, to the fullest.\n\nSomething our clients really appreciate — we're not some big corporation out of Denver… you call us, you get us. As a company we care deeply about our customers, our employees, and the local communities we serve.\n\n👉 INSERT PERSONAL TOUCH — why YOU work here (see the editable block below; swap it for your own story)\n\nTransition: \"Outside of family, your home is typically your largest investment — so we only install quality products, to the highest standards, with great warranties to back them up.\"",
       talkingPoints:["Founded 2004 · family-owned · based in Monument","Thousands of projects — 20+ years, not picked up last year","Not a Denver corporation: you call us, you get us","Founded by Kirt & Vicki, now led with sons Maxx & Jack","End on the largest-investment transition — it sets up Our Products"],
       coach:"Keep this warm and personal — don't sound like a commercial. The Personal Touch block is Matt's version: each rep should replace it with their own story (now editable in Training Mode — see the personal_touch field on s02 in data/doghouse-content-v1.json, or use the in-app editor once it ships)."
@@ -21,10 +21,10 @@ const DECK = {
     {
       id:"products", type:"productcards",
       title:"Our Products",
-      paragraph:"Outside of family, your home is typically your largest investment — so we only install quality products, to the highest standards, with great warranties to back them up.",
+      paragraph:"Outside of family, your home is typically your largest investment. So we only install quality products, to the highest standards, with great warranties to back them up.",
       rows:[
-        {icon:IMAGES.prodGutter, photo:IMAGES.prodGutterPhoto, logo:IMAGES.logoGutterHelmet, label:"Gutter Helmet & Helmet Heat", sublabel:"4,000+ customers in Southern Colorado", detail:"We've been the exclusive Gutter Helmet and heat-cable dealer in Southern Colorado, with over 4,000 Gutter Helmet customers. Leaf and debris protection for gutters and roofline — designed to be maintenance-free and help prolong the life of the exterior of your home."},
-        {icon:IMAGES.prodScreen, photo:IMAGES.prodScreenPhoto, logo:IMAGES.logoEclipse, label:"Motorized Screens & Track Systems", sublabel:"UV, heat & wind resistance", detail:"An extremely popular investment here — high UV and heat blocking plus real wind resistance, with the screen held firm in side tracks."},
+        {icon:IMAGES.prodGutter, photo:IMAGES.prodGutterPhoto, logo:IMAGES.logoGutterHelmet, label:"Gutter Helmet & Helmet Heat", sublabel:"4,000+ customers in Southern Colorado", detail:"We've been the exclusive Gutter Helmet and heat-cable dealer in Southern Colorado, with over 4,000 Gutter Helmet customers. Leaf and debris protection for gutters and roofline, designed to be maintenance-free and help prolong the life of the exterior of your home."},
+        {icon:IMAGES.prodScreen, photo:IMAGES.prodScreenPhoto, logo:IMAGES.logoEclipse, label:"Motorized Screens & Track Systems", sublabel:"UV, heat & wind resistance", detail:"An extremely popular investment here: high UV and heat blocking plus real wind resistance, with the screen held firm in side tracks."},
         {icon:IMAGES.prodLouver, photo:IMAGES.prodLouverPhoto, logo:IMAGES.logoEclipse, label:"Motorized Louvered Roofs", sublabel:"Attached & freestanding", detail:"Commercial-grade louvered roof systems built to handle the wind and harsh weather we deal with in Colorado. Often paired with our motorized screens to combat wind and sun and create a true three-season outdoor living experience."}
       ],
       script:"We've been the exclusive dealer for Gutter Helmet and heat cable systems in Southern Colorado, with over 4,000 Gutter Helmet customers — that's a leaf-and-debris protection system for your gutters and roofline, designed to be maintenance-free and help prolong the life of the exterior of your home.\n\nWe also install motorized screen and track systems — those have become an extremely popular investment because of the UV, heat, and wind resistance they provide.\n\nAnd motorized louvered roof systems — attached or freestanding — which are commercial grade to handle the wind and weather we deal with here in Colorado. Often we pair those with the screens to create a real three-season outdoor living experience.\n\n👉 Anchor service + accountability — this is cross-sell context, not a pitch. Plant seeds and move on.",
@@ -34,15 +34,15 @@ const DECK = {
     {
       id:"training", type:"splittext", image: IMAGES.trainingPhoto, cert: IMAGES.trainingCert,
       title:"Sunesta Factory Training",
-      bullets:["Trained by ATH and directly by Sunesta — Jacksonville, FL","Licensed & insured — permits pulled, everyone protected","Our crews & longstanding partners work for us, and only us","ATH final inspection on every project"],
+      bullets:["Trained by ATH and directly by Sunesta in Jacksonville, FL","Licensed & insured: permits pulled, everyone protected","Our crews & longstanding partners work for us, and only us","ATH final inspection on every project"],
       script:"Something that is really important — all of our installers are trained directly by us and through Sunesta down in Jacksonville, Florida.\n\nSo when we mount your awning, we're not guessing… we're making sure it's structurally correct for wind, load, and long-term performance.\n\nA lot of companies… it's kind of a 'chuck in a truck' situation — often they only install a few of these a year, so they just slap it up and hope for the best. There's no real consistency from one install to the next, which can lead to homeowners paying for the project multiple times. You can pick a great product, but if it's not installed correctly and to manufacturer standards, you won't have a real warranty.\n\n👉 Slight smile — let that land.\n\nWe're also a licensed and insured contractor — we hold a license for projects that require a permit, and if something were to happen on the job, you're protected and we're protected as well.\n\nWe go beyond what the manufacturer requires on mounting points, and when we're done, the wiring is run properly and the conduit is painted to match your home.\n\nTransition: \"We're a get-it-right-the-first-time company that stands behind our work — if your new awning ever has any issues, just give us a call and we'll schedule a time to come take a look. This is what we do, day in and day out.\"",
       talkingPoints:["Trained by ATH + Sunesta (Jacksonville) — we're not guessing","'Chuck in a truck' competitors → inconsistent installs → voided warranties","Licensed & insured — permits handled, both sides protected","Beyond-spec mounting points · conduit painted to match","If asked about subcontractors: partners who work for us and only us — see the Subcontractor FAQ"],
       coach:"Slight pause after the competitor comment. Let it land, then move with confidence. Photo and certificate are placeholders — real resolution coming."
     },
     {
       id:"doypeople", type:"splittext", image: IMAGES.award,
-      title:"Dealer of the Year — Our People",
-      bullets:["National Dealer of the Year 2025 — #1 awning/shade dealer in the western U.S.","In business 20+ years — thousands of projects managed","Certified technicians + a fully staffed operations department + longstanding partners","Trained to manufacturer specs AND our own standards"],
+      title:"Dealer of the Year: Our People",
+      bullets:["National Dealer of the Year 2025: #1 awning/shade dealer in the western U.S.","In business 20+ years, with thousands of projects managed","Certified technicians, a full operations team and longstanding partners","Trained to manufacturer specs AND our own standards"],
       script:"Retractable awnings have largely been adopted by the eastern half of the United States — mainly due to manufacturing locations, European influence, and climate. If you've ever visited countries like France, Germany, or Italy, retractable awnings are on every corner. They're much more popular in the Midwest, the East Coast, and of course the Southeast, where they're manufactured. On the other side of the coin, the western United States has seen a slower adoption of retractable shade.\n\nWe've been on a mission to change this. We live in one of the most beautiful climates in the whole country, but we find that many homeowners still struggle to actually enjoy their beautiful views and outdoor spaces. Options for quality retractable shade have been largely underserved here in Southern Colorado, and it's been our mission to change that — with shade solutions engineered for our climate, designed to meet the architectural trends, and a reputable team that can deliver that value to our community.\n\nIn 2025, we were honored to be named National Dealer of the Year by our manufacturer, Sunesta — recognized as the #1 awning and shade dealer in the western United States.\n\nAnd of course — you can build a great company and a great process, but if you don't have the right people for a project, it's unlikely to go well. When it comes to people, the questions are simple:\n\nHow long has the contractor been in business? We've been around over twenty years and installed thousands of projects. That requires a whole lot of people management.\n\nWho will be responsible to perform the work? We have our certified technicians, a fully staffed operations department, and longstanding subcontractor partners.\n\nAre they qualified? Our teams are trained to install to both manufacturer specifications as well as our own standards. The reason we do this is simple — we want your project to look great and last as long as possible.",
       talkingPoints:["Humble, not boastful: 'we deliver quality in an underserved market,' not 'we sold the most'","Mission story: East adopted awnings first — the West has been underserved, we're changing that","DoY 2025 = manufacturer's validation, based on installs + service","Three people questions: how long · who does the work · are they qualified","This slide answers the subcontractor question before it's asked"],
       coach:"📝 FIRST DRAFT — assembled from Matt's bullets + the mission paragraph; neither Jack nor Matt has scripted this page directly yet. Deliver the three questions as questions — pause after each. Photo is the award-ceremony shot."
@@ -73,13 +73,13 @@ const DECK = {
     {
       id:"badges", type:"credibility",
       title:"Trust & Credibility",
-      paragraph:"Reputation matters to us. In an industry known for complaints, we've stacked up the proof — third-party certifications, national awards, and hundreds of five-star reviews from local homeowners.",
+      paragraph:"Reputation matters to us. In an industry known for complaints, we've stacked up the proof: third-party certifications, national awards, and hundreds of five-star reviews from local homeowners.",
       rows:[
-        {icon:IMAGES.badgeMiamiDade, label:"Miami-Dade County Approved", sublabel:"Tested to 98 mph before arm failure — hurricane-zone rated", detail:"Sunesta is the first retractable awning manufacturer to exceed Miami-Dade's strict standards (NOA #24-0401.03). Arms tested to 98 mph before failure."},
-        {icon:IMAGES.badgeSkinCancer, label:"Skin Cancer Foundation", sublabel:"UV blockage tested & approved — their seal of recommendation", detail:"The fabric's UV blockage is tested and approved by The Skin Cancer Foundation — it carries their seal of recommendation for effective sun protection. At Colorado elevation, where UV exposure runs significantly higher than people expect, that matters."},
+        {icon:IMAGES.badgeMiamiDade, label:"Miami-Dade County Approved", sublabel:"Tested to 98 mph before arm failure. Hurricane-zone rated.", detail:"Sunesta is the first retractable awning manufacturer to exceed Miami-Dade's strict standards (NOA #24-0401.03). Arms tested to 98 mph before failure."},
+        {icon:IMAGES.badgeSkinCancer, label:"Skin Cancer Foundation", sublabel:"UV blockage tested & approved, with their seal of recommendation", detail:"The fabric's UV blockage is tested and approved by The Skin Cancer Foundation. It carries their seal of recommendation for effective sun protection. At Colorado elevation, where UV exposure runs significantly higher than people expect, that matters."},
         {icon:null, label:"Around The House Home Solutions", sublabel:"4.9 ★★★★★ · 200+ local reviews", link:"https://share.google/00IDfj15biWj76ERJ"},
-        {icon:IMAGES.award, label:"Award-Winning Team", sublabel:"National Dealer of the Year 2025 · 4x Customer Satisfaction", detail:"Sunesta's National Dealer of the Year for 2025 — recognized as the #1 awning/shade dealer in the western United States — plus a 4x Customer Satisfaction award winner with Gutter Helmet, two years in a row. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price."},
-        {icon:IMAGES.badgeBBB, label:"Better Business Bureau", sublabel:"Zero unresolved complaints in our company history", detail:"A+ rated and accredited. It doesn't mean we're perfect, but we have zero unresolved complaints in our company history — and what that really means is when something comes up, we take care of it."}
+        {icon:IMAGES.award, label:"Award-Winning Team", sublabel:"National Dealer of the Year 2025 · 4x Customer Satisfaction", detail:"Sunesta's National Dealer of the Year for 2025, recognized as the #1 awning/shade dealer in the western United States. Plus a 4x Customer Satisfaction award winner with Gutter Helmet, two years in a row. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price."},
+        {icon:IMAGES.badgeBBB, label:"Better Business Bureau", sublabel:"Zero unresolved complaints in our company history", detail:"A+ rated and accredited. It doesn't mean we're perfect, but we have zero unresolved complaints in our company history. What that really means is when something comes up, we take care of it."}
       ],
       script:"Our awning systems are Miami-Dade County approved — they've been tested in hurricane conditions, and the arms held up to about 98 mph winds before failure.\n\n👉 Use THEIR home as the example: \"Your home is in Falcon — one of the most wind-prone areas in the Springs\" or \"You mentioned the wind can rip through the back porch.\"\n\nWhile we don't deal with hurricanes in southern Colorado, we certainly get hit with some major winds. The good news is we install a wind sensor on our motorized awnings as a standard feature — your awning closes automatically if the wind picks up. I'll cover that again in a bit.\n\nSKIN CANCER FOUNDATION — technical fact first, then the emotional angle: \"The fabric's UV blockage is actually tested and approved by The Skin Cancer Foundation — it carries their seal of recommendation for effective sun protection. And that matters out here — you either need sunscreen… or shade. Especially in Colorado, where the sun can be absolutely brutal and relentless, and at our altitude the UV exposure is significantly higher. Super important to stay protected.\"\n\nGOOGLE REVIEWS: \"Here locally, we've also got over 200 five-star reviews. Our reputation is important to us, so we've worked hard to communicate well and create happy customers.\"\n\nAWARDS — delivered so they smile: \"We're a 4x Customer Satisfaction award winner — two years in a row — with Gutter Helmet. In an industry like home remodeling that's pretty notorious for complaints, it's pretty cool that we're winning awards. And as I mentioned, in 2025 Sunesta named us their National Dealer of the Year — we're really proud of the relationship we've built with them. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price.\"\n\nBBB — last on purpose: \"It doesn't mean we're perfect, but we have zero unresolved complaints in our company history.\"\n\n👉 If they push on it: \"What that really means is when something comes up, we take care of it.\"",
       talkingPoints:["Badge order is deliberate: Miami-Dade → Skin Cancer → Google → Awards → BBB last","Localize the wind point: THEIR neighborhood, their own words","Wind sensor comes STANDARD on motorized units — tease it here","SCF: technical fact first, then the altitude/health angle","Awards: 4x Customer Satisfaction + DoY callback + 'higher volume → more affordable price'","BBB verbatim: zero unresolved complaints · if pushed: 'when something comes up, we take care of it'","Tap any badge for detail — Google row opens real reviews"],
@@ -88,9 +88,9 @@ const DECK = {
     {
       id:"process", type:"processsteps",
       title:"Our Proven Process",
-      subtext:"Five steps, zero surprises — the process behind our Dealer of the Year award.",
+      subtext:"Five steps, zero surprises: the process behind our Dealer of the Year award.",
       steps:[
-        {icon:IMAGES.procManager, title:"Your Project Manager", text:"One point of contact — HOA packets handled too"},
+        {icon:IMAGES.procManager, title:"Your Project Manager", text:"One point of contact. HOA packets handled too."},
         {icon:IMAGES.procSite, title:"A Respectful Site", text:"Clean & professional, start to finish"},
         {icon:IMAGES.procInstall, title:"Half-Day Install", text:"Most projects finish in a morning"},
         {icon:IMAGES.procWalkthrough, title:"Final Walk-Through", text:"Pitch & clearance dialed to your space"},
@@ -113,16 +113,16 @@ const DECK = {
       id:"tenreasons", type:"reasonsgrid",
       title:"10 Reasons to Choose Sunesta",
       reasons:[
-        {title:"40+ Years Proven", text:"Building awnings since 1981 — tested in every U.S. climate. Not a startup."},
+        {title:"40+ Years Proven", text:"Building awnings since 1981, tested in every U.S. climate. Not a startup."},
         {title:"American Made", text:"Arms, fabric, and frame built in the USA."},
         {title:"Somfy Motor", text:"The world's most trusted motor, hand-assembled in Spain. Dimmable, multi-channel remote."},
-        {title:"Rust-Proof Arms", text:"Four PVC-coated steel cables inside each arm — no rusting bicycle chains."},
-        {title:"SmartCase Protection", text:"Fully encloses the fabric when retracted — rain, snow, UV, hail, pine needles."},
+        {title:"Rust-Proof Arms", text:"Four PVC-coated steel cables inside each arm. No rusting bicycle chains."},
+        {title:"SmartCase Protection", text:"Fully encloses the fabric when retracted. Shields it from rain, snow, UV, hail, pine needles."},
         {title:"98 MPH Tested", text:"Miami-Dade approved; arms held to 98 mph. 30 mph continuous wind rating."},
         {title:"Lifetime Warranty", text:"Lifetime arms & hardware, 10-yr fabric & motor — and it's transferable."},
-        {title:"Built to the Inch", text:"Custom sizing up to 40' wide and 14'8\" projection — made for your home."},
+        {title:"Built to the Inch", text:"Custom sizing up to 40' wide and 14'8\" projection, made for your home."},
         {title:"Local Install & Service", text:"Sunesta-trained ATH installers and free lifetime pitch adjustments."},
-        {title:"One Warranty, One Call", text:"National brand, local team — no Frankenstein parts, no runaround."}
+        {title:"One Warranty, One Call", text:"National brand, local team. No Frankenstein parts, no runaround."}
       ],
       script:"This is the quick version of everything we've walked through — ten reasons Sunesta stands apart. I won't read every one to you, but the ones that matter most for your situation are… (pick the two or three that map to their Accomplish List).\n\nThe theme through all ten is the same: it's engineered to last in Colorado weather, it's backed by one national warranty, and it's installed and serviced by us, locally.",
       talkingPoints:["Use this as a recap — don't read all ten","Pick the 2–3 reasons that map to THEIR Accomplish List","Every reason ties back to: built to last, one warranty, local service"],
@@ -137,8 +137,8 @@ const DECK = {
       talkingPoints:["Open with the engagement question — what do they DO out here? (drinks? dinner? games?)","Tap each bubble to reveal the reason","Re-anchor with THEIR exact Accomplish List items — say them back","Rain/evening/hail caution + lighting teaser is optional color, not required"],
       coach:"Click the temperature gauge live during this line for effect. Tie straight back to what they told you earlier — use their words, not generic ones.",
       hotspots:[
-        {x:0.70,y:0.13,label:"Rain Coverage",photo:IMAGES.reasonRain,content:"Usable even while it rains — great for BBQing or relaxing outside. Not recommended to leave retracted unattended in Colorado, since rain often brings hail."},
-        {x:0.48,y:0.34,label:"Temperature Control",photo:IMAGES.reasonThermometer,content:"Keeps the area at least 20 degrees cooler — turns a 90 degree day into a cool 70."},
+        {x:0.70,y:0.13,label:"Rain Coverage",photo:IMAGES.reasonRain,content:"Usable even while it rains. Great for BBQing or relaxing outside. Not recommended to leave retracted unattended in Colorado, since rain often brings hail."},
+        {x:0.48,y:0.34,label:"Temperature Control",photo:IMAGES.reasonThermometer,content:"Keeps the area at least 20 degrees cooler. Turns a 90 degree day into a cool 70."},
         {x:0.48,y:0.70,label:"Protects What's Inside",photo:IMAGES.reasonUvWood,content:"Adds protection for your flooring and furniture, helping prevent fading from the sun's UV rays."},
         {x:0.80,y:0.60,label:"Skin Health",photo:IMAGES.badgeSkinCancer,content:"Recommended by the Skin Cancer Foundation as effective UVA/UVB protection."}
       ]
@@ -159,7 +159,7 @@ const DECK = {
       talkingPoints:["Lead with the flagship — 90% choose the Sunesta","Tap a model card → fullscreen spec popup with the warranty grid · ⇄ compares all three","Arm warranty is the separator: Sunesta LIFETIME · Sunstyle 15-yr · Sunlight 12-yr (frame lifetime + fabric/motor 10-yr on all three)","Wind-class depth: Sunesta holds 24–30 mph thru 13' · Sunstyle thru 8'3\" · Sunlight thru 6'8\"","Arm sample + cable story: PVC-coated steel, no bicycle chains","Smart Case = standard; tell the 'string cheese' story","Free lifetime pitch adjustments — inch of drop per foot of projection"],
       coach:"THIS IS YOUR MONEY SLIDE. Slow down. Build the value. ⚠️ Careful with the spring-loaded arm sample — it can fly open and whack someone in the face. Control it, then hand it over. Note: older printed spec sheets show outdated frame/motor warranty lines — the 2026 warranty doc (lifetime frame, 10-yr motor) governs. ⚠️ FLAG FOR JACK — the three model card graphics now render distinct case housings and arm thickness per model (data fields on each model: caseType, armGauge). caseType and maxProjectionFt restate numbers already confirmed elsewhere on this slide (Fabric protection / Projection options), but armGauge (1–3) is my own visual read of the relative arm language, not a manufacturer spec — confirm the case silhouettes and arm-thickness ratio against real Sunstyle/Sunlight units before relying on this graphic with a customer.",
       models:[
-        {name:"Sunesta", tag:"Flagship — 90% of our installs", c1:"#1b5e3f", c2:"#2e7d4f", armYears:"Lifetime",
+        {name:"Sunesta", tag:"Flagship: 90% of our installs", c1:"#1b5e3f", c2:"#2e7d4f", armYears:"Lifetime",
          // Render-only fields for the model-card silhouette (app.js awningSVG).
          // maxProjectionFt is the same number already printed in "Projection
          // options" below — restated here as a number so the graphic can
@@ -175,40 +175,40 @@ const DECK = {
          chips:["To 14'8\" projection","Widths to 40'","24–30 mph thru 13'"],
          specs:[
            ["Projection options","Seven: 5' · 6'8\" · 8'3\" · 10' · 11'6\" · 13' · 14'8\""],
-           ["Maximum width","40 feet — custom-built to the inch"],
+           ["Maximum width","40 feet, custom-built to the inch"],
            ["Wind rating","Holds its full 24–30 mph wind class through 13' of projection (17–23 mph at 14'8\")"],
-           ["Arms","Solid extruded aluminum — four PVC-coated steel cables and up to three tension springs per arm"],
-           ["Motor","Somfy 50 Nm — wired or wireless (manual gear available)"],
+           ["Arms","Solid extruded aluminum, four PVC-coated steel cables and up to three tension springs per arm"],
+           ["Motor","Somfy 50 Nm, wired or wireless (manual gear available)"],
            ["Frame colors","White · Beige · Brown · Clay"],
-           ["Fabric protection","SmartCase full cassette — standard on every ATH install"]
+           ["Fabric protection","SmartCase full cassette, standard on every ATH install"]
          ],
-         bestFor:"The Colorado pick — biggest reach, strongest arms, and the only model that keeps its full wind class deep into its projection range."},
-        {name:"Sunstyle", tag:"Mid-line — the comparison option", c1:"#27435f", c2:"#3a5a7d", armYears:"15 years",
+         bestFor:"The Colorado pick: biggest reach, strongest arms, and the only model that keeps its full wind class deep into its projection range."},
+        {name:"Sunstyle", tag:"Mid-line: the comparison option", c1:"#27435f", c2:"#3a5a7d", armYears:"15 years",
          maxProjectionFt:11.5, caseType:"semi", armGauge:2,
          chips:["To 11'6\" projection","Widths to 40'","24–30 mph @ 8'3\""],
          specs:[
            ["Projection options","Five: 5' · 6'8\" · 8'3\" · 10' · 11'6\""],
-           ["Maximum width","40 feet — custom-built to the inch"],
-           ["Wind rating","24–30 mph at 8'3\" — drops to 17–23 mph at 10' and 11'6\""],
-           ["Arms","Extruded aluminum — four PVC-coated steel cables per arm"],
-           ["Motor","Somfy 50 Nm — wired or wireless (manual gear available)"],
+           ["Maximum width","40 feet, custom-built to the inch"],
+           ["Wind rating","24–30 mph at 8'3\". Drops to 17–23 mph at 10' and 11'6\""],
+           ["Arms","Extruded aluminum, four PVC-coated steel cables per arm"],
+           ["Motor","Somfy 50 Nm, wired or wireless (manual gear available)"],
            ["Frame colors","White · Beige · Brown · Clay"],
            ["Fabric protection","SmartCase cassette available as an option"]
          ],
-         bestFor:"A solid product for smaller spaces — but past 8'3\" of projection its wind class drops a full step."},
-        {name:"Sunlight", tag:"Entry level — rarely our recommendation", c1:"#8a6c48", c2:"#b6a27c", armYears:"12 years",
+         bestFor:"A solid product for smaller spaces. But past 8'3\" of projection its wind class drops a full step."},
+        {name:"Sunlight", tag:"Entry level: rarely our recommendation", c1:"#8a6c48", c2:"#b6a27c", armYears:"12 years",
          maxProjectionFt:10, caseType:"open", armGauge:1,
          chips:["To 10' projection","Widths to 24'","24–30 mph thru 6'8\""],
          specs:[
            ["Projection options","Four: 5' · 6'8\" · 8'3\" · 10'"],
-           ["Maximum width","24 feet — custom-built to the inch"],
-           ["Wind rating","24–30 mph only through 6'8\" — 17–23 mph at 8'3\" and 10'"],
+           ["Maximum width","24 feet, custom-built to the inch"],
+           ["Wind rating","24–30 mph only through 6'8\". 17–23 mph at 8'3\" and 10'"],
            ["Arms","Lighter-duty arm design than the Sunesta and Sunstyle"],
-           ["Motor","Somfy 25 Nm — half the torque of the other two models"],
+           ["Motor","Somfy 25 Nm: half the torque of the other two models"],
            ["Frame colors","White · Beige · Clay"],
            ["Fabric protection","No cassette listed on the spec sheet"]
          ],
-         bestFor:"A budget option for small, sheltered spaces — not engineered for our wind."}
+         bestFor:"A budget option for small, sheltered spaces. Not engineered for our wind."}
       ],
       modelCompare:{
         cats:[
@@ -236,7 +236,7 @@ const DECK = {
         {img:IMAGES.optFabric,label:"Fabric on the extruded arm"},
         {img:IMAGES.optArm,label:"Full arm mechanism"},
         {img:IMAGES.optMountWide,label:"Mounting hardware"},
-        {img:IMAGES.optMountClose,label:"Mounting hardware — close"},
+        {img:IMAGES.optMountClose,label:"Mounting hardware, close up"},
         {img:IMAGES.optDropScreen,label:"Drop screen installed"},
         {native:"warranty",label:"Nation's best warranty coverage"}
       ],
@@ -251,8 +251,8 @@ const DECK = {
           {label:"Arm Warranty",cells:[{s:"check",t:"Lifetime"},{s:"warn",t:"10 Years"},{s:"x",t:"3–5 Years"}]},
           {label:"Transferable to New Owner?",cells:[{s:"check",t:"Yes — adds resale value"},{s:"x",t:"No"},{s:"x",t:"No"}]},
           {label:"Wind Rating",cells:[{s:"check",t:"Defined & tested"},{s:"x",t:"Not defined"},{s:"x",t:"Not defined"}]},
-          {label:"Sizing",cells:[{s:"check",t:"Custom — built to your home"},{s:"warn",t:"Limited options"},{s:"x",t:"Pre-built / stock sizes"}]},
-          {label:"Service Calls",cells:[{s:"check",t:"Free — local ATH team"},{s:"x",t:"Paid — drive from Denver"},{s:"x",t:"800 number only"}]},
+          {label:"Sizing",cells:[{s:"check",t:"Custom, built to your home"},{s:"warn",t:"Limited options"},{s:"x",t:"Pre-built / stock sizes"}]},
+          {label:"Service Calls",cells:[{s:"check",t:"Free: local ATH team"},{s:"x",t:"Paid: drive from Denver"},{s:"x",t:"800 number only"}]},
           {label:"1-Year Service Visit",cells:[{s:"check",t:"Included"},{s:"x",t:"Not offered"},{s:"x",t:"Not offered"}]}
         ],
         footer:"Liberty's lifetime frame warranty is non-prorated and non-transferable. Wind ratings not defined. Always request the full written warranty before comparing."
@@ -263,7 +263,7 @@ const DECK = {
       docViewer:{title:"Sunesta Fabric Collection", tapLabel:"Tap to browse the fabric book",
         pages:["images/fabric-pages/page-01.jpg","images/fabric-pages/page-02.jpg","images/fabric-pages/page-03.jpg","images/fabric-pages/page-04.jpg","images/fabric-pages/page-05.jpg","images/fabric-pages/page-06.jpg","images/fabric-pages/page-07.jpg","images/fabric-pages/page-08.jpg","images/fabric-pages/z-frame-colors.jpg","images/fabric-pages/z-smartdrop-colors.jpg"]},
       title:"Fabrics & Frame Colors",
-      bullets:["100+ colorfast fabrics — solids and stripes","100% solution-dyed acrylic — the color runs through the fiber, not printed on","Antimicrobial & water-resistant — resists fading, mold and mildew","Endorsed by The Skin Cancer Foundation for blocking UV","Sewn with PTFE GORE TENARA thread — won't rot or break down in the sun","Armorcoated frames in white, beige, clay, black & brown"],
+      bullets:["100+ colorfast fabrics: solids and stripes","100% solution-dyed acrylic: color runs through the fiber, not printed on","Antimicrobial & water-resistant. Resists fading, mold and mildew","Endorsed by The Skin Cancer Foundation for blocking UV","Sewn with PTFE GORE TENARA thread that won't rot or break down in the sun","Armorcoated frames in white, beige, clay, black & brown"],
       script:"This is where it gets fun — you've got over a hundred fabric choices, solids and stripes, so we can match or complement your home.\n\nThe fabric is a 100% solution-dyed acrylic — that means the color runs all the way through the fiber instead of being printed on top, so it holds its color for the long haul. Compare that to vinyl: acrylic is more fibrous, it breathes, it's water-resistant, and it's antimicrobial — it resists fading, mold, and mildew.\n\nIt's also endorsed by the Skin Cancer Foundation for blocking harmful UV — which matters a lot at our elevation. With the Smart Case protecting it, we see these fabrics lasting 20-plus years. Even the thread is special — it's Tenara, which won't break down in the sun the way standard thread does.\n\nAnd the frame itself comes in five colors — white, beige, clay, black, and brown — so the whole system looks like it belongs on your home.",
       talkingPoints:["100+ fabrics — hand them the swatch book here","Solution-dyed acrylic vs. vinyl: color through the fiber, breathable, antimicrobial","Resists fading, mold & mildew · water-resistant","Skin Cancer Foundation endorsed — elevation UV angle","20+ year fabric life with the Smart Case","Frame in 5 colors: white, beige, clay, black, brown"],
       coach:"Hand them the fabric samples and tie color choice to their home's exterior. The swatch graphic is illustrative — the real fabric book is the prop that sells this slide."
@@ -273,7 +273,7 @@ const DECK = {
     {
       id:"smarttitle", type:"herosplit", image: IMAGES.smartTechIllus,
       title:"Smart Technology",
-      subtext:"Somfy-powered control — remote, wall switch, app, or full home automation. And wind protection comes standard on every motorized unit.",
+      subtext:"Somfy-powered control: remote, wall switch, app, or full home automation. And wind protection comes standard on every motorized unit.",
       script:"A few optional upgrades — totally based on preference. The system runs on a Somfy motor. Standard operation is a handheld remote or a wireless wall switch. If you want to go further, you can control it through an app or integrate it into a home automation system.\n\nOne thing that's not optional with us: every motorized awning we install includes a wind sensor as a standard feature. I'll show you that in a second.",
       talkingPoints:["Upgrades are optional and addable later — don't oversell","Wind sensor is STANDARD on every motorized unit, not an add-on","Don't feel like you have to decide on all of it right now"],
       coach:"Rebuilt as a native layout — the old slide was a screenshot with its title baked in."
@@ -282,8 +282,8 @@ const DECK = {
       id:"dropscreen", type:"splittext",
       cert:"images/library/sunesta/charcoal-solid-charcoal-siding-wall-mount-with-drop-screen.jpg",
       scrub:{frameBase:"images/dropscreen-frames/frame-", frameCount:28, framePad:2, frameExt:".jpg", hint:"Slide to raise & lower the screen", ends:["◄ Screen up","Screen down ►"]},
-      title:"Drop Screen — Block the Low Sun",
-      bullets:["A vertical panel drops from the front bar — down when you want it, gone when you don't","Blocks the low-angle morning and evening sun the awning can't reach","Adds privacy and cuts wind along the open front edge","Manual or motorized — operates independently of the awning","Available on the Sunesta & Sunstyle (not the Sunlight)","Add it now or later — the system is designed for both","Choose a lighter mesh to keep your view, or solid for full shade"],
+      title:"Drop Screen: Block the Low Sun",
+      bullets:["A panel drops from the front bar: down when you want it, gone when you don't","Blocks the low-angle morning and evening sun the awning can't reach","Adds privacy and cuts wind along the open front edge","Manual or motorized, and runs separately from the awning","Available on the Sunesta & Sunstyle (not the Sunlight)","Add it now or later. The system is built for both.","Choose a lighter mesh to keep your view, or solid for full shade"],
       script:"The drop screen — Sunesta calls it the SmartDrop — is a panel that hangs from the front of the awning when you want it, and rolls away when you don't. It's great for that low-angle sun the awning itself doesn't block, for extra wind reduction, or for a little privacy along the open front.\n\nA question we get a lot: if both the awning and the drop screen are motorized, do they work together? They operate independently — you choose when each one goes up or down. The one habit to build is rolling the drop screen up before you retract the awning, so it doesn't drag on the deck.\n\nYou can add this now or come back and add it later — the system is designed for it either way. We'll show you both in the pricing.\n\n👉 Rep guidance — pricing (value first, never lead with this): the drop-screen motor adds a little over $1,000, so most folks choose the manual — the screen is much lighter than the awning itself. It can be added later, but a retrofit costs a bit more since we swap parts and add the motor. It's available on both models you'll be pricing (not the Sunlight).\n\n👉 If low sun or privacy is on their Accomplish List, build the value here — for them it's essential, not an accessory.",
       talkingPoints:["Blocks low-angle sun, adds privacy, cuts wind at the front edge","Manual or motorized — operates independently of the awning","Roll the screen UP before retracting the awning","Motor ≈ $1,000+ — most choose manual; retrofit costs more (rep guidance, not a slide line)","Available on Sunesta & Sunstyle — not the Sunlight","Lighter mesh keeps the view; solid gives full shade"],
       coach:"If they mentioned evening/morning glare or privacy, tie straight back to it. Matt still owes full selling points/warranty details for the screen — flagged, don't improvise them. Photo is a placeholder — real drop-screen export coming."
@@ -294,28 +294,28 @@ const DECK = {
         {src: IMAGES.mylinkAppPhone, caption:"Somfy App"},
         {src: IMAGES.mylinkTahomaHub, caption:"TaHoma Hub"}
       ],
-      title:"myLink — Your Awning on Your Phone",
-      bullets:["Connects your Somfy motor to Wi-Fi with the myLink hub","Open, close, and dim your lights from the Somfy app — from anywhere","Set schedules and scenes — auto-extend on hot afternoons","Works with Amazon Alexa and Google Assistant","One hub controls the awning, drop screen, and LED lights together","Optional and addable anytime — no rewiring"],
+      title:"myLink: Your Awning on Your Phone",
+      bullets:["Connects your Somfy motor to Wi-Fi with the myLink hub","Open, close, and dim your lights from the Somfy app, from anywhere","Set schedules and scenes, like auto-extend on hot afternoons","Works with Amazon Alexa and Google Assistant","One hub controls the awning, drop screen, and LED lights together","Optional, and you can add it anytime with no rewiring"],
       script:"If you want to go a step beyond the remote, this is where it gets modern. The myLink hub connects your awning to your home Wi-Fi, and now you can run everything from the Somfy app on your phone — from anywhere.\n\nYou can put it on a schedule so it extends on its own on those hot afternoons, or tie it into Alexa or Google if that's how your home already works. One hub can run the awning, the drop screen, and the LED lights together.\n\nThis is completely optional and you can add it anytime — I just want you to know the ceiling on what this system can do.",
       talkingPoints:["myLink hub = control from your phone, anywhere","Schedules & scenes (auto-extend on hot afternoons)","Works with Alexa & Google","One hub runs awning + drop screen + lights","Optional, addable anytime — don't oversell"],
       coach:"Keep this light and preference-based. It's a 'nice to know the ceiling' slide, not a push. Photos are the Somfy app (phone) and the TaHoma hub — real product shots. Note: the hardware/app shown is branded TaHoma; slide copy says 'myLink' throughout — flagged for Jack to confirm this is still the correct product name to use."
     },
     {
       id:"sensors", type:"reasonsphoto", image: IMAGES.sensorsIllus,
-      title:"Automatic Sensors — Wind, Rain, Sun",
+      title:"Automatic Sensors: Wind, Rain, Sun",
       script:"Here's the peace-of-mind slide — and it starts with something that's standard with us, not an add-on.\n\nEvery motorized awning we install comes with a wind sensor as a standard feature. If you step out, forget the awning's extended, and one of our Colorado afternoon storms blows through — it retracts automatically. You don't have to be home. You don't have to babysit it. We've had customers tell us it paid for itself the first summer.\n\nThe rain and sun sensors are optional add-ons. The rain sensor retracts the fabric when a sudden downpour moves in, and the sun sensor can extend the awning on its own when direct sun hits — so the space is already shaded before you even walk outside.\n\n⚠️ UNVERIFIED — confirm before repeating to a customer: the wind sensor may actually be a motion sensor that needs ~5–7 seconds of sustained movement to trigger (so a single gust doesn't cycle it). Jack is confirming with Sunesta.",
       talkingPoints:["Wind sensor: STANDARD on every motorized unit — lead with it","Rain & sun sensors: optional add-ons","Colorado afternoon storms + travel = the emotional hook","'You don't have to babysit it'","Tap each pill to reveal the sensor"],
       coach:"Risk-removal close — tie the wind sensor to their travel or busy schedule. Rebuilt as a native layout; the old slide was a screenshot with leftover LED-lights text baked in. Wind hotspot now has a real product photo in its popover. Rain and Sun stay text-only — Jack is confirming sensor-type ID on a candidate photo before either gets a real image; don't add one on your own.",
       hotspots:[
-        {x:0.52,y:0.178,label:"Wind — Standard",photo:IMAGES.sensorWind,content:"Included as a standard feature on every motorized awning we install. Retracts the awning automatically when wind picks up — whether you're home or not."},
-        {x:0.52,y:0.50,label:"Rain",content:"Optional — retracts the fabric automatically when a sudden downpour moves in, so it isn't left out wet."},
-        {x:0.52,y:0.822,label:"Sun",content:"Optional — extends the awning automatically once direct sun is detected. The space is shaded before you step outside."}
+        {x:0.52,y:0.178,label:"Wind (Standard)",photo:IMAGES.sensorWind,content:"Included as a standard feature on every motorized awning we install. Retracts the awning automatically when wind picks up, whether you're home or not."},
+        {x:0.52,y:0.50,label:"Rain",content:"Optional. Retracts the fabric automatically when a sudden downpour moves in, so it isn't left out wet."},
+        {x:0.52,y:0.822,label:"Sun",content:"Optional. Extends the awning automatically once direct sun is detected. The space is shaded before you step outside."}
       ]
     },
     {
       id:"led", type:"herosplit", image: IMAGES.ledAwningArms,
-      title:"LED Lighting — Enjoy the Space After Dark",
-      subtext:"Our most popular add-on. Dimmable, one remote with the awning — under-arm task lighting or top-mounted underglow, the crowd favorite.",
+      title:"LED Lighting: Enjoy the Space After Dark",
+      subtext:"Our most popular add-on. Dimmable, on one remote with the awning. Choose under-arm task lighting or top-mounted underglow, the crowd favorite.",
       script:"This is actually our most popular add-on — LED lighting.\n\nIt completely changes the space at night — soft ambiance for dinner on the patio, or full brightness for an evening gathering. It's all dimmable, and it's the same remote that's already in your hand for the awning.\n\nWe can place the lights under the arms for functional task lighting, or on top of the arms for an underglow effect — that's our more popular option. It's integrated into the awning, not a clip-on afterthought. They can be added later too, but it typically costs a little more because it requires a return trip.\n\nThe number of customers who add this and then tell us 'I can't imagine not having it' — it's most of them. Just something to consider.\n\nAnd one more thing — with all of our awnings, we include a free one-year service. Let me show you what that covers.\n\n[Transition] \"Well, thanks for your time on that. Any questions about anything? Our company, products, me — anything at all?\"",
       talkingPoints:["Most popular add-on — lifestyle close","Under-arm = task light · top-of-arm = underglow (most popular)","Dimmable, one remote with the awning","Add-later possible but costs more (return trip) — rep guidance","Segue: free one-year service → next slide","End with the open question — company, products, me, anything"],
       coach:"Paint the evening picture — dinner, a glass of wine, the game. Real photo now — a lit patio at night under the awning arms."
@@ -351,7 +351,7 @@ const DECK = {
       // tier5 + tier6 are ATH's own photos (Sunesta beauty shot · Latitude pergola from aroundthehouseco.com).
       id:"pricecond", type:"costscale",
       bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-18)
-      eyebrow:"Know the market — position, don't surprise",
+      eyebrow:"Know the market: position, don't surprise",
       title:"Not All Shade Costs the Same",
       paragraph:"Five tiers of shade, from a sail on poles to a motorized louvered roof. Tap any tier to see what your money actually buys.",
       // 5 rungs — matches the price-conditioning script's 5 price points
@@ -377,7 +377,7 @@ const DECK = {
         {n:2, photo:IMAGES.pcTier2, popPhoto:IMAGES.pcTier2, label:"Buy online + handyman install", priceRange:"$2,000 – $4,000", detail:"Stock units shipped in a box. Whoever installs it owns the mistakes — and the manufacturer may not honor the warranty. Sooner or later, you're the one on the ladder patching it."},
         {n:3, photo:IMAGES.pcTier3, popPhoto:IMAGES.pcTier3, label:"Low-end companies", priceRange:"$4,000 – $8,000", detail:"Manual awnings with low wind ratings — or if motorized, an imported motor with a 1-year warranty, 2-cable arms, and thinner hardware. This is what failure looks like: one arm lets go and the whole unit folds down onto the patio."},
         {n:4, photo:IMAGES.pcTier5, popPhoto:IMAGES.pcTier5, label:"Professionally installed quality awning", priceRange:"$6,000 – $12,000+", athMarker:true, detail:"Something like what we offer — higher-quality hardware, a full SmartCase protecting the fabric, lifetime arms, and a local team behind it."},
-        {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", priceRange:"$30,000 – $80,000+", detail:"Motorized louvered roofs with screens — the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
+        {n:5, photo:IMAGES.pcTier6, popPhoto:IMAGES.pcTier6, label:"Pergolas / louvered roof systems", priceRange:"$30,000 – $80,000+", detail:"Motorized louvered roofs with screens: the top of the shade market, at a very different budget. That's our own Latitude line in the photo; we install these too."}
       ],
       script:"Walk the ladder low to high — their quote should feel positioned, not surprising. Reference competitor estimates and photos as they're available.\n\n(LOW END — verbatim): \"If anyone comes in here and asks for $X.00 for a motorized retractable awning — ask them a lot of questions… How is it so cheap? How long have you been in business? Where do you get your installers? This is almost certainly an awning that will fail sooner than you'd like, and you may have to replace it within a few years.\"\n\n(HIGH END): \"If anyone comes in here and asks for $X.00 —\"\n🕳 UNFINISHED IN SOURCE — the high-end rebuttal cuts off exactly here in Matt's notes. Needs Matt's ending — don't improvise it.\n\n(MID TO UPSCALE — verbatim): \"A professionally installed, high-quality awning with a legitimate company and warranty will cost somewhere between $X and $X. We're typically going to fall somewhere in between this range…\"",
       talkingPoints:["Position the market BEFORE your number lands","Low-end objection: ask a lot of questions — how is it so cheap?","Each rung's range shows on its popover — tap the rung, let the number land, then talk to it","Rungs 3–5 are where competitors live; we sit high-mid with lifetime arms + Smart Case standard","High-end rebuttal is unfinished — parked until Matt supplies the ending"],

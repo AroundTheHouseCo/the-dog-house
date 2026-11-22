@@ -352,8 +352,10 @@ function initYouTubeLoop(cfg){
   }
 }
 
+// title === "" draws the bar with the logo only: used where the slide already
+// shows its title beside the photo, so a customer reads it once (Jack, 2026-11-22).
 function footerBannerHTML(title, centered){
-  return `<div class="footer-banner${centered?' footer-centered':''}"><img src="${IMAGES.athLogo}"><div class="footer-title">${title}</div></div>`;
+  return `<div class="footer-banner${centered?' footer-centered':''}${title?'':' footer-logo-only'}"><img src="${IMAGES.athLogo}">${title?`<div class="footer-title">${title}</div>`:""}</div>`;
 }
 
 function renderSlide(){
@@ -788,7 +790,7 @@ function renderSlide(){
         ${photoBoxHTML}
         <div class="split-text">${textHTML}</div>
       </div>
-      ${footerBannerHTML(s.title, true)}
+      ${footerBannerHTML("", true)}
     `;
     area.appendChild(panel);
     if(s.docViewer){
@@ -836,7 +838,7 @@ function renderSlide(){
           ${s.subtext?`<div class="hero-subtext${s.bigSubtext?" lg":""}">${s.subtext}</div>`:""}
         </div>
       </div>
-      ${footerBannerHTML(s.title)}
+      ${footerBannerHTML("")}
     `;
     area.appendChild(panel);
     addNavZones(area);
@@ -1743,6 +1745,9 @@ function renderApp(){
   // Step 6b phase 2 (staging only until Jack approves every deck): the brand
   // on the presentations themselves (css/ravn-brand-deck.css).
   document.body.classList.toggle("rb-deck", showDeck);
+  // Customers never see the "#N · Slide title" badge (Jack, 2026-11-22); it
+  // stays in the training deck, where reps use the numbers.
+  document.body.classList.toggle("rb-present", appView==="present");
   const showPanel = appView==="center" || appView==="presentations" || appView==="coaches";
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";

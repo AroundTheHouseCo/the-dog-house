@@ -54,11 +54,11 @@ const ECLIPSE_DECK = {
     // trained install team as our awning division" / "Eclipse: a nationally
     // recognized screen brand, backed by a local company that stands behind
     // every install".
-    title:"Who We Are — Local & Family-Owned",
+    title:"Who We Are: Local & Family-Owned",
     bullets:[
       "Founded 2004 · Family-owned · Monument, CO",
       "Thousands of installs, Front Range",
-      "You call us — not a call center, not three states away",
+      "You call us: not a call center, not three states away",
       "Same crew as our awning division",
       "Local company, nationally recognized brand"
     ],
@@ -67,29 +67,29 @@ const ECLIPSE_DECK = {
   {
     id:"ez-lineup", type:"productcards",
     title:"Your Home Solutions Experts",
-    paragraph:"We're not just a screen company — we handle the full outdoor living spectrum, so whatever you do today works with whatever you might want to add later.",
+    paragraph:"We're not just a screen company. We handle the full outdoor living spectrum, so whatever you do today works with whatever you might want to add later.",
     rows:[
-      {photo: IMAGES.prodScreenPhoto, logo: IMAGES.ezLogoEclipse, label:"Eclipse® E-Zip Screens", sublabel:"Today's focus — motorized zipper-track screens",
-       detail:"Motorized exterior screens with zipper retention — sun, wind, bug, and privacy control for patios, decks, and porches. Custom made to your exact opening."},
+      {photo: IMAGES.prodScreenPhoto, logo: IMAGES.ezLogoEclipse, label:"Eclipse® E-Zip Screens", sublabel:"Today's focus: motorized zipper-track screens",
+       detail:"Motorized exterior screens with zipper retention: sun, wind, bug, and privacy control for patios, decks, and porches. Custom made to your exact opening."},
       // Item 3 (Jack, 2026-08-10), option 3: object-position:top so the
       // symmetric object-fit:cover crop doesn't eat into the roofline/canopy
       // -- these two photos put their subject in the upper portion of frame
       // with excess patio/lawn below, unlike the other two rows (subject
       // spans the frame evenly, left at the object-fit default).
       {photo: IMAGES.triSunestaAwning, logo: IMAGES.sunestaLogo, label:"Sunesta® Retractable Awnings", sublabel:"Overhead shade on demand",
-       detail:"Custom retractable awnings — shade over the whole space when you want it, sun when you don't. Pairs beautifully with E-Zip screens.",
+       detail:"Custom retractable awnings: shade over the whole space when you want it, sun when you don't. Pairs beautifully with E-Zip screens.",
        photoPosition:"top"},
       {photo: IMAGES.prodGutterPhoto, logo: IMAGES.logoGutterhelmet, label:"Gutter Helmet®", sublabel:"Never clean your gutters again",
-       detail:"Gutter protection and seamless gutters — the other side of what we do around the house."},
+       detail:"Gutter protection and seamless gutters, the other side of what we do around the house."},
       {photo: IMAGES.prodLouverPhoto, logo: IMAGES.ezLogoEclipse, label:"Eclipse® Latitude™ Louvered Roofs", sublabel:"A true outdoor room",
-       detail:"Motorized louvered roof systems — overhead coverage that opens and closes. Many customers pair a louvered roof with E-Zip screens on the sides.",
+       detail:"Motorized louvered roof systems: overhead coverage that opens and closes. Many customers pair a louvered roof with E-Zip screens on the sides.",
        photoPosition:"top"}
     ]
   },
   {
     id:"ez-install", type:"splitphoto",
-    title:"Installed In-House — Level, Parallel, To the Inch",
-    subtext:"The tracks have to be perfectly level and parallel or the screen won't run right — it's not like hanging a curtain. We surface-mount or recess into the structure — pergola posts, stucco, wood framing, brick, or soffit. Most installs are a standard 110-volt plug-in, done in a day.",
+    title:"Installed In-House: Level, Parallel, To the Inch",
+    subtext:"The tracks have to be perfectly level and parallel or the screen won't run right. It's not like hanging a curtain. We surface-mount or recess into pergola posts, stucco, wood framing, brick, or soffit. Most installs are a standard 110-volt plug-in, done in a day.",
     image: IMAGES.ezRecessedStone
   },
   {
@@ -98,12 +98,12 @@ const ECLIPSE_DECK = {
     // labeled placeholder; two prior searches (the Eclipse PDF's p2 group shot,
     // then the full 18-photo screens library) had turned up nothing usable.
     id:"ez-people", type:"splittext",
-    title:"Our People — Who Actually Shows Up",
+    title:"Our People: Who Actually Shows Up",
     bullets:[
       "Twenty-two years and thousands of projects across the Front Range",
       "Certified technicians and install teams who work with us and only us",
-      "Trained to Eclipse specification — and to our standards on top of that",
-      "A full operations team on every project, so nothing depends on one person remembering"
+      "Trained to Eclipse specs, and to our own standards on top",
+      "A full operations team on every project, so nothing rests on one person"
     ],
     image: IMAGES.ezPeopleInstalling
   }
@@ -121,11 +121,11 @@ const ECLIPSE_DECK = {
     id:"ez-eclipse", type:"splittext",
     title:"Eclipse® Authorized Dealer",
     bullets:[
-      "Eclipse Shading Systems — Middletown, New York, with manufacturing in Statesville, North Carolina",
+      "Eclipse Shading Systems: based in Middletown, NY, built in Statesville, NC",
       "Building the E-Zip since 2002 · the 7-inch line since 2019",
       "Custom made in the USA, built to the inch for every opening",
       "ATH is a licensed and insured Eclipse authorized dealer",
-      "Two companies behind your project — not a system assembled from four suppliers"
+      "Two companies behind your project, not parts from four suppliers"
     ],
     image: IMAGES.dealerFamily
   },
@@ -139,13 +139,13 @@ const ECLIPSE_DECK = {
     id:"ez-credibility", type:"credibility",
     headerLogo: IMAGES.ezLogoEclipse,
     title:"Why Eclipse",
-    paragraph:"Eclipse Shading Systems has manufactured the E-Zip in Middletown, New York since 2002 — residential and commercial applications across the country. A proven, refined product line — not something pieced together from multiple sources.",
+    paragraph:"Eclipse Shading Systems has manufactured the E-Zip in Middletown, New York since 2002, for homes and businesses across the country. A proven, refined product line, not something pieced together from multiple sources.",
     rows:[
       {icon: IMAGES.ezLogoSomfy, label:"Powered by Somfy", sublabel:"The industry's gold-standard motors",
-       detail:"Somfy motors come standard — the same brand used in premium motorized systems around the world. Handheld remote, wireless wall switch, or app control, with home-automation integration available."},
+       detail:"Somfy motors come standard, the same brand used in premium motorized systems around the world. Handheld remote, wireless wall switch, or app control, with home-automation integration available."},
       {icon: IMAGES.ezLogoPhifer, label:"Phifer SunTex® fabrics", sublabel:"GREENGUARD Gold certified",
        detail:"Phifer is one of the most respected shading-fabric manufacturers in the world. SunTex is GREENGUARD Gold certified and built specifically for exterior applications — and it carries its own 10-year exterior fabric warranty from Phifer."},
-      {icon: IMAGES.ezBadgeClass6Wind, label:"Class 6 wind resistance", sublabel:"Tested to 80 mph — 4\" & 5\" systems",
+      {icon: IMAGES.ezBadgeClass6Wind, label:"Class 6 wind resistance", sublabel:"Tested to 80 mph (4\" & 5\" systems)",
        detail:"The zipper retention locks the fabric edge into the side track, so the screen stays flat and taut instead of billowing and flapping like a generic roll-down screen."}
     ]
   },
@@ -157,7 +157,7 @@ const ECLIPSE_DECK = {
     // what this slide is for, and part-way-up also shows the stop-at-any-height
     // point. Eight photos tile as a clean 4x2.
     id:"ez-gallery", type:"photogrid",
-    title:"Real Projects — Right Here on the Front Range",
+    title:"Real Projects, Right Here on the Front Range",
     photos:[ IMAGES.ezMonUp, IMAGES.ezMonDown, IMAGES.ezThreePorch, IMAGES.ezNight,
              IMAGES.ezSunroom, IMAGES.ezWithAwning, IMAGES.ezArchedDeck, IMAGES.ezPartWayUp ]
   },
@@ -187,67 +187,67 @@ const ECLIPSE_DECK = {
     image: IMAGES.ezInsideView,
     hotspots:[
       {x:0.30, y:0.20, label:"Harsh sun & glare", photo: IMAGES.ezSunroom,
-       content:"Block the harsh afternoon or morning sun without losing the feel of being outside — and cut the heat and glare reaching the rooms behind the space."},
+       content:"Block the harsh afternoon or morning sun without losing the feel of being outside. And cut the heat and glare reaching the rooms behind the space."},
       {x:0.66, y:0.32, label:"Wind", photo: IMAGES.ezThreePorch,
-       content:"The fabric edge is zipped into the side tracks, so the screen stays flat and taut instead of flapping — the space is actually comfortable to sit in."},
+       content:"The fabric edge is zipped into the side tracks, so the screen stays flat and taut instead of flapping. The space is actually comfortable to sit in."},
       {x:0.42, y:0.62, label:"Privacy", photo: IMAGES.ezMonDown,
-       content:"A dark fabric reads almost like a mirror from outside during the day — neighbors can't see in, you can still see out."},
+       content:"A dark fabric reads almost like a mirror from outside during the day. Neighbors can't see in, you can still see out."},
       {x:0.74, y:0.76, label:"Bugs & no-see-ums", photo: IMAGES.ezFullEnclosure,
-       content:"The tight SunTex weave and the hem bar's brush seal keep no-see-ums, mosquitoes, and other small insects out — evenings become enjoyable again."}
+       content:"The tight SunTex weave and the hem bar's brush seal keep no-see-ums, mosquitoes, and other small insects out. Evenings become enjoyable again."}
     ]
   },
   {
     id:"ez-how", type:"splittext",
     title:"How the E-Zip Works",
     bullets:[
-      "The screen stores inside a protective aluminum cassette — rain, UV, and debris never sit on the fabric",
-      "Press a button: the fabric edges zip into the side tracks, locked flat and taut — no flapping in the wind",
-      "The hem bar's brush seal meets the floor — a real seal, no gaps along the bottom",
-      "Stop it at any height — partial shade, partial wind block, or full enclosure"
+      "The screen stores in a protective aluminum cassette, safe from rain, UV and debris",
+      "Edges zip into the side tracks: flat, taut, no flapping",
+      "The hem bar's brush seal meets the floor, with no gaps along the bottom",
+      "Stop it at any height: partial shade, partial wind block, or full enclosure"
     ],
     image: IMAGES.ezHowItWorks
   },
   {
     id:"ez-systems", type:"models", cardGraphic:"screen",
     title:"Cassette Sizes & System Options",
-    sub:"Three cassette sizes — we size the system to your exact opening. Every unit is custom made to the inch, in two-piece powder-coated extruded aluminum.",
+    sub:"Three cassette sizes. We size the system to your exact opening. Every unit is custom made to the inch, in two-piece powder-coated extruded aluminum.",
     models:[
       {name:"4-inch", tag:"Standard duty · smaller openings", c1:"#3a6ea5", c2:"#5a8fc0", chipHero:false,
        heroChip:"STANDARD DUTY",
        chips:["To 14' wide","To 12' drop","70mm roller"],
        warrantyTiles:[{num:"Lifetime",label:"Frame"},{num:"Lifetime",label:"Fabric",hero:true},{num:"Lifetime",label:"Motor"},{num:"Lifetime",label:"Electronics"}],
        specs:[
-         ["Max width","14 feet — custom-built to the inch"],
+         ["Max width","14 feet, custom-built to the inch"],
          ["Max drop","12 feet (fabric-dependent)"],
-         ["Roller tube","70 mm — largest for the size, so fabric hangs flat"],
+         ["Roller tube","70 mm, largest for the size, so fabric hangs flat"],
          ["Duty level","Standard duty only"],
-         ["Wind","Class 6 wind resistance — tested to 80 mph"],
-         ["Operation","Motorized Somfy — manual crank optional"],
+         ["Wind","Class 6 wind resistance, tested to 80 mph"],
+         ["Operation","Motorized Somfy, manual crank optional"],
          ["Mounting","Surface, recessed, or between-post"],
          ["Cassette","Two-piece powder-coated extruded aluminum"]
        ],
-       bestFor:"Smaller openings — porches, single windows, and tighter spans up to about 14 feet."},
-      {name:"5-inch", tag:"Our most common — Standard or Super Duty", c1:"#1b5e3f", c2:"#2e7d4f", chipHero:true,
+       bestFor:"Smaller openings: porches, single windows, and tighter spans up to about 14 feet."},
+      {name:"5-inch", tag:"Our most common: Standard or Super Duty", c1:"#1b5e3f", c2:"#2e7d4f", chipHero:true,
        heroChip:"STANDARD or SUPER DUTY",
        chips:["To 24' wide","To 16'+ drop","78mm roller"],
        warrantyTiles:[{num:"Lifetime",label:"Frame"},{num:"Lifetime",label:"Fabric",hero:true},{num:"Lifetime",label:"Motor"},{num:"Lifetime",label:"Electronics"}],
        specs:[
-         ["Max width","24 feet — custom-built to the inch"],
+         ["Max width","24 feet, custom-built to the inch"],
          ["Max drop","16 feet (20 ft with select fabrics)"],
-         ["Roller tube","78 mm — larger tube, sag-resistant across the span"],
+         ["Roller tube","78 mm: a larger tube, sag-resistant across the span"],
          ["Duty level","Standard or Super Duty"],
-         ["Wind","Class 6 wind resistance — tested to 80 mph"],
-         ["Operation","Motorized Somfy — manual crank optional"],
+         ["Wind","Class 6 wind resistance, tested to 80 mph"],
+         ["Operation","Motorized Somfy, manual crank optional"],
          ["Mounting","Surface, recessed, or between-post"],
          ["Cassette","Two-piece powder-coated extruded aluminum"]
        ],
-       bestFor:"The vast majority of residential openings — and the only size offered in both Standard and Super Duty, so it fits almost any situation."},
+       bestFor:"The vast majority of residential openings. The only size offered in both Standard and Super Duty, so it fits almost any situation."},
       {name:"7-inch", tag:"Super Duty · the largest openings", c1:"#5a5f66", c2:"#7c828a", chipHero:false,
        heroChip:"SUPER DUTY",
        chips:["To 26' wide","To 20' drop","Largest roller"],
        warrantyTiles:[{num:"Lifetime",label:"Frame"},{num:"Lifetime",label:"Fabric",hero:true},{num:"Lifetime",label:"Motor"},{num:"Lifetime",label:"Electronics"}],
        specs:[
-         ["Max width","26 feet — custom-built to the inch"],
+         ["Max width","26 feet, custom-built to the inch"],
          ["Max drop","20 feet (fabric-dependent)"],
          ["Roller tube","Largest available (up to 140 mm)"],
          ["Duty level","Super Duty only"],
@@ -259,7 +259,7 @@ const ECLIPSE_DECK = {
          ["Mounting","Surface, recessed, or between-post"],
          ["Cassette","Two-piece powder-coated extruded aluminum"]
        ],
-       bestFor:"The largest openings and full enclosures — Super Duty engineering, motorized, and mountable the same three ways as the smaller sizes."}
+       bestFor:"The largest openings and full enclosures: Super Duty engineering, motorized, and mountable the same three ways as the smaller sizes."}
     ],
     modelCompare:{
       title:"4-inch · 5-inch · 7-inch",
@@ -291,10 +291,10 @@ const ECLIPSE_DECK = {
       ]
     },
     gallery:[
-      {img:IMAGES.ezRecessedStone, label:"Recessed cassette — clean, built-in look"},
+      {img:IMAGES.ezRecessedStone, label:"Recessed cassette: clean, built-in look"},
       {img:IMAGES.ezHowItWorks, label:"Cassette · zipper track · hem bar"},
       {img:IMAGES.ezThreePorch, label:"Side tracks across a full porch enclosure"},
-      {img:IMAGES.ezMonUp, label:"Cassette up — barely there"}
+      {img:IMAGES.ezMonUp, label:"Cassette up: barely there"}
     ]
     // The three-column Eclipse / roll-down / sunroom comparison that used to
     // live here moved to ez-options in THE WRAP-UP (spec §2.3) and grew a
@@ -302,20 +302,20 @@ const ECLIPSE_DECK = {
   },
   {
     id:"ez-fabric", type:"splittext",
-    title:"The Fabric — SunTex® by Phifer",
+    title:"The Fabric: SunTex® by Phifer",
     bullets:[
-      "Every fabric is Phifer SunTex® — GREENGUARD Gold certified, built for the outdoors",
-      "All colors cost the same — the only real decision is openness: how much UV it blocks vs. how much you see through",
-      "SunTex 95 is the most popular — blocks ~95% of UV, keeps your view, and reads like a mirror from outside by day",
-      "Want full blackout instead? A solid fabric gives total shade and privacy for extreme exposures",
-      "6 colors on SunTex 80/90, 10 on SunTex 95/97 — near-black to white"
+      "All Phifer SunTex®: GREENGUARD Gold certified, built for the outdoors",
+      "All colors cost the same","The only real choice is openness: UV blocked vs. view kept",
+      "Most popular: SunTex 95 blocks ~95% of UV and keeps your view",
+      "Want full blackout? A solid fabric gives total shade and privacy",
+      "6 colors on SunTex 80/90, 10 on SunTex 95/97, from near-black to white"
     ],
     image: IMAGES.ezMonOutside,
     // Same in-app doc viewer Sunesta's s15 uses for its fabric book, so the
     // rep never leaves the deck to answer a color/spec question. Pages are
     // the two in-repo Phifer PDFs (docs/suntex-*-samples.pdf, 4pp each)
     // rasterized at 1485px wide -- see images/ezip-fabric-pages/.
-    docViewer:{title:"SunTex® by Phifer — Fabric Samples & Specs", tapLabel:"Tap to browse the fabric book",
+    docViewer:{title:"SunTex® by Phifer: Fabric Samples & Specs", tapLabel:"Tap to browse the fabric book",
       pages:["images/ezip-fabric-pages/suntex-95-97-01.jpg","images/ezip-fabric-pages/suntex-95-97-02.jpg","images/ezip-fabric-pages/suntex-95-97-03.jpg","images/ezip-fabric-pages/suntex-95-97-04.jpg","images/ezip-fabric-pages/suntex-80-90-01.jpg","images/ezip-fabric-pages/suntex-80-90-02.jpg","images/ezip-fabric-pages/suntex-80-90-03.jpg","images/ezip-fabric-pages/suntex-80-90-04.jpg"]}
   },
   {
@@ -341,14 +341,14 @@ const ECLIPSE_DECK = {
     // phone in hand, cropped from the Eclipse slide PDF, dated handset; fine as
     // a stand-in, oi10 stays open (relocated here) for a current shot.
     id:"ez-smart", type:"splittext",
-    title:"Smart Control — One Button, Total Command",
+    title:"Smart Control: One Button, Total Command",
     bullets:[
-      "Motorized is standard — not an upgrade. Touch a button; stop it at any height",
+      "Motorized is standard, not an upgrade",
       "Somfy drive — the industry's gold standard, covered for life under Platinum Protection Plus",
       "Control by handheld remote, wireless wall switch, or the app on your phone",
-      "Integrates with home automation — works right alongside the rest of your smart home",
-      "Sun and wind sensors available as add-ons — automate it to the weather",
-      "Standard 110-volt plug-in in most homes — no panel upgrades, no complicated wiring"
+      "Works with home automation and the rest of your smart home",
+      "Add sun and wind sensors to automate it to the weather",
+      "Standard 110-volt plug-in in most homes: no panel upgrades, no complex wiring"
     ],
     image: IMAGES.ezMylinkPhone
   }
@@ -358,14 +358,14 @@ const ECLIPSE_DECK = {
   {
     id:"ez-process", type:"processsteps",
     title:"Our Proven Process",
-    subtext:"From first measurement to final walk-through — one accountable local team.",
+    subtext:"From first measurement to final walk-through: one accountable local team.",
     steps:[
-      {icon: IMAGES.procSite,        title:"Site Visit & Measure",  text:"Exact opening dimensions — every screen is custom made to the inch."},
+      {icon: IMAGES.procSite,        title:"Site Visit & Measure",  text:"Exact opening dimensions. Every screen is custom made to the inch."},
       {icon: IMAGES.procManager,     title:"Project Manager",       text:"One point of contact keeps your project moving and you informed."},
-      {icon: IMAGES.procInstall,     title:"Installation Day",      text:"Our trained crew sets the tracks level and parallel — most jobs done in a day."},
+      {icon: IMAGES.procInstall,     title:"Installation Day",      text:"Our trained crew sets the tracks level and parallel. Most jobs done in a day."},
       {icon: IMAGES.procWalkthrough, title:"Final Walk-Through",    text:"We run every screen with you and don't leave until you're happy."},
       {icon: IMAGES.procWarranty,    title:"Warranty Activated",    text:"We register your coverage and service it locally — you call us, not an 800 number."},
-      {icon: IMAGES.procService,     title:"12-Month Shade Service", text:"A free cleaning visit at the one-year mark — on us."}
+      {icon: IMAGES.procService,     title:"12-Month Shade Service", text:"A free cleaning visit at the one-year mark, on us."}
     ],
     trust:"Serving the Front Range since 2004"
   },
@@ -395,10 +395,10 @@ const ECLIPSE_DECK = {
     // DIY sails and umbrellas stay in script only — a fifth column would make
     // the table unreadable at presentation distance.
     id:"ez-options", type:"difference",
-    title:"Other Options — An Honest Comparison",
+    title:"Other Options: An Honest Comparison",
     paragraph:"Not every shade product is solving the same problem. Here is where the E-Zip actually sits against the alternatives homeowners most often price against.",
     comparison:{
-      title:"Other Options — An Honest Comparison",
+      title:"Other Options: An Honest Comparison",
       columns:[
         {name:"Eclipse E-Zip", sub:"Installed by ATH", badge:"★ OUR PICK"},
         {name:"Generic Roll-Down", sub:"No zipper track"},
@@ -406,7 +406,7 @@ const ECLIPSE_DECK = {
         {name:"Hurricane-Rated", sub:"Coastal storm systems"}
       ],
       rows:[
-        {label:"Holds fabric in wind", cells:[{s:"check",t:"Zipper-locked, stays taut"},{s:"x",t:"Flaps & billows"},{s:"check",t:"Solid — but sealed in"},{s:"check",t:"Overbuilt for here"}]},
+        {label:"Holds fabric in wind", cells:[{s:"check",t:"Zipper-locked, stays taut"},{s:"x",t:"Flaps & billows"},{s:"check",t:"Solid, but sealed in"},{s:"check",t:"Overbuilt for here"}]},
         {label:"Keeps the outdoor feel", cells:[{s:"check",t:"Air moves through"},{s:"check",t:"It's a screen"},{s:"x",t:"Traps heat"},{s:"check",t:"It's a screen"}]},
         {label:"Bug & no-see-um seal", cells:[{s:"check",t:"Tight SunTex + brush seal"},{s:"warn",t:"Depends on fit"},{s:"check",t:"Sealed"},{s:"check",t:"Yes"}]},
         {label:"Retracts out of sight", cells:[{s:"check",t:"Into the cassette"},{s:"warn",t:"Basic housing"},{s:"x",t:"Permanent"},{s:"check",t:"Yes"}]},
@@ -418,9 +418,9 @@ const ECLIPSE_DECK = {
         // strong as ours. Here its one non-check falls on exactly the point the
         // rep is making.
         {label:"Right-sized for Front Range weather", cells:[{s:"check",t:"Built for our wind and sun"},{s:"x",t:"Fails in real wind"},{s:"x",t:"Solves a different problem"},{s:"warn",t:"Engineered for coastal storms"}]},
-        {label:"Investment", cells:[{s:"check",t:"A fraction of a glass room"},{s:"check",t:"Low — but short-lived"},{s:"x",t:"$50,000+"},{s:"x",t:"$20,000+"}]}
+        {label:"Investment", cells:[{s:"check",t:"A fraction of a glass room"},{s:"check",t:"Low, but short-lived"},{s:"x",t:"$50,000+"},{s:"x",t:"$20,000+"}]}
       ],
-      footer:"Glass sunrooms commonly run $50,000 and up and trap heat by design. Generic roll-downs without a zipper track flap in the wind and fail. Hurricane-rated systems are excellent engineering for coastal storm zones — and overkill on the Front Range. Always ask what's actually behind the price."
+      footer:"Glass sunrooms commonly run $50,000 and up and trap heat by design. Generic roll-downs without a zipper track flap in the wind and fail. Hurricane-rated systems are excellent engineering for coastal storm zones, and overkill on the Front Range. Always ask what's actually behind the price."
     }
   },
   {
@@ -440,7 +440,7 @@ const ECLIPSE_DECK = {
     // Sunesta's tier1 slot took a different photo, so the credit applies here only.
     id:"ez-pricecond", type:"costscale",
     bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-10)
-    eyebrow:"Know the market — position, don't surprise",
+    eyebrow:"Know the market: position, don't surprise",
     title:"Not All Shade Costs the Same",
     paragraph:"Four tiers of outdoor shade, from a bamboo roll-up to a full glass room. Tap any tier to see what that money actually buys.",
     rungs:[
@@ -448,16 +448,16 @@ const ECLIPSE_DECK = {
        detail:"$500 – $1,000. Bamboo roll-ups, shade sails, outdoor curtains. Fine for a season — no engineering, no wind rating, no warranty to speak of."},
       {n:2, photo:IMAGES.ezPcTier2, popPhoto:IMAGES.ezPcTier2, label:"Low-end installed",
        detail:"$1,000 – $3,000 per opening. Usually manual, no zipper track, and a one-year warranty on components. This is the tier where the screen flaps in the wind and fails early."},
-      {n:3, photo:IMAGES.ezMonDown, popPhoto:IMAGES.ezMonDown, label:"Quality motorized — where we live", athMarker:true,
+      {n:3, photo:IMAGES.ezMonDown, popPhoto:IMAGES.ezMonDown, label:"Quality motorized: where we live", athMarker:true,
        detail:"$4,000 – $12,000. Zipper retention, name-brand Phifer fabric, a real lifetime warranty through PPP, and professional installation by the team that stands behind it."},
       {n:4, photo:IMAGES.ezPcTier4, popPhoto:IMAGES.ezPcTier4, label:"Hurricane-rated & glass rooms",
-       detail:"$20,000 – $100,000+. MagnaTrack-class storm systems and full glass sunrooms. Excellent engineering — built for a different problem, at a very different budget."}
+       detail:"$20,000 – $100,000+. MagnaTrack-class storm systems and full glass sunrooms. Excellent engineering, built for a different problem, at a very different budget."}
     ]
   },
   {
     id:"ez-viewstays", type:"herosplit",
     title:"Up, It Disappears. Down, It's Protected.",
-    subtext:"It's more like a wall you can make disappear whenever you want. The view stays — the sun, the wind, and the bugs don't.",
+    subtext:"It's more like a wall you can make disappear whenever you want. The view stays. The sun, the wind, and the bugs don't.",
     image: IMAGES.ezHalfDeployed
   }
 ]

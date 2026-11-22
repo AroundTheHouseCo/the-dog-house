@@ -65,3 +65,37 @@ body.rb-deck :is(.scrub-ends,.mv2-tag,.spec-tag,.ct-badge,.cmp-panel .ct-badge,.
 /* Tab labels never squeeze into each other: each tab is as wide as its
    label and the bar scrolls sideways when they don't all fit (phones). */
 body.rb-deck .tabbar button{flex:1 0 auto;min-width:max-content;padding:13px 16px;}
+
+/* Customer view: no "#N · title" badge (training deck keeps it), and the
+   split slides no longer need the top padding that cleared it. */
+body.rb-present .slide-num-badge{display:none;}
+@media(max-width:860px){ body.rb-present .split-text{padding-top:28px;} }
+/* Slides that show their title beside the photo keep the bar for the logo only. */
+body.rb-deck .footer-banner.footer-logo-only{justify-content:center;}
+
+/* Readable across a table on an iPad (Jack, 2026-11-22): the body copy a
+   homeowner reads goes up wherever the slide has room. Wide screens only;
+   phone layouts keep their sizes. Every slide re-checked for overflow. */
+@media(min-width:900px){
+  body.rb-deck .split-text h2{font-size:36px;line-height:1.15;margin-bottom:14px;}
+  body.rb-deck .split-bullets li{font-size:23px;line-height:1.35;padding:7px 0 7px 26px;color:#3A3A3C;}
+  body.rb-deck .split-subtext{font-size:21px;}
+  body.rb-deck .hero-text h2{font-size:30px;}
+  body.rb-deck .hero-subtext{font-size:21px;}
+  body.rb-deck .hero-subtext.lg{font-size:23px;}
+  body.rb-deck .cred-row .cred-label{font-size:23px;}
+  body.rb-deck .cred-row .cred-sublabel{font-size:18px;max-width:400px;}
+  body.rb-deck .reason-body p{font-size:18px;}
+  body.rb-deck .ps-title{font-size:19px;}
+  body.rb-deck .ps-text{font-size:16px;max-width:210px;}
+  body.rb-deck .wt-sub{font-size:16px;}
+  body.rb-deck .tri-subtext{font-size:20px;}
+}
+/* Long lists (6+ bullets) step down a little so they still fit a 1024×768 iPad. */
+@media(min-width:900px){
+  body.rb-deck .split-bullets:has(li:nth-child(6)) li{font-size:21px;padding-top:5px;padding-bottom:5px;}
+}
+/* iPad held upright: the one remaining bar title (photo slides) fits without "…". */
+@media(min-width:600px) and (max-width:899px){
+  body.rb-deck .footer-banner .footer-title{font-size:26px;}
+}
