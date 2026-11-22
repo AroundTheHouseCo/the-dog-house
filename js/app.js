@@ -1727,6 +1727,8 @@ function renderApp(){
   // DECK LAYOUT"). Gated on appView, so both product decks get it and the
   // home/picker/Quote Builder card layouts are left alone.
   document.body.classList.toggle("deck-full", showDeck);
+  // Branded RAVN screens sit on the warm cream background (RAVN brand guide).
+  document.body.classList.toggle("ravn-page", appView==="courses");
   const showPanel = appView==="center" || appView==="presentations" || appView==="coaches";
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";

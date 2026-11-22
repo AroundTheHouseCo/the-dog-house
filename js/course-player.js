@@ -54,52 +54,59 @@ function cpFindLesson(id){
 }
 function cpBar(pct, label){
   const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
-  return `<div class="cp-bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100" aria-label="${cpE(label || "Progress")}">
-    <div class="cp-bar-fill" style="width:${p}%"></div></div>`;
+  return `<div class="rb-bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100" aria-label="${cpE(label || "Progress")}">
+    <div class="rb-bar-fill" style="width:${p}%"></div></div>`;
 }
-const cpLock = () => (typeof ICON !== "undefined" && ICON.lock) || "🔒";
-const cpCheck = () => (typeof ICON !== "undefined" && ICON.checkCircle) || "✓";
+const cpI = (name) => (typeof LUCIDE !== "undefined" && LUCIDE[name]) || "";
+// Every status is an icon AND a word.
+const cpTagDone = (word) => `<span class="rb-tag done cp-tag">${cpI("circleCheck")}${word}</span>`;
+const cpTagLock = (word) => `<span class="rb-tag locked cp-tag">${cpI("lock")}${word}</span>`;
+const cpTagGo = (word) => `<span class="rb-tag go cp-tag">${cpI("arrowRight")}${word}</span>`;
+const cpHead = (eyebrow, title) => `<div class="rb-head"><div class="rb-eyebrow">${cpE(eyebrow)}</div><h1>${cpE(title)}</h1></div>`;
+const cpBack = (act, id, label) => `<button class="rb-back" data-cp="${act}"${id ? ` data-id="${cpE(id)}"` : ""}>${cpI("chevronLeft")}${cpE(label)}</button>`;
 
 function renderCourses(){
   const el = document.getElementById("coursePanel");
   if (!el) return;
   if (typeof rvGetSession === "function" && !rvGetSession()) {
-    el.innerHTML = `<div class="qb-status"><h2>Sign in first</h2><p>Courses follow your RAVN sign-in. Open Start Appointment to sign in, then come back.</p></div>`;
+    el.innerHTML = `${cpHead("Training", "Courses")}<div class="rb-card"><h2>Sign in first</h2>
+      <p>Your courses follow your RAVN sign-in. Open Start appointment, sign in, then come back here.</p></div>`;
     return;
   }
   if (CP.data === null && !CP.loading && !CP.error) { cpLoad(); return; }
   let body = "";
-  if (CP.loading && !CP.data) body = `<div class="rv-empty">Loading courses…</div>`;
-  else if (CP.error) body = `<div class="rv-error">${cpE(CP.error)}</div><button class="qb-btn-primary" data-cp="reload">Try again</button>`;
+  if (CP.loading && !CP.data) body = `${cpHead("Training", "Courses")}<div class="rb-empty">Loading your courses…</div>`;
+  else if (CP.error) body = `${cpHead("Training", "Courses")}<div class="rb-error">${cpE(CP.error)}</div>
+    <button class="rb-btn" data-cp="reload">${cpI("rotateCcw")}Try again</button>`;
   else if (CP.view === "course") body = cpCourseHTML();
   else if (CP.view === "lesson") body = cpLessonHTML();
   else if (CP.view === "quiz") body = cpQuizHTML();
   else if (CP.view === "result") body = cpResultHTML();
   else body = cpListHTML();
-  el.innerHTML = `<div class="ca-wrap cp-wrap">${body}</div>`;
+  el.innerHTML = body;
   el.onclick = cpOnClick;
   el.onchange = cpOnChange;
 }
 
 function cpListHTML(){
   const d = CP.data, courses = d.courses || [];
-  if (!courses.length) return `<div class="center-head"><div class="eyebrow">Training</div><h1>Courses</h1></div>
-    <div class="rv-empty">No courses are published yet. Your owner approves lessons in Content before they show up here.</div>`;
+  if (!courses.length) return `${cpHead("Training", "Courses")}
+    <div class="rb-card"><h2>No courses yet</h2><p class="rb-meta">Courses show up here once they're approved in Content.</p></div>`;
   const cards = courses.map((c) => {
-    const state = c.complete ? `<span class="cp-tag done">${cpCheck()} Complete</span>`
-      : c.locked ? `<span class="cp-tag locked">${cpLock()} Finish ${cpE(c.requiresTitle)} first</span>`
-      : c.unitsDone ? `<span class="cp-tag">${c.percent}% done</span>` : `<span class="cp-tag">Not started</span>`;
-    return `<button class="ca-row-btn cp-course${c.locked ? " is-locked" : ""}" data-cp="open-course" data-id="${cpE(c.id)}">
-      <span class="cp-course-main"><span class="ca-row-title">${cpE(c.title)}</span>
-        ${c.summary ? `<span class="cp-sub">${cpE(c.summary)}</span>` : ""}
+    const state = c.complete ? cpTagDone("Complete")
+      : c.locked ? cpTagLock(`Finish ${cpE(c.requiresTitle)} first`)
+      : c.unitsDone ? cpTagGo(`${c.percent}% done`) : cpTagGo("Start");
+    return `<button class="rb-row rb-course cp-course${c.locked ? " is-locked" : ""}" data-cp="open-course" data-id="${cpE(c.id)}">
+      <span class="rb-row-main"><span class="rb-row-title">${cpE(c.title)}</span>
+        ${c.summary ? `<span class="rb-meta">${cpE(c.summary)}</span>` : ""}
         ${cpBar(c.percent, c.title + " progress")}
-        <span class="cp-sub">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span></span>
+        <span class="rb-hint">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span></span>
       ${state}</button>`;
   }).join("");
-  return `<div class="center-head"><div class="eyebrow">Training</div><h1>Courses</h1></div>
-    <div class="ca-card cp-overall"><div class="cp-overall-head"><b>Your training</b><span>${d.overall.percent}%</span></div>
-      ${cpBar(d.overall.percent, "Overall training progress")}
-      <div class="cp-sub">${d.overall.unitsDone} of ${d.overall.units} steps across every course</div></div>
+  return `${cpHead("Training", "Courses")}
+    <div class="rb-card cp-overall"><div class="cp-overall-head"><h2>Your training</h2><span class="rb-score-num cp-pct">${d.overall.percent}%</span></div>
+      ${cpBar(d.overall.percent, "Your overall training progress")}
+      <div class="rb-hint">${d.overall.unitsDone} of ${d.overall.units} steps done across every course</div></div>
     ${cards}`;
 }
 
@@ -108,27 +115,26 @@ function cpCourseHTML(){
   if (!c) { CP.view = "list"; return cpListHTML(); }
   const mods = c.modules.map((m, mi) => {
     const rows = m.lessons.map((l) => `
-      <button class="ca-row-btn cp-lesson${l.locked ? " is-locked" : ""}" data-cp="open-lesson" data-id="${cpE(l.id)}" ${l.locked ? "aria-disabled=\"true\"" : ""}>
-        <span><span class="ca-row-title">${cpE(l.title)}</span><span class="cp-sub">${cpE(CP_TYPES[l.type] || l.type)}${l.minutes ? " · " + l.minutes + " min" : ""}</span></span>
-        <span class="cp-state">${l.done ? `<span class="cp-tag done">${cpCheck()} Done</span>` : l.locked ? `<span class="cp-tag locked">${cpLock()}</span>` : `<span class="cp-tag go">Start</span>`}</span>
+      <button class="rb-row cp-lesson${l.locked ? " is-locked" : ""}" data-cp="open-lesson" data-id="${cpE(l.id)}" ${l.locked ? "aria-disabled=\"true\"" : ""}>
+        <span class="rb-row-main"><span class="rb-row-title">${cpE(l.title)}</span><span class="rb-hint">${cpE(CP_TYPES[l.type] || l.type)}${l.minutes ? " · " + l.minutes + " min" : ""}</span></span>
+        ${l.done ? cpTagDone("Done") : l.locked ? cpTagLock("Locked") : cpTagGo("Start")}
       </button>`).join("");
     const q = m.quiz ? `
-      <button class="ca-row-btn cp-lesson cp-quizrow${m.quiz.locked ? " is-locked" : ""}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${m.quiz.locked ? "aria-disabled=\"true\"" : ""}>
-        <span><span class="ca-row-title">Quiz — ${m.quiz.count} question${m.quiz.count === 1 ? "" : "s"}</span>
-          <span class="cp-sub">Pass mark ${m.pass}%${m.quiz.best ? ` · best ${m.quiz.best.score}%` : ""}</span></span>
-        <span class="cp-state">${m.quiz.best && m.quiz.best.passed ? `<span class="cp-tag done">${cpCheck()} Passed</span>` : m.quiz.locked ? `<span class="cp-tag locked">${cpLock()}</span>` : `<span class="cp-tag go">${m.quiz.best ? "Retake" : "Take quiz"}</span>`}</span>
+      <button class="rb-row cp-lesson cp-quizrow${m.quiz.locked ? " is-locked" : ""}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${m.quiz.locked ? "aria-disabled=\"true\"" : ""}>
+        <span class="rb-row-main"><span class="rb-row-title">Quiz · ${m.quiz.count} question${m.quiz.count === 1 ? "" : "s"}</span>
+          <span class="rb-hint">Pass mark ${m.pass}%${m.quiz.best ? ` · your best ${m.quiz.best.score}%` : ""}</span></span>
+        ${m.quiz.best && m.quiz.best.passed ? cpTagDone("Passed") : m.quiz.locked ? cpTagLock("Locked") : cpTagGo(m.quiz.best ? "Retake" : "Take quiz")}
       </button>` : "";
     const pct = m.units ? Math.round((m.unitsDone / m.units) * 100) : 0;
-    return `<div class="ca-card cp-module${m.locked ? " is-locked" : ""}">
-      <div class="cp-module-head"><h3>${mi + 1}. ${cpE(m.title)}</h3>${m.complete ? `<span class="cp-tag done">${cpCheck()} Complete</span>` : m.locked ? `<span class="cp-tag locked">${cpLock()} Locked</span>` : ""}</div>
+    return `<div class="rb-card cp-module${m.locked ? " is-locked" : ""}">
+      <div class="cp-module-head"><h3>${mi + 1}. ${cpE(m.title)}</h3>${m.complete ? cpTagDone("Complete") : m.locked ? cpTagLock("Locked") : ""}</div>
       ${cpBar(pct, m.title + " progress")}
-      ${m.locked && mi > 0 ? `<div class="cp-sub">Opens when “${cpE(c.modules[mi - 1].title)}” is complete.</div>` : ""}
+      ${m.locked && mi > 0 ? `<div class="rb-hint">Opens when you finish “${cpE(c.modules[mi - 1].title)}”.</div>` : ""}
       ${rows}${q}</div>`;
   }).join("");
-  return `<button class="ca-back" data-cp="to-list">← All courses</button>
-    <div class="center-head"><div class="eyebrow">${c.locked ? "Locked" : c.percent + "% complete"}</div><h1>${cpE(c.title)}</h1></div>
-    ${c.locked ? `<div class="rv-note">${cpLock()} This course opens when you finish <b>${cpE(c.requiresTitle)}</b>.</div>` : ""}
-    ${cpBar(c.percent, c.title + " progress")}
+  return `${cpBack("to-list", "", "All courses")}
+    ${cpHead(c.locked ? "Locked" : c.complete ? "Complete" : c.percent + "% done", c.title)}
+    ${c.locked ? `<div class="rb-note">${cpI("lock")} This course opens when you finish <b>${cpE(c.requiresTitle)}</b>.</div>` : ""}
     ${mods}`;
 }
 
@@ -145,23 +151,23 @@ function cpLessonHTML(){
   if (l.type === "video" && l.url) {
     const yt = cpYouTubeId(l.url);
     media = yt
-      ? `<div class="cp-video"><iframe src="https://www.youtube-nocookie.com/embed/${yt}?rel=0" title="${cpE(l.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
-      : `<a class="qb-btn-primary cp-linkbtn" href="${cpE(l.url)}" target="_blank" rel="noopener noreferrer">Open the video</a>`;
+      ? `<div class="rb-video cp-video"><iframe src="https://www.youtube-nocookie.com/embed/${yt}?rel=0" title="${cpE(l.title)}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+      : `<a class="rb-btn secondary" href="${cpE(l.url)}" target="_blank" rel="noopener noreferrer">${cpI("externalLink")}Open the video</a>`;
   } else if (l.type === "roleplay") {
-    media = `${l.goal ? `<div class="rv-note"><b>Goal:</b> ${cpE(l.goal)}</div>` : ""}
-      ${l.url ? `<a class="qb-btn-primary cp-linkbtn" href="${cpE(l.url)}" target="_blank" rel="noopener noreferrer">Open the role-play</a>` : ""}`;
+    media = `${l.goal ? `<div class="rb-note"><b>Your goal:</b> ${cpE(l.goal)}</div>` : ""}
+      ${l.url ? `<a class="rb-btn secondary" href="${cpE(l.url)}" target="_blank" rel="noopener noreferrer">${cpI("externalLink")}Open the role-play</a>` : ""}`;
   } else if (l.type === "document") {
-    media = `<div class="rv-note">This lesson uses a Resource Library document (<code>${cpE(l.doc || "")}</code>). The Library arrives in the next RAVN update — until then, ask your manager for it.</div>`;
+    media = `<div class="rb-note">${cpI("fileText")} This lesson uses a document from the Resource Library, which comes in the next RAVN update. Until then, ask your manager for it.</div>`;
   }
   const next = m.lessons[index + 1];
-  const nextBtn = next ? `<button class="qb-btn-primary" data-cp="open-lesson" data-id="${cpE(next.id)}" ${!l.done ? "disabled" : ""}>Next lesson</button>`
-    : m.quiz ? `<button class="qb-btn-primary" data-cp="open-quiz" data-id="${cpE(m.id)}" ${!l.done ? "disabled" : ""}>Take the quiz</button>`
-    : `<button class="qb-btn-primary" data-cp="open-course" data-id="${cpE(CP.courseId)}" ${!l.done ? "disabled" : ""}>Back to the course</button>`;
-  return `<button class="ca-back" data-cp="open-course" data-id="${cpE(CP.courseId)}">← ${cpE(m.title)}</button>
-    <div class="center-head"><div class="eyebrow">${cpE(CP_TYPES[l.type] || l.type)}${l.minutes ? " · " + l.minutes + " min" : ""}</div><h1>${cpE(l.title)}</h1></div>
-    <div class="ca-card cp-lesson-body">${media}${l.body ? `<div class="cp-md">${md(l.body)}</div>` : ""}</div>
-    <div class="cp-actions">
-      ${l.done ? `<span class="cp-tag done">${cpCheck()} Done</span>` : `<button class="qb-btn-primary" data-cp="lesson-done" data-id="${cpE(l.id)}" ${CP.busy ? "disabled" : ""}>Mark complete</button>`}
+  const nextBtn = next ? `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-lesson" data-id="${cpE(next.id)}" ${!l.done ? "disabled" : ""}>Next lesson${cpI("arrowRight")}</button>`
+    : m.quiz ? `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${!l.done ? "disabled" : ""}>Take the quiz${cpI("arrowRight")}</button>`
+    : `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-course" data-id="${cpE(CP.courseId)}" ${!l.done ? "disabled" : ""}>Back to the course</button>`;
+  return `${cpBack("open-course", CP.courseId, m.title)}
+    ${cpHead((CP_TYPES[l.type] || l.type) + (l.minutes ? " · " + l.minutes + " min" : ""), l.title)}
+    <div class="rb-card cp-lesson-body">${media}${l.body ? `<div class="rb-md cp-md">${md(l.body)}</div>` : ""}</div>
+    <div class="rb-actions cp-actions">
+      ${l.done ? cpTagDone("Done") : `<button class="rb-btn" data-cp="lesson-done" data-id="${cpE(l.id)}" ${CP.busy ? "disabled" : ""}>${cpI("circleCheck")}Mark as done</button>`}
       ${nextBtn}
     </div>`;
 }
@@ -171,7 +177,7 @@ async function cpOpenQuiz(moduleId){
   CP.busy = true; renderCourses();
   const r = await cpApi("/quiz?module=" + encodeURIComponent(moduleId));
   CP.busy = false;
-  if (!r.data.ok) { CP.error = null; alert(r.data.error || "Couldn't open the quiz."); return renderCourses(); }
+  if (!r.data.ok) { alert(r.data.error || "Couldn't open the quiz. Check your connection and try again."); return renderCourses(); }
   // A fresh order every attempt: questions and their choices.
   const questions = cpShuffle(r.data.questions).map((q) => Object.assign({}, q, { choices: cpShuffle(q.choices) }));
   CP.quiz = { moduleId: r.data.moduleId, title: r.data.title, pass: r.data.pass, questions, answers: {} };
@@ -183,35 +189,40 @@ function cpQuizHTML(){
   if (!z) { CP.view = "course"; return cpCourseHTML(); }
   const answered = z.questions.filter((q) => z.answers[q.id] && z.answers[q.id].size).length;
   const qs = z.questions.map((q, qi) => `
-    <fieldset class="ca-card cp-q"><legend><b>${qi + 1}.</b> ${cpE(q.prompt)}${q.multi ? ` <span class="cp-sub">(select all that apply)</span>` : ""}</legend>
-      ${q.choices.map((c) => `<label class="cp-choice"><input type="${q.multi ? "checkbox" : "radio"}" name="cpq-${cpE(q.id)}" data-q="${cpE(q.id)}" data-i="${c.i}"
+    <fieldset class="rb-card rb-q cp-q"><legend>${qi + 1}. ${cpE(q.prompt)}${q.multi ? ` <span class="rb-hint">Pick every one that's right.</span>` : ""}</legend>
+      ${q.choices.map((c) => `<label class="rb-choice cp-choice"><input type="${q.multi ? "checkbox" : "radio"}" name="cpq-${cpE(q.id)}" data-q="${cpE(q.id)}" data-i="${c.i}"
         ${z.answers[q.id] && z.answers[q.id].has(c.i) ? "checked" : ""}> <span>${cpE(c.text)}</span></label>`).join("")}
     </fieldset>`).join("");
-  return `<button class="ca-back" data-cp="open-course" data-id="${cpE(CP.courseId)}">← Back to the course</button>
-    <div class="center-head"><div class="eyebrow">Quiz · pass mark ${z.pass}%</div><h1>${cpE(z.title)}</h1></div>
+  return `${cpBack("open-course", CP.courseId, "Back to the course")}
+    ${cpHead("Quiz · pass mark " + z.pass + "%", z.title)}
     ${qs}
-    <div class="cp-actions"><span class="cp-sub">${answered} of ${z.questions.length} answered</span>
-      <button class="qb-btn-primary" data-cp="submit-quiz" ${answered < z.questions.length || CP.busy ? "disabled" : ""}>Submit answers</button></div>`;
+    <div class="rb-actions cp-actions"><span class="rb-meta">${answered} of ${z.questions.length} answered</span>
+      <button class="rb-btn" data-cp="submit-quiz" ${answered < z.questions.length || CP.busy ? "disabled" : ""}>Submit answers</button></div>`;
 }
 function cpResultHTML(){
   const r = CP.result;
   if (!r) { CP.view = "course"; return cpCourseHTML(); }
   const g = r.grade, byId = new Map(r.quiz.questions.map((q) => [q.id, q]));
-  const text = (q, idxs) => idxs.map((i) => { const c = q.choices.find((x) => x.i === i); return c ? cpE(c.text) : "?"; }).join(", ") || "—";
+  const text = (q, idxs) => idxs.map((i) => { const c = q.choices.find((x) => x.i === i); return c ? cpE(c.text) : "?"; }).join(", ") || "Nothing picked";
   const rows = g.results.map((x, n) => {
     const q = byId.get(x.id); if (!q) return "";
-    return `<div class="ca-card cp-res ${x.right ? "right" : "wrong"}"><div><b>${n + 1}. ${cpE(q.prompt)}</b></div>
-      <div class="cp-sub">${x.right ? `${cpCheck()} Right` : "Not quite"} — your answer: ${text(q, x.picked)}</div>
-      ${x.right ? "" : `<div><b>Correct:</b> ${text(q, x.correct)}</div><div class="cp-expl">${cpE(x.explanation)}</div>`}</div>`;
+    return `<div class="rb-card rb-res cp-res ${x.right ? "right" : "wrong"}"><div><b>${n + 1}. ${cpE(q.prompt)}</b></div>
+      <div class="rb-res-verdict ${x.right ? "right" : "wrong"}">${x.right ? cpI("circleCheck") + "Right" : cpI("circleX") + "Not quite"}</div>
+      <div class="rb-meta">Your answer: ${text(q, x.picked)}</div>
+      ${x.right ? "" : `<div><b>Correct:</b> ${text(q, x.correct)}</div><div class="rb-expl cp-expl">${cpE(x.explanation)}</div>`}</div>`;
   }).join("");
   const m = (cpFindModuleNow(r.quiz.moduleId) || {}).module;
-  return `<div class="center-head"><div class="eyebrow">${cpE(r.quiz.title)}</div>
-      <h1>${g.passed ? "Passed" : "Not passed yet"} — ${g.score}%</h1></div>
-    <div class="rv-note">${g.right} of ${g.total} right · pass mark ${g.pass}%. ${g.passed ? (m && m.complete ? "This module is complete." : "") : "Review the answers below and take it again — there's no limit."}</div>
+  const note = g.passed
+    ? (m && m.complete ? "Nice work. This module is complete." : "Nice work.")
+    : `You need ${g.pass}% to pass. Read the answers below, then take it again — there's no limit.`;
+  return `${cpHead(r.quiz.title, g.passed ? `Passed — ${g.score}%` : `Not passed yet — ${g.score}%`)}
+    <div class="rb-card cp-scorecard"><div class="rb-score">${g.passed ? `<span class="rb-tag done">${cpI("circleCheck")}Passed</span>` : `<span class="rb-tag go">${cpI("rotateCcw")}Try again</span>`}
+      <span class="rb-meta">${g.right} of ${g.total} right · pass mark ${g.pass}%</span></div>
+      ${cpBar(g.score, "Your score")}<p class="rb-meta" style="margin:8px 0 0">${note}</p></div>
     ${rows}
-    <div class="cp-actions">
-      ${g.passed ? "" : `<button class="qb-btn-primary" data-cp="open-quiz" data-id="${cpE(r.quiz.moduleId)}">Retake the quiz</button>`}
-      <button class="${g.passed ? "qb-btn-primary" : "rv-signout"}" data-cp="open-course" data-id="${cpE(CP.courseId)}">Back to the course</button>
+    <div class="rb-actions cp-actions">
+      ${g.passed ? "" : `<button class="rb-btn" data-cp="open-quiz" data-id="${cpE(r.quiz.moduleId)}">${cpI("rotateCcw")}Retake the quiz</button>`}
+      <button class="rb-btn${g.passed ? "" : " secondary"}" data-cp="open-course" data-id="${cpE(CP.courseId)}">Back to the course</button>
     </div>`;
 }
 function cpFindModuleNow(id){
@@ -246,7 +257,7 @@ async function cpOnClick(e){
     CP.busy = true; renderCourses();
     const r = await cpPost("/lesson-done", { lessonId: id });
     CP.busy = false;
-    if (r.data.ok) cpTake(r.data); else alert(r.data.error || "Couldn't save that.");
+    if (r.data.ok) cpTake(r.data); else alert(r.data.error || "That didn't save. Check your connection and tap Mark as done again.");
     return renderCourses();
   }
   if (act === "submit-quiz") {

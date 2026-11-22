@@ -1,0 +1,133 @@
+/* ═════════════════════════════════════════════════════════════════════════
+   RAVN brand (Jack's brand guide, 2026-11-22) — scoped to .ravn-ui so the
+   customer presentations (out of scope until after show season) don't move.
+   New RAVN screens use these rb-* classes; Step 6b brings the existing
+   screens (sign-in, Start Appointment, recording/upload, Owners, Content,
+   Device check) onto them before Jan 4.
+
+   Contrast (checked, WCAG): charcoal on amber 5.5:1 · dark amber #9A5A00 on
+   cream 5.1:1 · white on deep green #007A3F 5.5:1 · deep green text on cream
+   5.1:1 · charcoal on cream 10.5:1 · muted #5F5B53 on cream 6.3:1.
+   Brand green #008A47 is 4.1:1 as text on cream, so it is used for icons and
+   fills; green TEXT uses the deep green.
+   ═════════════════════════════════════════════════════════════════════════ */
+.ravn-ui{
+  --rb-amber:#F9A11B;  --rb-amber-dark:#9A5A00;  --rb-amber-soft:#FDEBC8;
+  --rb-green:#008A47;  --rb-green-deep:#007A3F;  --rb-green-soft:#E3F3EA;
+  --rb-charcoal:#3A3A3C; --rb-muted:#5F5B53;
+  --rb-cream:#FBF6EA;  --rb-paper:#FFFDF8;       --rb-line:#E8DFC4;
+  --rb-red:#B3261E;    --rb-red-soft:#FBE9E7;
+  --rb-shadow:0 2px 10px rgba(110,84,30,.10), 0 1px 2px rgba(110,84,30,.08);
+  --rb-ease:160ms ease;
+  font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:18px; line-height:1.5; color:var(--rb-charcoal);
+  background:var(--rb-cream);
+  max-width:760px; margin:0 auto; padding:16px 16px 40px; box-sizing:border-box;
+}
+.ravn-ui *{box-sizing:border-box;}
+.ravn-ui .lc{width:20px;height:20px;flex:none;vertical-align:middle;}
+
+/* Headings */
+.ravn-ui .rb-head{margin:8px 0 16px;}
+.ravn-ui .rb-eyebrow{font-family:"Space Mono",ui-monospace,Menlo,monospace;font-size:14px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--rb-green-deep);margin:0 0 4px;}
+.ravn-ui h1{font-size:32px;font-weight:900;letter-spacing:-.02em;line-height:1.15;margin:0;color:var(--rb-charcoal);}
+.ravn-ui h2,.ravn-ui h3{font-weight:900;letter-spacing:-.01em;line-height:1.2;margin:0;color:var(--rb-charcoal);}
+.ravn-ui h2{font-size:22px;} .ravn-ui h3{font-size:20px;}
+.ravn-ui .rb-hint{font-size:14px;color:var(--rb-muted);}
+.ravn-ui .rb-meta{font-size:16px;color:var(--rb-muted);}
+
+/* Cards */
+.ravn-ui .rb-card{background:var(--rb-paper);border:1px solid var(--rb-line);border-radius:16px;box-shadow:var(--rb-shadow);
+  padding:20px;margin:0 0 16px;}
+.ravn-ui .rb-card.is-locked{background:#F6F1E4;box-shadow:none;}
+
+/* Rows (tappable list items) */
+.ravn-ui .rb-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 16px;margin:8px 0 0;
+  text-align:left;font:inherit;color:var(--rb-charcoal);background:#fff;border:2px solid var(--rb-line);border-radius:12px;
+  cursor:pointer;transition:border-color var(--rb-ease),background var(--rb-ease);}
+.ravn-ui .rb-row:hover{border-color:var(--rb-amber);}
+.ravn-ui .rb-row.is-locked{cursor:default;color:var(--rb-muted);background:#F6F1E4;}
+.ravn-ui .rb-row.is-locked:hover{border-color:var(--rb-line);}
+.ravn-ui .rb-row-main{flex:1;min-width:0;}
+.ravn-ui .rb-row-title{display:block;font-weight:800;font-size:18px;}
+.ravn-ui .rb-course{flex-direction:column;align-items:stretch;padding:20px;border-radius:16px;box-shadow:var(--rb-shadow);border-width:1px;min-height:0;margin:0 0 16px;}
+.ravn-ui .rb-course .rb-row-title{font-size:22px;font-weight:900;letter-spacing:-.01em;}
+
+/* Buttons — 48px+ tap targets, sentence case */
+.ravn-ui .rb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 20px;
+  font:inherit;font-weight:800;font-size:18px;border-radius:12px;border:2px solid var(--rb-amber);background:var(--rb-amber);
+  color:var(--rb-charcoal);cursor:pointer;text-decoration:none;transition:filter var(--rb-ease),background var(--rb-ease);}
+.ravn-ui .rb-btn:hover{filter:brightness(.96);}
+.ravn-ui .rb-btn.secondary{background:#fff;border-color:var(--rb-charcoal);color:var(--rb-charcoal);}
+.ravn-ui .rb-btn.go-green{background:var(--rb-green-deep);border-color:var(--rb-green-deep);color:#fff;}
+.ravn-ui .rb-btn.block{width:100%;}
+/* Disabled comes after every variant so it always wins (a disabled outline button must not look tappable). */
+.ravn-ui .rb-btn:disabled,.ravn-ui .rb-btn[aria-disabled="true"]{background:#EFE8D8;border-color:#E2D9C4;color:#6F695E;cursor:not-allowed;filter:none;}
+.ravn-ui .rb-back{display:inline-flex;align-items:center;gap:4px;min-height:48px;padding:8px 4px;margin:0 0 4px;border:0;background:none;
+  font:inherit;font-weight:800;font-size:18px;color:var(--rb-green-deep);cursor:pointer;}
+.ravn-ui .rb-link{color:var(--rb-green-deep);font-weight:800;}
+
+/* Focus: 2px charcoal border + soft amber ring */
+.ravn-ui :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--rb-charcoal);outline-offset:2px;
+  box-shadow:0 0 0 6px rgba(249,161,27,.35);}
+
+/* Progress bars (amber) */
+.ravn-ui .rb-bar{height:12px;border-radius:999px;background:#EDE3CC;overflow:hidden;margin:12px 0 8px;}
+.ravn-ui .rb-bar-fill{height:100%;background:var(--rb-amber);border-radius:999px;transition:width 200ms ease;}
+
+/* Status tags — always an icon AND a word */
+.ravn-ui .rb-tag{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:4px 12px;border-radius:999px;
+  font-size:16px;font-weight:800;white-space:nowrap;background:#F1EADB;color:var(--rb-charcoal);}
+.ravn-ui .rb-tag .lc{width:18px;height:18px;}
+.ravn-ui .rb-tag.done{background:var(--rb-green-soft);color:var(--rb-green-deep);}
+.ravn-ui .rb-tag.done .lc{color:var(--rb-green);}
+.ravn-ui .rb-tag.locked{background:#EEE8DA;color:var(--rb-muted);}
+.ravn-ui .rb-tag.go{background:var(--rb-amber-soft);color:var(--rb-amber-dark);}
+
+/* Notices */
+.ravn-ui .rb-note{background:var(--rb-amber-soft);border-radius:12px;padding:12px 16px;margin:0 0 16px;color:var(--rb-charcoal);}
+.ravn-ui .rb-error{background:var(--rb-red-soft);border:2px solid #F2B8B5;border-radius:12px;padding:12px 16px;margin:0 0 16px;color:#7A1C16;}
+.ravn-ui .rb-empty{padding:32px 8px;text-align:center;color:var(--rb-muted);}
+
+/* Actions row: single column on phones */
+.ravn-ui .rb-actions{display:flex;flex-direction:column;gap:12px;margin:16px 0 32px;}
+@media (min-width:600px){ .ravn-ui .rb-actions{flex-direction:row;align-items:center;justify-content:space-between;} }
+
+/* Lesson content */
+.ravn-ui .rb-md{font-size:18px;line-height:1.6;overflow-wrap:anywhere;}
+.ravn-ui .rb-md h3,.ravn-ui .rb-md h4{margin:20px 0 8px;}
+.ravn-ui .rb-md pre{white-space:pre-wrap;background:#F6F1E4;border-radius:12px;padding:12px 16px;font-size:16px;}
+.ravn-ui .rb-md blockquote{margin:12px 0;padding:8px 16px;border-left:4px solid var(--rb-amber);background:#FFF8EA;border-radius:0 12px 12px 0;}
+.ravn-ui .rb-video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#1E1D1B;margin:0 0 16px;}
+.ravn-ui .rb-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+/* Quiz */
+.ravn-ui .rb-q{border:1px solid var(--rb-line);}
+.ravn-ui .rb-q legend{padding:0;margin:0 0 8px;font-weight:800;font-size:19px;line-height:1.4;}
+.ravn-ui .rb-choice{display:flex;gap:12px;align-items:center;min-height:56px;padding:12px 16px;margin:8px 0 0;border:2px solid var(--rb-line);
+  border-radius:12px;background:#fff;font-size:18px;cursor:pointer;transition:border-color var(--rb-ease),background var(--rb-ease);}
+.ravn-ui .rb-choice:has(input:checked){border-color:var(--rb-amber);background:#FFF8EA;}
+.ravn-ui .rb-choice input{width:24px;height:24px;flex:none;margin:0;accent-color:var(--rb-amber-dark);}
+
+/* Results */
+.ravn-ui .rb-score{display:flex;align-items:center;gap:16px;}
+.ravn-ui .rb-score-num{font-size:44px;font-weight:900;letter-spacing:-.02em;line-height:1;}
+.ravn-ui .rb-res{border-left:6px solid var(--rb-green);}
+.ravn-ui .rb-res.wrong{border-left-color:var(--rb-red);}
+.ravn-ui .rb-res-verdict{display:flex;align-items:center;gap:8px;font-weight:800;margin:8px 0 4px;}
+.ravn-ui .rb-res-verdict.right{color:var(--rb-green-deep);} .ravn-ui .rb-res-verdict.right .lc{color:var(--rb-green);}
+.ravn-ui .rb-res-verdict.wrong{color:#8C1D18;}
+.ravn-ui .rb-expl{margin-top:8px;background:#F6F1E4;border-radius:12px;padding:12px 16px;}
+
+@media (prefers-reduced-motion:reduce){ .ravn-ui *{transition:none !important;} }
+.ravn-ui .cp-overall-head,.ravn-ui .cp-module-head{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.ravn-ui .cp-pct{color:var(--rb-charcoal);font-size:32px;}
+.ravn-ui .rb-note .lc{color:var(--rb-amber-dark);margin-right:4px;}
+body.ravn-page{background:#FBF6EA;}
+.ravn-ui .rb-course .rb-tag{align-self:flex-start;}
+/* Fieldset legends sit inside the card, not on its border. */
+.ravn-ui .rb-q legend{float:left;width:100%;}
+.ravn-ui .rb-q legend + *{clear:both;}
+/* Phones: full-width buttons, easier one-handed. */
+@media (max-width:599px){ .ravn-ui .rb-actions .rb-btn{width:100%;} .ravn-ui .rb-actions{align-items:stretch;} }
