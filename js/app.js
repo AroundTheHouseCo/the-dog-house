@@ -1441,11 +1441,6 @@ function renderHome(){
         <div class="home-card-name">Quote Builder</div>
         <div class="home-card-sub">Live pricing from Cockpit — works offline</div>
       </div>
-      <div class="home-card secondary" id="homeGoCourses">
-        <div class="home-card-icon">${ICON.book}</div>
-        <div class="home-card-name">Courses</div>
-        <div class="home-card-sub">Lessons & quizzes — your progress follows you</div>
-      </div>
       <div class="home-card secondary" id="homeGoRaven">
         <div class="home-card-icon">${ICON.chat}</div>
         <div class="home-card-name">Start Appointment</div>
@@ -1464,7 +1459,6 @@ function renderHome(){
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
   document.getElementById("homeGoRaven").onclick = ()=>{ appView = "raven"; renderApp(); };
   const gc = document.getElementById("homeGoContent"); if(gc) gc.onclick = ()=>{ appView = "content"; renderApp(); };
-  const gk = document.getElementById("homeGoCourses"); if(gk) gk.onclick = ()=>{ if(typeof cpOpen==="function") cpOpen(); appView = "courses"; renderApp(); };
 }
 
 // Product picker — shared by Presentations and Training Center entry points.
@@ -1477,6 +1471,14 @@ function renderPicker(){
       <h1>${isPres ? "Presentations" : "Training Center"}</h1>
     </div>
     <div class="center-cards">
+      ${isPres ? "" : `
+        <div class="center-card cp-entry" id="tcGoCourses">
+          <div class="center-card-icon">${ICON.book}</div>
+          <div>
+            <div class="center-card-name">Courses</div>
+            <div class="center-card-sub">Lessons and quizzes. Your progress follows you.</div>
+          </div>
+        </div>`}
       ${PRODUCTS.map(p=>`
         <div class="center-card product${p.ready?"":" soon"}" data-key="${p.key}">
           <div class="center-card-icon">${p.icon}</div>
@@ -1488,6 +1490,8 @@ function renderPicker(){
         </div>`).join("")}
     </div>
   `;
+  const gk = document.getElementById("tcGoCourses");
+  if(gk) gk.onclick = ()=>{ if(typeof cpOpen==="function") cpOpen(); appView = "courses"; renderApp(); };
   el.querySelectorAll(".center-card.product").forEach(card=>{
     card.onclick = ()=>{
       const p = PRODUCTS.find(x=>x.key===card.dataset.key);
@@ -1675,7 +1679,10 @@ function renderTopbarNav(){
   } else if(appView==="content"){
     html = `<button class="back-btn" id="backContentBtn">‹ Home</button>`;
   } else if(appView==="courses"){
-    html = `<button class="back-btn" id="homeBtn">‹ Home</button>`;
+    // Courses live in the Training Center; a preview from Content goes back there.
+    html = (typeof cpIsPreview==="function" && cpIsPreview())
+      ? `<button class="back-btn" id="backPreviewBtn">‹ Content</button>`
+      : `<button class="back-btn" id="backCoachesBtn">‹ Training Center</button>`;
   } else if(appView==="raven"){
     // Recording keeps running in the background if the rep leaves this
     // screen (see js/raven.js, rvIsRecording comment) — so Home is always
@@ -1701,6 +1708,7 @@ function renderTopbarNav(){
   const bk = document.getElementById("backCoachesBtn"); if(bk) bk.onclick = ()=>{ appView="coaches"; centerView=null; libPhoto=null; renderApp(); };
   const br = document.getElementById("backRavenBtn"); if(br) br.onclick = goHome;
   const bct = document.getElementById("backContentBtn"); if(bct) bct.onclick = goHome;
+  const bpv = document.getElementById("backPreviewBtn"); if(bpv) bpv.onclick = ()=>{ if(typeof cpExitPreview==="function") cpExitPreview(); };
   const bq = document.getElementById("backQuoteBtn"); if(bq) bq.onclick = ()=>{
     if(qbView==="picker"){ goHome(); }
     else { qbResetToPicker(); renderApp(); }

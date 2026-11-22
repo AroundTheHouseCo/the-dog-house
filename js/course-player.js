@@ -20,6 +20,10 @@ const CP = {
   courseId: null, lessonId: null, moduleId: null,
   quiz: null,        // {moduleId, title, pass, questions (shuffled), answers:{qid:Set}}
   result: null,      // server grade + the quiz it was for
+  // "Preview as a rep" (owners, from Content): one course with its drafts,
+  // played with the rep rules. Progress lives only here and is sent with
+  // every call; Cockpit stores nothing. null = a normal rep session.
+  preview: null,     // {courseId, progress:{lessonsDone:[], quizBest:{}}}
 };
 
 function cpBase(){ return self.RAVN_API_BASE || "https://ath-cockpit.onrender.com"; }
@@ -34,9 +38,10 @@ const cpPost = (path, body) => cpApi(path, { method: "POST", headers: { "Content
 const cpE = (s) => (typeof ravnEsc === "function" ? ravnEsc(s) : String(s == null ? "" : s));
 const CP_TYPES = { reading: "Reading", video: "Video", script: "Script", checklist: "Checklist", roleplay: "Role-play", document: "Library document" };
 
+const cpPrev = (op, extra) => cpPost("/preview", Object.assign({ op, courseId: CP.preview.courseId, progress: CP.preview.progress }, extra || {}));
 async function cpLoad(){
   CP.loading = true; CP.error = null; renderCourses();
-  const r = await cpApi("/learn");
+  const r = CP.preview ? await cpPrev("view") : await cpApi("/learn");
   CP.loading = false;
   if (!r.data.ok) CP.error = r.status === 503 ? "Courses aren't set up on Cockpit yet." : (r.data.error || "Couldn't load courses.");
   else CP.data = r.data;
@@ -75,6 +80,7 @@ function renderCourses(){
   }
   if (CP.data === null && !CP.loading && !CP.error) { cpLoad(); return; }
   let body = "";
+  const banner = CP.preview ? `<div class="rb-note cp-preview-banner">${cpI("bookOpen")} <b>Preview as a rep.</b> Drafts are included. Nothing you do here is saved, and reps only see what you approve.</div>` : "";
   if (CP.loading && !CP.data) body = `${cpHead("Training", "Courses")}<div class="rb-empty">Loading your courses…</div>`;
   else if (CP.error) body = `${cpHead("Training", "Courses")}<div class="rb-error">${cpE(CP.error)}</div>
     <button class="rb-btn" data-cp="reload">${cpI("rotateCcw")}Try again</button>`;
@@ -83,7 +89,7 @@ function renderCourses(){
   else if (CP.view === "quiz") body = cpQuizHTML();
   else if (CP.view === "result") body = cpResultHTML();
   else body = cpListHTML();
-  el.innerHTML = body;
+  el.innerHTML = banner + body;
   el.onclick = cpOnClick;
   el.onchange = cpOnChange;
 }
@@ -91,7 +97,7 @@ function renderCourses(){
 function cpListHTML(){
   const d = CP.data, courses = d.courses || [];
   if (!courses.length) return `${cpHead("Training", "Courses")}
-    <div class="rb-card"><h2>No courses yet</h2><p class="rb-meta">Courses show up here once they're approved in Content.</p></div>`;
+    <div class="rb-card cp-empty"><h2>No courses yet. Check back soon.</h2></div>`;
   const cards = courses.map((c) => {
     const state = c.complete ? cpTagDone("Complete")
       : c.locked ? cpTagLock(`Finish ${cpE(c.requiresTitle)} first`)
@@ -132,7 +138,7 @@ function cpCourseHTML(){
       ${m.locked && mi > 0 ? `<div class="rb-hint">Opens when you finish “${cpE(c.modules[mi - 1].title)}”.</div>` : ""}
       ${rows}${q}</div>`;
   }).join("");
-  return `${cpBack("to-list", "", "All courses")}
+  return `${CP.preview ? cpBack("exit-preview", "", "Back to Content") : cpBack("to-list", "", "All courses")}
     ${cpHead(c.locked ? "Locked" : c.complete ? "Complete" : c.percent + "% done", c.title)}
     ${c.locked ? `<div class="rb-note">${cpI("lock")} This course opens when you finish <b>${cpE(c.requiresTitle)}</b>.</div>` : ""}
     ${mods}`;
@@ -175,7 +181,7 @@ function cpLessonHTML(){
 function cpShuffle(a){ const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
 async function cpOpenQuiz(moduleId){
   CP.busy = true; renderCourses();
-  const r = await cpApi("/quiz?module=" + encodeURIComponent(moduleId));
+  const r = CP.preview ? await cpPrev("quiz", { moduleId }) : await cpApi("/quiz?module=" + encodeURIComponent(moduleId));
   CP.busy = false;
   if (!r.data.ok) { alert(r.data.error || "Couldn't open the quiz. Check your connection and try again."); return renderCourses(); }
   // A fresh order every attempt: questions and their choices.
@@ -250,10 +256,18 @@ async function cpOnClick(e){
   const act = b.dataset.cp, id = b.dataset.id;
   if (act === "reload") { CP.data = null; CP.error = null; return cpLoad(); }
   if (act === "to-list") { CP.view = "list"; return renderCourses(); }
+  if (act === "exit-preview") return cpExitPreview();
   if (act === "open-course") { CP.courseId = id; CP.view = "course"; CP.quiz = null; CP.result = null; renderCourses(); return window.scrollTo(0, 0); }
   if (act === "open-lesson") { const f = cpFindLesson(id); if (!f || f.lesson.locked) return; CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; renderCourses(); return window.scrollTo(0, 0); }
   if (act === "open-quiz") { await cpOpenQuiz(id); return window.scrollTo(0, 0); }
   if (act === "lesson-done") {
+    if (CP.preview) {
+      if (!CP.preview.progress.lessonsDone.includes(id)) CP.preview.progress.lessonsDone.push(id);
+      CP.busy = true; renderCourses();
+      const v = await cpPrev("view"); CP.busy = false;
+      if (v.data.ok) cpTake(v.data); else alert(v.data.error || "Couldn't update the preview.");
+      return renderCourses();
+    }
     CP.busy = true; renderCourses();
     const r = await cpPost("/lesson-done", { lessonId: id });
     CP.busy = false;
@@ -264,18 +278,38 @@ async function cpOnClick(e){
     const z = CP.quiz; if (!z) return;
     const answers = {}; for (const q of z.questions) answers[q.id] = [...(z.answers[q.id] || [])];
     CP.busy = true; renderCourses();
-    const r = await cpPost("/quiz-submit", { moduleId: z.moduleId, answers });
+    const r = CP.preview ? await cpPrev("submit", { moduleId: z.moduleId, answers }) : await cpPost("/quiz-submit", { moduleId: z.moduleId, answers });
+    if (r.data.ok && CP.preview) {
+      // Keep the best attempt, the way Cockpit does for a real rep.
+      const g = r.data.result, qb = CP.preview.progress.quizBest, old = qb[z.moduleId];
+      if (!old || (g.passed && !old.passed) || (g.passed === old.passed && g.score > old.score)) qb[z.moduleId] = { score: g.score, passed: g.passed };
+      const v = await cpPrev("view"); if (v.data.ok) cpTake(v.data);
+    }
     CP.busy = false;
     if (!r.data.ok) { alert(r.data.error || "Couldn't submit. Your answers are still here."); return renderCourses(); }
-    cpTake(r.data);
+    if (!CP.preview) cpTake(r.data);
     CP.result = { grade: r.data.result, quiz: z };
     CP.view = "result"; renderCourses();
     return window.scrollTo(0, 0);
   }
 }
 
-// Fresh data each time the Courses screen is opened from Home.
-function cpOpen(){ CP.view = "list"; CP.data = null; CP.error = null; CP.quiz = null; CP.result = null; }
+// Fresh data each time the Courses screen is opened from the Training Center.
+function cpOpen(){ CP.preview = null; CP.view = "list"; CP.data = null; CP.error = null; CP.quiz = null; CP.result = null; }
+// Owners: open one course from Content with its drafts (see CP.preview).
+function cpStartPreview(courseId){
+  cpOpen();
+  CP.preview = { courseId, progress: { lessonsDone: [], quizBest: {} } };
+  CP.view = "course"; CP.courseId = courseId;
+}
+function cpIsPreview(){ return !!CP.preview; }
+// Leaving a preview throws its progress away and returns to Content.
+function cpExitPreview(){
+  cpOpen();
+  const el = document.getElementById("coursePanel"); if (el) el.innerHTML = "";
+  if (typeof appView !== "undefined") { appView = "content"; if (typeof renderApp === "function") renderApp(); }
+  window.scrollTo(0, 0);
+}
 // Signing out (or a revoke) must not leave one rep's progress on screen.
 function cpReset(){ cpOpen(); const el = document.getElementById("coursePanel"); if (el) el.innerHTML = ""; }
 window.addEventListener("raven-session-changed", () => { cpReset(); });

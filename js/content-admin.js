@@ -131,7 +131,8 @@ function caListHTML(){
     return `<button class="ca-row-btn" data-act="open-course" data-id="${caE(c.id)}">
       <div><div class="ca-row-title">${caE(caW(c).title || c.id)}</div>
       <div class="ca-meta">${caE(CA_PRODUCTS[caW(c).product] || caW(c).product || "")} · ${liveN} of ${lessons.length} lessons live${waiting ? ` · <b>${waiting} waiting for approval</b>` : ""}</div></div>
-      <span class="ca-go">›</span></button>`;
+      <span class="ca-go">›</span></button>
+      <div class="ca-actions ca-preview-row"><button class="ca-small" data-act="preview" data-id="${caE(c.id)}">Preview as a rep</button></div>`;
   }).join("") || `<div class="rv-empty">No courses yet — import one above.</div>`;
   const docs = (CA.refdocs || []).map((d) => `<div class="ca-row-static"><div><div class="ca-row-title">${caE({ shared: "Shared (all products)", sunesta: "Sunesta presentation", eclipse: "Eclipse presentation", "gutter-helmet": "Gutter Helmet presentation" }[d.key] || d.key)}</div>
       <div class="ca-meta">Updated ${caWhen(d.updatedAt)}${d.updatedBy && d.updatedBy !== "seed" ? " by " + caE(d.updatedBy) : ""}</div></div>
@@ -176,7 +177,7 @@ function caCourseHTML(){
     <div class="center-head"><div class="eyebrow">${caE(CA_PRODUCTS[w.product] || w.product || "")}</div><h1>${caE(w.title || c.id)}</h1></div>
     ${c.status !== "live" ? `<div class="ca-meta">${caChip(c.status)} The course title and summary go live with its first approved lesson.</div>` : ""}
     ${w.summary ? `<p class="ca-help">${caE(w.summary)}</p>` : ""}
-    <div class="ca-actions"><button class="ca-small" data-act="export">Export as a file</button></div>
+    <div class="ca-actions"><button class="qb-btn-primary" data-act="preview" data-id="${caE(c.id)}">Preview as a rep</button><button class="ca-small" data-act="export">Export as a file</button></div>
     ${mods}`;
 }
 
@@ -307,6 +308,12 @@ async function caOnClick(ev){
   const act = b.dataset.act, id = b.dataset.id, kind = b.dataset.kind;
   if (act === "reload") { CA.tree = null; CA.error = null; return caLoad(); }
   if (act === "to-list") { CA.view = "list"; CA.editing = null; CA.msg = null; return renderContentAdmin(); }
+  if (act === "preview") {
+    // Plays the course with its drafts, the way a rep will see it once approved.
+    // Nothing is published or saved (see cpStartPreview in js/course-player.js).
+    if (typeof cpStartPreview !== "function") return;
+    cpStartPreview(id); appView = "courses"; renderApp(); return window.scrollTo(0, 0);
+  }
   if (act === "open-course") { CA.view = "course"; CA.courseId = id; CA.editing = null; CA.msg = null; return renderContentAdmin(); }
   if (act === "open-lesson") { CA.view = "lesson"; CA.moduleId = b.dataset.module; CA.lessonId = id; CA.editing = null; CA.msg = null; return renderContentAdmin(); }
   if (act === "open-quiz") { CA.view = "quiz"; CA.moduleId = b.dataset.module; CA.editing = null; CA.msg = null; return renderContentAdmin(); }
