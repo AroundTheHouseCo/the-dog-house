@@ -1441,6 +1441,11 @@ function renderHome(){
         <div class="home-card-name">Quote Builder</div>
         <div class="home-card-sub">Live pricing from Cockpit — works offline</div>
       </div>
+      <div class="home-card secondary" id="homeGoCourses">
+        <div class="home-card-icon">${ICON.book}</div>
+        <div class="home-card-name">Courses</div>
+        <div class="home-card-sub">Lessons & quizzes — your progress follows you</div>
+      </div>
       <div class="home-card secondary" id="homeGoRaven">
         <div class="home-card-icon">${ICON.chat}</div>
         <div class="home-card-name">Start Appointment</div>
@@ -1459,6 +1464,7 @@ function renderHome(){
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
   document.getElementById("homeGoRaven").onclick = ()=>{ appView = "raven"; renderApp(); };
   const gc = document.getElementById("homeGoContent"); if(gc) gc.onclick = ()=>{ appView = "content"; renderApp(); };
+  const gk = document.getElementById("homeGoCourses"); if(gk) gk.onclick = ()=>{ if(typeof cpOpen==="function") cpOpen(); appView = "courses"; renderApp(); };
 }
 
 // Product picker — shared by Presentations and Training Center entry points.
@@ -1668,6 +1674,8 @@ function renderTopbarNav(){
     html = `<button class="back-btn" id="backQuoteBtn">‹ ${label}</button>`;
   } else if(appView==="content"){
     html = `<button class="back-btn" id="backContentBtn">‹ Home</button>`;
+  } else if(appView==="courses"){
+    html = `<button class="back-btn" id="homeBtn">‹ Home</button>`;
   } else if(appView==="raven"){
     // Recording keeps running in the background if the rep leaves this
     // screen (see js/raven.js, rvIsRecording comment) — so Home is always
@@ -1725,6 +1733,7 @@ function renderApp(){
   document.getElementById("quoteBuilder").style.display    = appView==="quote" ? "" : "none";
   document.getElementById("ravenPanel").style.display      = appView==="raven" ? "" : "none";
   document.getElementById("contentPanel").style.display    = appView==="content" ? "" : "none";
+  document.getElementById("coursePanel").style.display     = appView==="courses" ? "" : "none";
   document.getElementById("stage").style.display          = showDeck ? "" : "none";
   document.querySelector(".slidebar").style.display       = showDeck ? "" : "none";
   document.getElementById("tabbar").style.display         = showDeck ? "" : "none";
@@ -1745,6 +1754,7 @@ function renderApp(){
   if(appView==="quote") renderQuoteBuilder();
   if(appView==="raven") renderRaven();
   if(appView==="content" && typeof renderContentAdmin==="function") renderContentAdmin();
+  if(appView==="courses" && typeof renderCourses==="function") renderCourses();
   if(showDeck){
     mode = appView==="training-deck" ? "rehearse" : "present";
     renderAll();

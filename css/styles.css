@@ -2727,3 +2727,31 @@
   .rv-devcheck{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.45;background:#f7f5ef;
     border:1px solid #e4e0d6;border-radius:10px;padding:12px;margin:0 0 12px;}
   .rv-devcheck-actions{display:flex;gap:12px;align-items:center;}
+  /* RAVN step 6: course player */
+  .cp-bar{height:8px;border-radius:999px;background:#ece7da;overflow:hidden;margin:8px 0 4px;}
+  .cp-bar-fill{height:100%;background:var(--green, #2E7D32);transition:width .3s ease;}
+  .cp-sub{display:block;font-size:14px;color:#6b6b6b;margin-top:2px;}
+  .cp-course{align-items:flex-start;}
+  .cp-course-main{flex:1;min-width:0;display:block;}
+  .cp-tag{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:13.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:#f1efe8;color:#5c5c5c;white-space:nowrap;}
+  .cp-tag svg{width:15px;height:15px;}
+  .cp-tag.done{background:#e8f5e9;color:#2e7d32;}
+  .cp-tag.locked{background:#f1f1ee;color:#8a8a8a;}
+  .cp-tag.go{background:#fdf3e2;color:#a06b10;}
+  .is-locked{opacity:.62;}
+  .cp-overall-head,.cp-module-head{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .cp-overall-head span{font-weight:800;font-size:18px;color:var(--charcoal);}
+  .cp-module .ca-row-btn{margin-top:8px;}
+  .cp-video{position:relative;padding-top:56.25%;border-radius:10px;overflow:hidden;background:#000;margin-bottom:12px;}
+  .cp-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .cp-linkbtn{display:inline-block;text-decoration:none;margin:4px 0 12px;}
+  .cp-md{font-size:16.5px;line-height:1.55;overflow-wrap:anywhere;}
+  .cp-md pre{white-space:pre-wrap;}
+  .cp-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:12px 0 24px;}
+  .cp-q{border:1px solid #e6e2d8;}
+  .cp-q legend{font-size:16.5px;padding:0 4px;line-height:1.4;}
+  .cp-choice{display:flex;gap:10px;align-items:flex-start;padding:12px 6px;border-top:1px solid #f0ece2;font-size:16px;cursor:pointer;}
+  .cp-choice input{width:22px;height:22px;flex:none;margin-top:1px;}
+  .cp-res.right{border-color:#c8e6c9;}
+  .cp-res.wrong{border-color:#f5c6c0;}
+  .cp-expl{margin-top:6px;background:#f6f4ee;border-radius:8px;padding:8px 10px;font-size:15px;color:#4d4d4d;}

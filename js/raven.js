@@ -50,7 +50,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-22.2";
+const RAVN_APP_BUILD = "2026-11-22.3";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
