@@ -41,7 +41,9 @@
     background:var(--orange);
     display:flex;align-items:center;justify-content:center;
     color:#fff;font-weight:700;font-size:18px;
+    overflow:hidden;
   }
+  .brand-badge img{width:100%;height:100%;display:block;}
   .brand-text{font-size:17px;color:var(--charcoal);}
   .brand-text b{color:var(--green-dark);}
   /* topbar navigation — context-dependent (exit ✕ in-home, back links elsewhere) */

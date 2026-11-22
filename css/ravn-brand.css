@@ -131,3 +131,16 @@ body.ravn-page{background:#FBF6EA;}
 .ravn-ui .rb-q legend + *{clear:both;}
 /* Phones: full-width buttons, easier one-handed. */
 @media (max-width:599px){ .ravn-ui .rb-actions .rb-btn{width:100%;} .ravn-ui .rb-actions{align-items:stretch;} }
+
+/* Screenshot review fixes (Jack, 2026-11-22) */
+/* The older global .is-locked{opacity:.62} faded locked text below 4.5:1 — not on branded screens. */
+.ravn-ui .is-locked{opacity:1;}
+.ravn-ui .rb-row.is-locked,.ravn-ui .rb-card.is-locked{color:#4A4740;}            /* 7.6:1 on the locked fill */
+.ravn-ui .rb-row.is-locked .rb-meta,.ravn-ui .rb-card.is-locked .rb-meta{color:#55514A;}
+.ravn-ui .cp-tag.locked{background:#EEE8DA;color:#4A4740;}
+/* Course cards: Start / Continue is a full-width button, like Mark as done. */
+.ravn-ui .rb-course .cp-start{align-self:stretch;margin-top:12px;}
+/* Results: nothing under 16px; wrong answers get a normal full border, no stripe. */
+.ravn-ui .rb-res{border-left:1px solid var(--rb-line);}
+.ravn-ui .rb-res.wrong{border-left-color:var(--rb-line);}
+.ravn-ui .rb-res .rb-meta,.ravn-ui .rb-res,.ravn-ui .rb-expl,.ravn-ui .cp-result-note{font-size:18px;}

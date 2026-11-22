@@ -26,7 +26,7 @@ function cpBase(){ return self.RAVN_API_BASE || "https://ath-cockpit.onrender.co
 async function cpApi(path, opts){
   let r;
   try { r = await rvAuthedFetch(cpBase() + "/api/raven/content" + path, opts); }
-  catch (e) { return { status: 0, data: { ok: false, error: navigator.onLine ? "Couldn't reach Cockpit." : "You're offline — courses need a connection." } }; }
+  catch (e) { return { status: 0, data: { ok: false, error: navigator.onLine ? "Couldn't reach Cockpit." : "You're offline. Courses need a connection." } }; }
   const data = await r.json().catch(() => ({ ok: false, error: `HTTP ${r.status}` }));
   return { status: r.status, data };
 }
@@ -95,18 +95,18 @@ function cpListHTML(){
   const cards = courses.map((c) => {
     const state = c.complete ? cpTagDone("Complete")
       : c.locked ? cpTagLock(`Finish ${cpE(c.requiresTitle)} first`)
-      : c.unitsDone ? cpTagGo(`${c.percent}% done`) : cpTagGo("Start");
+      : `<span class="rb-btn block cp-tag cp-start">${c.unitsDone ? "Continue" : "Start"}${cpI("arrowRight")}</span>`;
     return `<button class="rb-row rb-course cp-course${c.locked ? " is-locked" : ""}" data-cp="open-course" data-id="${cpE(c.id)}">
       <span class="rb-row-main"><span class="rb-row-title">${cpE(c.title)}</span>
         ${c.summary ? `<span class="rb-meta">${cpE(c.summary)}</span>` : ""}
         ${cpBar(c.percent, c.title + " progress")}
-        <span class="rb-hint">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span></span>
+        <span class="rb-meta">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span></span>
       ${state}</button>`;
   }).join("");
   return `${cpHead("Training", "Courses")}
     <div class="rb-card cp-overall"><div class="cp-overall-head"><h2>Your training</h2><span class="rb-score-num cp-pct">${d.overall.percent}%</span></div>
       ${cpBar(d.overall.percent, "Your overall training progress")}
-      <div class="rb-hint">${d.overall.unitsDone} of ${d.overall.units} steps done across every course</div></div>
+      <div class="rb-meta">${d.overall.unitsDone} of ${d.overall.units} steps done across every course</div></div>
     ${cards}`;
 }
 
@@ -189,7 +189,7 @@ function cpQuizHTML(){
   if (!z) { CP.view = "course"; return cpCourseHTML(); }
   const answered = z.questions.filter((q) => z.answers[q.id] && z.answers[q.id].size).length;
   const qs = z.questions.map((q, qi) => `
-    <fieldset class="rb-card rb-q cp-q"><legend>${qi + 1}. ${cpE(q.prompt)}${q.multi ? ` <span class="rb-hint">Pick every one that's right.</span>` : ""}</legend>
+    <fieldset class="rb-card rb-q cp-q"><legend>${qi + 1}. ${cpE(q.prompt)}</legend>
       ${q.choices.map((c) => `<label class="rb-choice cp-choice"><input type="${q.multi ? "checkbox" : "radio"}" name="cpq-${cpE(q.id)}" data-q="${cpE(q.id)}" data-i="${c.i}"
         ${z.answers[q.id] && z.answers[q.id].has(c.i) ? "checked" : ""}> <span>${cpE(c.text)}</span></label>`).join("")}
     </fieldset>`).join("");
@@ -214,11 +214,11 @@ function cpResultHTML(){
   const m = (cpFindModuleNow(r.quiz.moduleId) || {}).module;
   const note = g.passed
     ? (m && m.complete ? "Nice work. This module is complete." : "Nice work.")
-    : `You need ${g.pass}% to pass. Read the answers below, then take it again — there's no limit.`;
-  return `${cpHead(r.quiz.title, g.passed ? `Passed — ${g.score}%` : `Not passed yet — ${g.score}%`)}
+    : `You need ${g.pass}% to pass. Read the answers below, then take it again. There's no limit.`;
+  return `${cpHead(r.quiz.title, g.passed ? `Passed: ${g.score}%` : `Not passed yet: ${g.score}%`)}
     <div class="rb-card cp-scorecard"><div class="rb-score">${g.passed ? `<span class="rb-tag done">${cpI("circleCheck")}Passed</span>` : `<span class="rb-tag go">${cpI("rotateCcw")}Try again</span>`}
       <span class="rb-meta">${g.right} of ${g.total} right · pass mark ${g.pass}%</span></div>
-      ${cpBar(g.score, "Your score")}<p class="rb-meta" style="margin:8px 0 0">${note}</p></div>
+      ${cpBar(g.score, "Your score")}<p class="rb-meta cp-result-note" style="margin:8px 0 0">${note}</p></div>
     ${rows}
     <div class="rb-actions cp-actions">
       ${g.passed ? "" : `<button class="rb-btn" data-cp="open-quiz" data-id="${cpE(r.quiz.moduleId)}">${cpI("rotateCcw")}Retake the quiz</button>`}
@@ -266,7 +266,7 @@ async function cpOnClick(e){
     CP.busy = true; renderCourses();
     const r = await cpPost("/quiz-submit", { moduleId: z.moduleId, answers });
     CP.busy = false;
-    if (!r.data.ok) { alert(r.data.error || "Couldn't submit — your answers are still here."); return renderCourses(); }
+    if (!r.data.ok) { alert(r.data.error || "Couldn't submit. Your answers are still here."); return renderCourses(); }
     cpTake(r.data);
     CP.result = { grade: r.data.result, quiz: z };
     CP.view = "result"; renderCourses();
