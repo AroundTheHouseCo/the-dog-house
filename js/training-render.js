@@ -62,7 +62,7 @@ function tcPurposeHTML(entry, id){
 // it, now genuinely visible in the walk it was written for.
 function tcPersonalTouchHTML(entry, id){
   if (!entry.personal_touch) return "";
-  return `<div class="personal-touch"><div class="pt-label">${ICON.pencil} Personal touch — editable per rep</div><div class="pt-body">${tcField(id, "personal_touch")}</div></div>`;
+  return `<div class="personal-touch"><div class="pt-label">${AICON.pencil} Personal touch, editable per rep</div><div class="pt-body">${tcField(id, "personal_touch")}</div></div>`;
 }
 
 function tcBeatsHTML(entry, id){
@@ -82,10 +82,10 @@ function tcBlockHTML(id, groupKey, b, bi){
 
   // An unfinished sentence must never be read to a customer.
   if (b.incomplete) bits.push(
-    `<div class="tc-warn">${ICON.warn} Unfinished — do not deliver as written.</div>`);
+    `<div class="tc-warn">${AICON.warn} Unfinished. Do not deliver as written.</div>`);
 
   if (b.conditional) bits.push(
-    `<div class="tc-conditional">Optional${b.conditional_note ? ` — ${tcField(id, p("conditional_note"))}` : ""}</div>`);
+    `<div class="tc-conditional">Optional${b.conditional_note ? `: ${tcField(id, p("conditional_note"))}` : ""}</div>`);
 
   (b.script || []).forEach((_, si) => bits.push(`<p class="tc-script">${tcField(id, p(`script.${si}`))}</p>`));
 
@@ -125,7 +125,7 @@ function tcSlowDownHTML(entry, id){
 function tcEngagementHTML(entry, id){
   const q = entry.engagement_question;
   if (!q) return "";
-  return `<div class="tc-engage"><div class="tc-engage-k">Ask${q.when ? ` — ${tcField(id, "engagement_question.when")}` : ""}</div>
+  return `<div class="tc-engage"><div class="tc-engage-k">Ask${q.when ? `: ${tcField(id, "engagement_question.when")}` : ""}</div>
     <p class="tc-engage-q">${tcField(id, "engagement_question.text")}</p>
     ${(q.branches || []).length
       ? `<ul class="tc-branches">${q.branches.map((_, i) => `<li>${tcField(id, `engagement_question.branches.${i}`)}</li>`).join("")}</ul>` : ""}</div>`;
@@ -140,7 +140,7 @@ function tcCoachHTML(entry, id){
   // ever introduce or remove a \n\n boundary.
   const html = tcFieldHTML(id, "coaching_note");
   const paras = html.split("\n\n").map((p) => `<p>${p}</p>`).join("");
-  return `<div class="tc-coach"><div class="tc-coach-k">${ICON.bulb} Coaching</div>${tcEditWrap(id, "coaching_note", paras)}</div>`;
+  return `<div class="tc-coach"><div class="tc-coach-k">${AICON.bulb} Coaching</div>${tcEditWrap(id, "coaching_note", paras)}</div>`;
 }
 
 function tcTransitionHTML(entry, id){

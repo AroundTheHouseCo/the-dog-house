@@ -339,7 +339,7 @@ function tcResolve(text){
     const label = (varDef && varDef.label) || key;
     const unset = varDef && varDef.status === "NOT_SET";
     return `<span class="tc-var-chip${unset ? " unset" : ""}" title="${tcEsc(
-      unset ? "Not set — admin needs to fill this in" : "Fill in during discovery")}">[${tcEsc(label)}]</span>`;
+      unset ? "Not set. An admin needs to fill this in." : "Fill in during discovery")}">[${tcEsc(label)}]</span>`;
   });
 }
 
@@ -545,7 +545,7 @@ function tcSearch(q){
         const line = tcFieldValue(id, `reactive_scripts.${ri}.${answerKey}.${li}`);
         if ((line || "").toLowerCase().includes(needle))
           // Label the hit with its question so the result is self-explaining.
-          found.push({ where: question ? `Q&A — ${question}` : "Q&A", text: line });
+          found.push({ where: question ? `Q&A: ${question}` : "Q&A", text: line });
       });
     });
     // Do & Don't lists — short, high-recall lines a rep looks up by phrase.

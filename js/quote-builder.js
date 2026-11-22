@@ -228,13 +228,13 @@ window.addEventListener("online", () => {
 
 // ── Small helpers ──────────────────────────────────────────────────────
 function qbMoney(n){
-  return n == null ? "—" : "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return n == null ? "n/a" : "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 function qbSyncIndicatorHTML(){
   const when = QB.syncedAt ? new Date(QB.syncedAt) : null;
   const label = when ? when.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "never";
   const online = navigator.onLine;
-  return `<div class="qb-sync-badge">${online ? "●" : "○"} Pricing last synced: ${label}${online ? "" : " — offline, using cached data"}</div>`;
+  return `<div class="qb-sync-badge">${online ? "●" : "○"} Pricing last synced: ${label}${online ? "" : ". Offline, using saved prices."}</div>`;
 }
 
 // ── Top-level dispatcher, called by app.js whenever appView becomes "quote" ──
@@ -275,7 +275,7 @@ function qbLoadingHTML(){
 }
 function qbSignInHTML(){
   return `<div class="qb-status">
-    <div class="qb-status-icon">${ICON.warn}</div>
+    <div class="qb-status-icon">${AICON.warn}</div>
     <h2>Sign in to load pricing</h2>
     <p>Pricing comes from Cockpit using your own RAVN sign-in. Sign in once under Start Appointment, then come back here. After that it keeps working offline.</p>
     <button class="qb-btn-primary" id="qbGoSignIn">Sign in</button>
@@ -283,7 +283,7 @@ function qbSignInHTML(){
 }
 function qbNeedsSyncHTML(){
   return `<div class="qb-status">
-    <div class="qb-status-icon">${ICON.signal}</div>
+    <div class="qb-status-icon">${AICON.signal}</div>
     <h2>Quote Builder needs to sync once before it can work offline</h2>
     <p>Connect to WiFi or cellular data, then try again to pull live pricing from Cockpit. After the first sync it keeps working offline.</p>
     <button class="qb-btn-primary" id="qbRetrySync">Try again</button>
@@ -291,7 +291,7 @@ function qbNeedsSyncHTML(){
 }
 function qbErrorHTML(){
   return `<div class="qb-status">
-    <div class="qb-status-icon">${ICON.warn}</div>
+    <div class="qb-status-icon">${AICON.warn}</div>
     <h2>Couldn't reach Cockpit</h2>
     <p>${QB.errorMessage || "Pricing data could not be loaded."}</p>
     <button class="qb-btn-primary" id="qbRetrySync">Try again</button>
@@ -311,14 +311,14 @@ function qbRenderPicker(el){
     <div class="center-cards">
       ${awnings.map((p) => `
         <div class="center-card product" data-kind="awning" data-id="${p.id}">
-          <div class="center-card-icon">${PRODUCT_ICON.sunesta}</div>
+          <div class="center-card-icon">${AICON.sunesta}</div>
           <div>
             <div class="center-card-name">${p.product}</div>
             <div class="center-card-sub">Retractable awning</div>
           </div>
         </div>`).join("")}
       <div class="center-card product" data-kind="screens">
-        <div class="center-card-icon">${PRODUCT_ICON.eclipse}</div>
+        <div class="center-card-icon">${AICON.eclipse}</div>
         <div>
           <div class="center-card-name">Eclipse EZIP Screens</div>
           <div class="center-card-sub">${screens.length} products · multi-unit quotes</div>
@@ -528,7 +528,7 @@ function qbRenderAwningForm(el){
 // ── Result rendering (single-unit) ────────────────────────────────────
 function qbResultHTML(r){
   if (!r) return "";
-  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${ICON.warn} ${r.error}</div></div>`;
+  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${AICON.warn} ${r.error}</div></div>`;
   const proposal = r.proposal || { lines: [], retail: null };
   return `
   <div class="qb-result">
@@ -538,7 +538,7 @@ function qbResultHTML(r){
         ${proposal.lines.map((l) => `<div class="qb-proposal-line"><span>${l.label}</span><span>${l.value}</span></div>`).join("")}
       </div>
     </div>
-    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${ICON.lock}</button>
+    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${AICON.lock}</button>
     ${qbRepView ? qbBreakdownHTML(r) : ""}
   </div>`;
 }
@@ -547,7 +547,7 @@ function qbBreakdownHTML(r){
   const lines = r.lines || [];
   const detailed = lines.length && lines[0].cogs !== undefined;
   const rows = detailed
-    ? lines.map((l) => `<tr><td>${l.label}</td><td>${qbMoney(l.msrp)}</td><td>${l.discountRate != null ? Math.round(l.discountRate * 100) + "%" : "—"}</td><td>${l.qty || 1}</td><td>${qbMoney(l.cogs)}</td></tr>`).join("")
+    ? lines.map((l) => `<tr><td>${l.label}</td><td>${qbMoney(l.msrp)}</td><td>${l.discountRate != null ? Math.round(l.discountRate * 100) + "%" : "n/a"}</td><td>${l.qty || 1}</td><td>${qbMoney(l.cogs)}</td></tr>`).join("")
     : lines.map((l) => `<tr><td colspan="4">${l.label}</td><td>${qbMoney(l.amount)}</td></tr>`).join("");
   const cogsTotal = r.cogs && typeof r.cogs === "object" ? r.cogs.total : r.cogs;
   return `
@@ -567,7 +567,7 @@ function qbBreakdownHTML(r){
       <div class="qb-total-retail"><span>Retail</span><span>${qbMoney(r.retail)}</span></div>
       <div><span>Effective margin</span><span>${r.effectiveMargin != null ? Math.round(r.effectiveMargin * 100) + "%" : "—"}</span></div>
     </div>
-    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${ICON.warn} ${w}</div>`).join("")}</div>` : ""}
+    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${AICON.warn} ${w}</div>`).join("")}</div>` : ""}
   </div>`;
 }
 
@@ -666,7 +666,7 @@ function qbRenderScreenBuilder(el){
       ${qbScreenUnits.length === 0 ? '<div class="qb-empty">No units added yet.</div>' : qbScreenUnits.map((u, i) => {
         const product = QB.catalogs[u.product];
         return `<div class="qb-unit-card">
-          <div><b>${product.product}</b> — ${u.widthFt}' W × ${u.dropFt}' drop</div>
+          <div><b>${product.product}</b>: ${u.widthFt}' W × ${u.dropFt}' drop</div>
           <div class="qb-unit-card-actions">
             <button data-edit="${i}">Edit</button>
             <button data-remove="${i}">Remove</button>
@@ -710,12 +710,12 @@ function qbRenderScreenBuilder(el){
 
 function qbResultHTMLMulti(r){
   if (!r) return "";
-  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${ICON.warn} ${r.error}</div></div>`;
+  if (r.ok === false) return `<div class="qb-result"><div class="qb-error">${AICON.warn} ${r.error}</div></div>`;
   const blocked = r.blocked;
   return `
   <div class="qb-result">
     ${blocked ? `<div class="qb-restriction-banner">
-        ${r.restrictedUnits.map((u) => `<div>${ICON.warn} Unit ${u.unit}: ${(u.notes || []).join(" ")}</div>`).join("")}
+        ${r.restrictedUnits.map((u) => `<div>${AICON.warn} Unit ${u.unit}: ${(u.notes || []).join(" ")}</div>`).join("")}
         <div>Go back into the restricted unit(s) and confirm the size to unlock pricing.</div>
       </div>` : ""}
     <div class="qb-proposal-card">
@@ -726,7 +726,7 @@ function qbResultHTMLMulti(r){
           ${u.lines.map((l) => `<div class="qb-proposal-line"><span>${l.label}</span><span>${l.value}</span></div>`).join("")}
         </div>`).join("")}
     </div>
-    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${ICON.lock}</button>
+    <button class="qb-rep-toggle" id="qbRepToggle">${qbRepView ? "Hide" : "Show"} cost breakdown (rep only) ${AICON.lock}</button>
     ${qbRepView ? qbBreakdownHTMLMulti(r) : ""}
   </div>`;
 }
@@ -736,7 +736,7 @@ function qbBreakdownHTMLMulti(r){
   <div class="qb-breakdown">
     ${r.units.map((u) => `
       <div class="qb-breakdown-unit">
-        <h4>Unit ${u.index} — ${u.product}</h4>
+        <h4>Unit ${u.index}: ${u.product}</h4>
         <table class="qb-breakdown-table"><tbody>
           ${u.lines.map((l) => `<tr><td colspan="4">${l.label}</td><td>${qbMoney(l.amount)}</td></tr>`).join("")}
         </tbody></table>
@@ -753,7 +753,7 @@ function qbBreakdownHTMLMulti(r){
       <div class="qb-total-retail"><span>Retail</span><span>${qbMoney(r.retail)}</span></div>
       <div><span>Effective margin</span><span>${r.effectiveMargin != null ? Math.round(r.effectiveMargin * 100) + "%" : "—"}</span></div>
     </div>
-    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${ICON.warn} ${w}</div>`).join("")}</div>` : ""}
+    ${(r.warnings && r.warnings.length) ? `<div class="qb-warnings">${r.warnings.map((w) => `<div>${AICON.warn} ${w}</div>`).join("")}</div>` : ""}
   </div>`;
 }
 
@@ -880,13 +880,13 @@ function qbRenderUnitForm(el){
 
     ${preview.ok && preview.isRestricted ? `
       <div class="qb-restriction-banner">
-        ${preview.restrictedNotes.map((n) => `<div>${ICON.warn} ${n}</div>`).join("")}
+        ${preview.restrictedNotes.map((n) => `<div>${AICON.warn} ${n}</div>`).join("")}
         <label class="qb-ack-row">
           <input type="checkbox" id="qbAck" ${unit.acknowledgedRestriction ? "checked" : ""}>
           I called the office and confirmed this size
         </label>
       </div>` : ""}
-    ${(preview.ok === false) ? `<div class="qb-error">${ICON.warn} ${preview.error}</div>` : ""}
+    ${(preview.ok === false) ? `<div class="qb-error">${AICON.warn} ${preview.error}</div>` : ""}
 
     <div class="qb-actions">
       <button class="qb-btn-secondary" id="qbUnitCancel">Cancel</button>

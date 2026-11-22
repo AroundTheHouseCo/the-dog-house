@@ -29,7 +29,7 @@ let tcEditOn = false;
 
 function tcEditToggleHTML(){
   return `<button class="tcv-edit-toggle${tcEditOn ? " active" : ""}" id="tcEditToggle" title="Tap-to-edit script and coaching text">
-    ${ICON.pencil} ${tcEditOn ? "Editing" : "Edit"}</button>`;
+    ${AICON.pencil} ${tcEditOn ? "Editing" : "Edit"}</button>`;
 }
 // RAVN step 4: the device-only editor is replaced. Only owners see Edit, and
 // "Save to RAVN" sends the edited document to Cockpit, where every rep's
@@ -42,7 +42,7 @@ function tcCanEdit(){
 function tcUnsavedCount(){ return Object.keys(tcContentEdits()).length; }
 function tcExportButtonHTML(){
   const n = tcUnsavedCount();
-  return `<button class="tcv-export-btn" id="tcExportBtn"${n ? "" : " disabled"} title="Save your edits so every rep sees them">${ICON.doc} ${tcSaving ? "Saving…" : "Save to RAVN"}</button>`;
+  return `<button class="tcv-export-btn" id="tcExportBtn"${n ? "" : " disabled"} title="Save your edits so every rep sees them">${AICON.doc} ${tcSaving ? "Saving…" : "Save to RAVN"}</button>`;
 }
 let tcSaving = false;
 async function tcSaveToRavn(rerender){
@@ -64,8 +64,8 @@ async function tcSaveToRavn(rerender){
       tcResetContent();
       await tcEnsureProductContent(key);
       msg = "Saved. Every rep now sees your changes.";
-    } else msg = (d && d.error) || "Couldn't save — your edits are still on this device. Try again.";
-  } catch (e) { msg = "Couldn't reach Cockpit — your edits are still on this device. Try again when you're online."; }
+    } else msg = (d && d.error) || "Couldn't save. Your edits are still on this device. Try again.";
+  } catch (e) { msg = "Couldn't reach Cockpit. Your edits are still on this device. Try again when you're online."; }
   tcSaving = false; rerender();
   alert(msg);
 }
@@ -133,12 +133,12 @@ function tcvHubCards(){
   if (!tcReady()) return [];
   const unset = tcUnsetVars().length;
   return [
-    {key:"script", icon:ICON.book, name:"Full Script & Coaching",
-     sub:"Every slide — beats, verbatim script, timing, tone & coaching"},
-    {key:"setup",  icon:ICON.pencil, name:"Variables & Setup",
-     sub: unset ? `${unset} required value${unset===1?"":"s"} not set — fill in before rep use` : "Rep profile, company settings, per-appointment"},
-    {key:"cflags", icon:ICON.warn, name:"Content Flags & Open Items",
-     sub:"Admin — known issues and outstanding decisions"},
+    {key:"script", icon:AICON.book, name:"Full Script & Coaching",
+     sub:"Every slide: beats, word-for-word script, timing, tone and coaching"},
+    {key:"setup",  icon:AICON.pencil, name:"Variables & Setup",
+     sub: unset ? `${unset} required value${unset===1?"":"s"} not set. Fill them in before reps use it.` : "Rep profile, company settings, per-appointment"},
+    {key:"cflags", icon:AICON.warn, name:"Content Flags & Open Items",
+     sub:"Admin: known issues and open decisions"},
   ];
 }
 
@@ -180,7 +180,7 @@ function tcvRenderWalk(root){
     <div class="tcv-wrap">
       <div class="tcv-bar">
         <input id="tcvSearch" class="tcv-search" type="search" placeholder="Search titles, script, Q&A…" value="${tcEsc(tcv.q)}">
-        ${refAt >= 0 ? `<button class="tcv-mark${tcv.i===refAt?" here":""}" id="tcvMark" title="${tcEsc(refLabel)} — the reference slide">★ ${tcEsc(refLabel)}</button>` : ""}
+        ${refAt >= 0 ? `<button class="tcv-mark${tcv.i===refAt?" here":""}" id="tcvMark" title="${tcEsc(refLabel)} : the reference slide">★ ${tcEsc(refLabel)}</button>` : ""}
         ${m ? `<button class="tcv-drawer-btn" id="tcvDrawerBtn">If they ask…</button>` : ""}
       </div>
       <div id="tcvResults"></div>
@@ -193,7 +193,7 @@ function tcvRenderWalk(root){
         <button id="tcvNext" ${tcv.i===walk.length-1?"disabled":""}>Next ›</button>
       </div>
       ${m ? `<div class="tcv-drawer" id="tcvDrawer" ${tcv.drawer?"":"hidden"}>
-        <div class="tcv-drawer-head">If they ask… <button id="tcvDrawerClose" class="dismiss-btn">${ICON.close} Close</button></div>
+        <div class="tcv-drawer-head">If they ask… <button id="tcvDrawerClose" class="dismiss-btn">${AICON.close} Close</button></div>
         ${tcReactiveHTML(m, m.module_id)}
       </div>` : ""}
     </div>`;
@@ -260,11 +260,11 @@ function tcvRenderWalk(root){
 // ------------------------------------------------------------ setup ------
 // A form, not a feature. Values persist in localStorage on this device.
 const TCV_SOURCES = [
-  ["company_settings", "Company settings", "Company-wide, from the committed <code>data/company-settings.json</code> — the same values on every rep's iPad. Editing here overrides that default on this device only, for one appointment."],
+  ["company_settings", "Company settings", "Company-wide, from the committed <code>data/company-settings.json</code>. The same values on every rep's iPad. Editing here overrides that default on this device only, for one appointment."],
   ["rep_profile", "Rep profile", "Set once per rep on their own iPad."],
-  ["discovery", "This appointment — discovery", "Entered during discovery, cleared after the appointment."],
-  ["measure", "This appointment — measure", ""],
-  ["proposal", "This appointment — proposal", ""],
+  ["discovery", "This appointment: discovery", "Entered during discovery, cleared after the appointment."],
+  ["measure", "This appointment: measure", ""],
+  ["proposal", "This appointment: proposal", ""],
 ];
 
 function tcvRenderSetup(root){
@@ -280,11 +280,11 @@ function tcvRenderSetup(root){
     <div class="tcv-setup">
       ${unset.length ? `
       <div class="tcv-unset">
-        <div class="tcv-unset-k">${ICON.warn} ${unset.length} required value${unset.length===1?"":"s"} not set</div>
+        <div class="tcv-unset-k">${AICON.warn} ${unset.length} required value${unset.length===1?"":"s"} not set</div>
         <ul>${unset.map(v => {
           const b = blockedBy(v.key);
-          return `<li><b>${tcEsc(v.label)}</b>${b.length ? ` — blocks slide${b.length===1?"":"s"} ${b.join(", ")}` : ""}</li>`;}).join("")}</ul>
-      </div>` : `<div class="tcv-allset">${ICON.checkCircle} All required values are set.</div>`}
+          return `<li><b>${tcEsc(v.label)}</b>${b.length ? `: blocks slide${b.length===1?"":"s"} ${b.join(", ")}` : ""}</li>`;}).join("")}</ul>
+      </div>` : `<div class="tcv-allset">${AICON.checkCircle} All required values are set.</div>`}
       ${TCV_SOURCES.map(([src, label, note]) => {
         const vars = tcVarsBySource(src);
         if (!vars.length) return "";
@@ -342,7 +342,7 @@ function tcvRenderFlags(root){
 
   root.innerHTML = `
     <div class="tcv-flags">
-      ${audit.length ? `<div class="tcv-unset"><div class="tcv-unset-k">${ICON.warn} Mapping problems (live audit)</div>
+      ${audit.length ? `<div class="tcv-unset"><div class="tcv-unset-k">${AICON.warn} Mapping problems (live audit)</div>
         <ul>${audit.map(p => `<li>${tcEsc(p)}</li>`).join("")}</ul></div>` : ""}
       <h3>Content flags <span class="tcv-count">${open.length}</span>${resolved.length ? ` <span class="tcv-count-note">+ ${resolved.length} resolved</span>` : ""}</h3>
       <div class="tcv-chips">${["all","high","medium","low"].map(s =>

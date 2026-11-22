@@ -1260,11 +1260,11 @@ function trainingBodyHTML(view){
     const dosHTML = liFields("ref:do_dont", "do", shared.do)
       + liFields("ref_dodont", "training_notes.do", own.do);
     return `
-      <div class="eyebrow">Reference — every call</div>
+      <div class="eyebrow">Reference · every call</div>
       <h2>Do & Don't</h2>
-      <div class="tref-section"><h3 class="tref-h3 bad">${ICON.xCircle} What NOT to do</h3><ul class="talking-points">${dontHTML}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3 good">${ICON.checkCircle} What TO do</h3><ul class="talking-points">${dosHTML}</ul></div>
-      <div class="tref-section"><h3 class="tref-h3">${ICON.target} The Four Sales</h3><div class="script-block">${tcField("ref:four_sales", "intro")}</div><ul class="talking-points">${liFields("ref:four_sales", "items", fourSales.items)}</ul><div class="coach-note">${ICON.bulb} ${tcField("ref:four_sales", "footer")}</div></div>
+      <div class="tref-section"><h3 class="tref-h3 bad">${AICON.xCircle} What NOT to do</h3><ul class="talking-points">${dontHTML}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3 good">${AICON.checkCircle} What TO do</h3><ul class="talking-points">${dosHTML}</ul></div>
+      <div class="tref-section"><h3 class="tref-h3">${AICON.target} The Four Sales</h3><div class="script-block">${tcField("ref:four_sales", "intro")}</div><ul class="talking-points">${liFields("ref:four_sales", "items", fourSales.items)}</ul><div class="coach-note">${AICON.bulb} ${tcField("ref:four_sales", "footer")}</div></div>
     `;
   }
   if(view==="faq"){
@@ -1281,7 +1281,7 @@ function trainingBodyHTML(view){
       ...((refFaq && refFaq.reactive_scripts) || []).map((f,i) => ({f, id:"ref_faq", i})),
     ];
     return `
-      <div class="eyebrow">Reference — any slide, any time</div>
+      <div class="eyebrow">Reference · any slide, any time</div>
       <h2>FAQs & Objections</h2>
       ${sources.map(({f,id,i})=>`
         <div class="faq-item">
@@ -1294,9 +1294,9 @@ function trainingBodyHTML(view){
     const c = typeof tcEntry === "function" ? tcEntry("ref_close") : null;
     if(!c) return `<div class="tc-empty">No Pricing & Close reference loaded for this product.</div>`;
     return `
-      <div class="eyebrow">Reference — the pricing moment</div>
+      <div class="eyebrow">Reference · the pricing moment</div>
       <h2>Pricing & Close</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_close", "coaching_note")}</div>
+      <div class="coach-note tref-gap">${AICON.bulb} ${tcField("ref_close", "coaching_note")}</div>
       ${(c.blocks||[]).map((b,bi)=>`<div class="tref-section"><h3 class="tref-h3">${tcField("ref_close", `blocks.${bi}.label`)}</h3><div class="script-block">${joinFields("ref_close", `blocks.${bi}.script`, b.script)}</div></div>`).join("")}
     `;
   }
@@ -1304,9 +1304,9 @@ function trainingBodyHTML(view){
     const p = typeof tcEntry === "function" ? tcEntry("ref_predemo") : null;
     if(!p) return `<div class="tc-empty">No Pre-Demo Recap reference loaded for this product.</div>`;
     return `
-      <div class="eyebrow">Reference — before slide 1</div>
+      <div class="eyebrow">Reference · before slide 1</div>
       <h2>Pre-Demo Recap at the Table</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcField("ref_predemo", "coaching_note")}</div>
+      <div class="coach-note tref-gap">${AICON.bulb} ${tcField("ref_predemo", "coaching_note")}</div>
       <div class="script-block">${joinFields("ref_predemo", "blocks.0.script", p.blocks && p.blocks[0] && p.blocks[0].script)}</div>
     `;
   }
@@ -1315,9 +1315,9 @@ function trainingBodyHTML(view){
     if(!t) return `<div class="tc-empty">10-step process not loaded.</div>`;
     const seqId = "seq:ten_steps";
     return `
-      <div class="eyebrow">Reference — the whole visit</div>
+      <div class="eyebrow">Reference · the whole visit</div>
       <h2>Our 10-Step Sales Process</h2>
-      <div class="coach-note tref-gap">${ICON.bulb} ${tcField(seqId, "intro")}</div>
+      <div class="coach-note tref-gap">${AICON.bulb} ${tcField(seqId, "intro")}</div>
       <ol class="ten-steps">
         ${t.steps.map((st,sti)=>`
           <li class="ten-step">
@@ -1427,30 +1427,30 @@ function renderHome(){
     </div>
     <div class="home-cards">
       <div class="home-card" id="homeGoPresent">
-        <div class="home-card-icon">${ICON.play}</div>
+        <div class="home-card-icon">${AICON.play}</div>
         <div class="home-card-name">Presentations</div>
         <div class="home-card-sub">Customer-facing product demos</div>
       </div>
       <div class="home-card secondary" id="homeGoCenter">
-        <div class="home-card-icon">${ICON.cap}</div>
+        <div class="home-card-icon">${AICON.cap}</div>
         <div class="home-card-name">Training Center</div>
-        <div class="home-card-sub">Rep-only — coaches, scripts & tools</div>
+        <div class="home-card-sub">Coaches, scripts and tools for reps</div>
       </div>
       <div class="home-card secondary" id="homeGoQuote">
-        <div class="home-card-icon">${ICON.calculator}</div>
+        <div class="home-card-icon">${AICON.calculator}</div>
         <div class="home-card-name">Quote Builder</div>
-        <div class="home-card-sub">Live pricing from Cockpit — works offline</div>
+        <div class="home-card-sub">Live pricing from Cockpit. Works offline.</div>
       </div>
       <div class="home-card secondary" id="homeGoRaven">
-        <div class="home-card-icon">${ICON.chat}</div>
+        <div class="home-card-icon">${AICON.mic}</div>
         <div class="home-card-name">Start Appointment</div>
         <div class="home-card-sub">Find the job & record the visit</div>
       </div>
       ${(typeof caIsOwner === "function" && caIsOwner()) ? `
       <div class="home-card secondary" id="homeGoContent">
-        <div class="home-card-icon">${ICON.pencil}</div>
+        <div class="home-card-icon">${AICON.pencil}</div>
         <div class="home-card-name">Content</div>
-        <div class="home-card-sub">Owners — import, approve & edit training</div>
+        <div class="home-card-sub">Owners only. Import, approve and edit training.</div>
       </div>` : ""}
     </div>
   `;
@@ -1467,13 +1467,13 @@ function renderPicker(){
   const isPres = appView === "presentations";
   el.innerHTML = `
     <div class="center-head">
-      <div class="eyebrow">${isPres ? "Customer-facing" : "Rep-only"}</div>
+      <div class="eyebrow">${isPres ? "Customer-facing" : "Reps only"}</div>
       <h1>${isPres ? "Presentations" : "Training Center"}</h1>
     </div>
     <div class="center-cards">
       ${isPres ? "" : `
         <div class="center-card cp-entry" id="tcGoCourses">
-          <div class="center-card-icon">${ICON.book}</div>
+          <div class="center-card-icon">${AICON.book}</div>
           <div>
             <div class="center-card-name">Courses</div>
             <div class="center-card-sub">Lessons and quizzes. Your progress follows you.</div>
@@ -1481,7 +1481,7 @@ function renderPicker(){
         </div>`}
       ${PRODUCTS.map(p=>`
         <div class="center-card product${p.ready?"":" soon"}" data-key="${p.key}">
-          <div class="center-card-icon">${p.icon}</div>
+          <div class="center-card-icon">${(typeof AICON !== "undefined" && AICON[p.key]) || p.icon}</div>
           <div>
             <div class="center-card-name">${isPres ? p.name : p.coach + " Training Coach"}</div>
             <div class="center-card-sub">${p.ready ? p.tag : "Coming soon"}</div>
@@ -1512,21 +1512,21 @@ function renderCenter(){
       .reduce((n,c)=>n+(PHOTO_LIBRARY[c]?PHOTO_LIBRARY[c].photos.length:0),0);
     const docsCard = PROD.docsCard || {name:"Docs & Spec Sheets", sub:"Product documents"};
     const cards = [
-      {key:"deck",     icon:ICON.monitor, name:"Training Presentation", sub:"The full deck with word-for-word scripts & coach notes"},
-      {key:"tensteps", icon:ICON.steps, name:"Our 10-Step Sales Process", sub:"The whole visit, start to finish"},
-      {key:"library",  icon:ICON.camera, name:"Photo Library", sub:photoCount+" real project photos — by model & category"},
-      {key:"docs",     icon:ICON.doc, name:docsCard.name, sub:docsCard.sub},
-      {key:"recap",    icon:ICON.clipboard, name:"Pre-Demo Recap", sub:"At the table, before slide 1"},
-      {key:"dodont",   icon:ICON.target, name:"Do & Don't", sub:"Every call · The Four Sales"},
-      {key:"faq",      icon:ICON.chat, name:"FAQs & Objections", sub:"Verbatim responses, any slide any time"},
-      {key:"close",    icon:ICON.tag, name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"},
+      {key:"deck",     icon:AICON.monitor, name:"Training Presentation", sub:"The full deck with word-for-word scripts & coach notes"},
+      {key:"tensteps", icon:AICON.steps, name:"Our 10-Step Sales Process", sub:"The whole visit, start to finish"},
+      {key:"library",  icon:AICON.camera, name:"Photo Library", sub:photoCount+" real project photos, by model and category"},
+      {key:"docs",     icon:AICON.doc, name:docsCard.name, sub:docsCard.sub},
+      {key:"recap",    icon:AICON.clipboard, name:"Pre-Demo Recap", sub:"At the table, before slide 1"},
+      {key:"dodont",   icon:AICON.target, name:"Do & Don't", sub:"Every call · The Four Sales"},
+      {key:"faq",      icon:AICON.chat, name:"FAQs & Objections", sub:"Verbatim responses, any slide any time"},
+      {key:"close",    icon:AICON.tag, name:"Pricing & Close", sub:"The pricing moment, spoken over the estimate"},
       // Training v2 views (js/training-coach.js) — only offered when the
       // JSON content file covers this product and has loaded.
       ...((typeof tcvHubCards === "function") ? tcvHubCards() : [])
     ];
     el.innerHTML = `
       <div class="center-head">
-        <div class="eyebrow">${productInfo().name} — rep-only</div>
+        <div class="eyebrow">${productInfo().name} · reps only</div>
         <h1>${productInfo().coach} Training Coach</h1>
       </div>
       <div class="center-cards">
@@ -1560,7 +1560,7 @@ function renderCenter(){
       </div>
       <div class="resource-page wide">
         <div class="eyebrow">Photo Library</div>
-        <h2>${cur.label} — ${cur.photos.length} photos</h2>
+        <h2>${cur.label}: ${cur.photos.length} photos</h2>
         <div class="lib-pills">
           ${cats.map(c=>`<button class="${c===libCat?'active':''}" data-c="${c}">${PHOTO_LIBRARY[c].label} · ${PHOTO_LIBRARY[c].photos.length}</button>`).join("")}
         </div>
@@ -1597,7 +1597,7 @@ function renderCenter(){
       const lb = document.createElement("div");
       lb.className = "lib-lightbox";
       lb.innerHTML = `
-        <button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button>
+        <button class="dismiss-btn on-dark lightbox-close">${AICON.close} Close</button>
         <button class="lib-nav prev">‹</button>
         <figure><img src="${ph.f}"><figcaption>${ph.c}</figcaption></figure>
         <button class="lib-nav next">›</button>
@@ -1619,12 +1619,12 @@ function renderCenter(){
         <div class="doc-list">
           ${(PROD.docs || []).map(d=>`
             <a class="doc-row" href="${d.file}" target="_blank" rel="noopener">
-              <span class="doc-icon">${d.kind==="pdf"?ICON.doc:ICON.palette}</span>
+              <span class="doc-icon">${d.kind==="pdf"?AICON.doc:AICON.palette}</span>
               <span class="doc-name">${d.name}</span>
               <span class="doc-open">${d.kind==="pdf"?"Open PDF ›":"View ›"}</span>
             </a>`).join("")}
         </div>
-        <div class="coach-note" style="margin-top:16px;">${ICON.bulb} Documents open in a new tab — hand the iPad over for fabric browsing, or AirDrop the PDF to the customer.</div>
+        <div class="coach-note" style="margin-top:16px;">${AICON.bulb} Documents open in a new tab. Hand the iPad over for fabric browsing, or AirDrop the PDF to the customer.</div>
       </div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
@@ -1643,7 +1643,7 @@ function renderCenter(){
         <button class="back-btn" id="resourceBack">‹ ${productInfo().coach} Coach</button>
         ${showEditControls ? `<div class="resource-actions">${tcEditToggleHTML()}${tcExportButtonHTML()}</div>` : ""}
       </div>
-      ${(showEditControls && typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${ICON.pencil} Edit Mode is on — tap any highlighted text to change it (Enter keeps it, Shift+Enter for a new line, Esc cancels). Your changes are only on this device until you tap <b>Save to RAVN</b>.${typeof tcUnsavedCount === "function" && tcUnsavedCount() ? ` <b>${tcUnsavedCount()} unsaved.</b>` : ""}</div>` : ""}
+      ${(showEditControls && typeof tcEditOn !== "undefined" && tcEditOn) ? `<div class="tcv-edit-hint">${AICON.pencil} Edit Mode is on. Tap any highlighted text to change it (Enter keeps it, Shift+Enter for a new line, Esc cancels). Your changes are only on this device until you tap <b>Save to RAVN</b>.${typeof tcUnsavedCount === "function" && tcUnsavedCount() ? ` <b>${tcUnsavedCount()} unsaved.</b>` : ""}</div>` : ""}
       <div class="resource-page">${trainingBodyHTML(centerView)}</div>
     `;
     document.getElementById("resourceBack").onclick = ()=>{ centerView = null; renderCenter(); };
@@ -1698,7 +1698,7 @@ function renderTopbarNav(){
   // topbar is hidden there anyway) so it can never show on a screen a
   // customer is looking at. See the .rv-resume-badge CSS comment.
   if(!inDeck && appView!=="raven" && typeof rvIsRecording==="function" && rvIsRecording()){
-    html = `<button class="rv-resume-badge" id="rvResumeBadge"><span class="rv-resume-dot"></span>Appointment in progress — tap to return</button>` + html;
+    html = `<button class="rv-resume-badge" id="rvResumeBadge"><span class="rv-resume-dot"></span>Appointment in progress. Tap to return.</button>` + html;
   }
   nav.innerHTML     = inDeck ? "" : html;
   deckNav.innerHTML = inDeck ? html : "";
@@ -1737,6 +1737,9 @@ function renderApp(){
   document.body.classList.toggle("deck-full", showDeck);
   // Branded RAVN screens sit on the warm cream background (RAVN brand guide).
   document.body.classList.toggle("ravn-page", appView==="courses");
+  // Step 6b: the ATH brand on every rep/owner screen (css/ravn-brand-app.css).
+  // Off in the deck views, so the customer presentations are untouched.
+  document.body.classList.toggle("rb-app", !showDeck);
   const showPanel = appView==="center" || appView==="presentations" || appView==="coaches";
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";

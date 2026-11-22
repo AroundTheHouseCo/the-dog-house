@@ -1,0 +1,272 @@
+/* ═════════════════════════════════════════════════════════════════════════
+   RAVN Step 6b, Phase 1: the ATH brand on every rep and owner screen.
+
+   Scoped to body.rb-app, which js/app.js sets on every screen EXCEPT the
+   deck views (customer presentations and the training deck). Those are
+   Phase 2 and stay exactly as they were until Jack approves them, so
+   nothing in this file can reach a slide a customer sees.
+
+   Same tokens and rules as css/ravn-brand.css (the course player): amber
+   #F9A11B buttons with CHARCOAL text; amber text #9A5A00; green #008A47 for
+   icons/fills, deep green #007A3F for green text and green buttons; charcoal
+   #3A3A3C; warm cream #FBF6EA; Figtree, 900 headings, nothing under 16px
+   except 14px hints and Space Mono eyebrow labels; 16px cards, 12px
+   buttons and inputs, 48px+ tap targets; focus = 2px charcoal + amber ring.
+   Look only: no markup, feature or flow is changed by this file.
+   ═════════════════════════════════════════════════════════════════════════ */
+body.rb-app{
+  --orange:#F9A11B; --charcoal:#3A3A3C; --green:#007A3F; --green-dark:#007A3F; --green-bright:#008A47;
+  --bg:#FBF6EA; --cream:#FBF6EA; --cream-border:#E8DFC4; --white:#ffffff;
+  --rb-amber:#F9A11B; --rb-amber-dark:#9A5A00; --rb-amber-soft:#FDEBC8;
+  --rb-green:#008A47; --rb-green-deep:#007A3F; --rb-green-soft:#E3F3EA;
+  --rb-charcoal:#3A3A3C; --rb-muted:#5F5B53; --rb-paper:#FFFDF8; --rb-line:#E8DFC4;
+  --rb-shadow:0 2px 10px rgba(110,84,30,.10), 0 1px 2px rgba(110,84,30,.08);
+  font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:18px; background:#FBF6EA; color:#3A3A3C; padding:16px 16px 40px;
+}
+body.rb-app :is(button,input,select,textarea){font-family:inherit;}
+body.rb-app :is(button,a,input,select,textarea,summary,[tabindex]):focus-visible{
+  outline:2px solid #3A3A3C; outline-offset:2px; box-shadow:0 0 0 6px rgba(249,161,27,.35);
+}
+/* Lucide icons (js/app-icons.js): sized by their container, coloured by text. */
+body.rb-app .lc{width:1.15em;height:1.15em;flex:none;vertical-align:-.2em;pointer-events:none;}
+@media (prefers-reduced-motion:reduce){ body.rb-app *{transition:none !important;} }
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+body.rb-app .brand-text{font-size:18px;color:#3A3A3C;}
+body.rb-app .brand-text b{color:#007A3F;font-weight:900;}
+body.rb-app :is(.back-btn,.refmap-back){
+  min-height:48px; border:2px solid #E8DFC4; background:#fff; border-radius:12px;
+  padding:8px 16px; font-size:18px; font-weight:800; color:#007A3F;
+}
+body.rb-app :is(.back-btn,.refmap-back):hover{border-color:#F9A11B;background:#fff;}
+body.rb-app .rv-resume-badge{min-height:48px;font-size:16px;border-radius:12px;border:2px solid #E8DFC4;background:#fff;}
+/* The old footnote under Home ("Placeholder images from the screen recording …")
+   was a developer note, never meant for reps. */
+body.rb-app .note{display:none;}
+
+/* ── Home ────────────────────────────────────────────────────────────── */
+body.rb-app .home-screen{
+  background:none; box-shadow:none; border-radius:0; min-height:0;
+  padding:8px 0 24px; gap:24px; align-items:stretch;
+}
+body.rb-app .home-logo{max-width:200px;border:1px solid #E8DFC4;border-radius:12px;}
+body.rb-app .home-hero h1{color:#3A3A3C;font-size:40px;font-weight:900;letter-spacing:-.02em;line-height:1.1;}
+body.rb-app .home-sub{
+  font-family:"Space Mono",ui-monospace,Menlo,monospace; font-size:14px; font-weight:700;
+  letter-spacing:.08em; color:#007A3F; margin-top:8px;
+}
+body.rb-app .home-cards{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:12px;width:100%;max-width:760px;margin:0 auto;}
+@media (min-width:700px){ body.rb-app .home-cards{display:grid;grid-template-columns:1fr 1fr;} }
+body.rb-app .home-card{
+  width:auto; display:grid; grid-template-columns:56px 1fr; column-gap:16px; align-items:center; text-align:left;
+  min-height:88px; padding:20px; border-radius:16px;
+  background:#FFFDF8; border:2px solid #E8DFC4; box-shadow:var(--rb-shadow);
+  transition:border-color 160ms ease;
+}
+body.rb-app .home-card:hover{transform:none;border-color:#F9A11B;}
+body.rb-app .home-card-icon,
+body.rb-app .home-card.secondary .home-card-icon{
+  width:56px; height:56px; border-radius:12px; margin:0; flex:none;
+  background:#FDEBC8; color:#3A3A3C; font-size:28px; grid-row:span 2; align-self:center;
+}
+body.rb-app .home-card:first-child .home-card-icon{background:#F9A11B;}
+body.rb-app .home-card-name{font-size:22px;font-weight:900;letter-spacing:-.01em;color:#3A3A3C;}
+body.rb-app .home-card-sub{font-size:16px;color:#5F5B53;margin-top:2px;align-self:start;}
+body.rb-app .home-card-name{align-self:end;}
+
+/* ── Panels: Training Center, Quote Builder, Start Appointment, Content ─ */
+/* They were fixed-height boxes that scrolled inside the page (built for the
+   iPad). On a phone that hid most of each screen, so the page now scrolls. */
+body.rb-app .training-center{
+  background:none; border:0; box-shadow:none; border-radius:0;
+  min-height:0; max-height:none; overflow:visible; padding:8px 0 32px;
+}
+body.rb-app .center-head{margin-bottom:20px;}
+body.rb-app .center-head h1{font-size:32px;font-weight:900;letter-spacing:-.02em;line-height:1.15;color:#3A3A3C;}
+body.rb-app .training-center .eyebrow{
+  font-family:"Space Mono",ui-monospace,Menlo,monospace; font-size:14px; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase; color:#007A3F;
+}
+body.rb-app .resource-page h2{font-size:24px;font-weight:900;letter-spacing:-.01em;}
+body.rb-app .center-cards{grid-template-columns:1fr;gap:12px;}
+@media (min-width:700px){ body.rb-app .center-cards{grid-template-columns:1fr 1fr;} }
+body.rb-app .center-card{
+  min-height:88px; padding:20px; gap:16px; border-radius:16px;
+  background:#FFFDF8; border:2px solid #E8DFC4; box-shadow:var(--rb-shadow);
+}
+body.rb-app .center-card:hover{border-color:#F9A11B;box-shadow:var(--rb-shadow);}
+body.rb-app .center-card-icon{width:56px;height:56px;border-radius:12px;background:#FDEBC8;color:#3A3A3C;font-size:28px;}
+body.rb-app .center-card-name{font-size:20px;font-weight:900;color:#3A3A3C;}
+body.rb-app .center-card-sub{font-size:16px;color:#5F5B53;margin-top:4px;}
+body.rb-app .center-card.soon{opacity:1;background:#F6F1E4;box-shadow:none;}
+body.rb-app .center-card.soon :is(.center-card-name,.center-card-sub){color:#4A4740;}
+body.rb-app .soon-chip{font-size:14px;letter-spacing:.06em;color:#3A3A3C;background:#FDEBC8;padding:4px 10px;}
+body.rb-app .center-card.cp-entry .center-card-icon{background:#F9A11B;}
+
+/* Buttons. Primary = amber with charcoal text. Secondary = white, outlined. */
+body.rb-app :is(.qb-btn-primary,.rv-stop-btn){
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:52px; padding:12px 20px; border-radius:12px;
+  background:#F9A11B; border:2px solid #F9A11B; color:#3A3A3C;
+  font-size:18px; font-weight:800; cursor:pointer;
+}
+body.rb-app :is(.qb-btn-primary,.rv-stop-btn):hover{background:#F9A11B;filter:brightness(.96);}
+body.rb-app .rv-stop-btn{min-height:60px;padding:16px 36px;font-size:20px;}
+body.rb-app :is(.qb-btn-secondary,.ca-small,.rv-btn-ghost,.rv-up-btn,.tcv-edit-toggle,.tcv-export-btn,.tc-toggle,
+  .tcv-mark,.tcv-drawer-btn,.tcv-nav button,.tcv-clear,.tcv-revert,.qb-unit-card-actions button,.lib-pills button,.tcv-chip){
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  min-height:48px; padding:10px 16px; border-radius:12px;
+  background:#fff; border:2px solid #3A3A3C; color:#3A3A3C;
+  font-size:16px; font-weight:800; cursor:pointer;
+}
+body.rb-app :is(.lib-pills button,.tcv-chip){border-color:#E8DFC4;}
+body.rb-app :is(.lib-pills button.active,.tcv-chip.active,.tcv-mark.here){background:#007A3F;border-color:#007A3F;color:#fff;}
+body.rb-app .tcv-clear{border-color:#B3261E;color:#8C1D18;}
+body.rb-app :is(.qb-btn-primary,.rv-stop-btn,.qb-btn-secondary,.ca-small,.rv-btn-ghost,.rv-up-btn,.tcv-edit-toggle,
+  .tcv-export-btn,.tcv-nav button):disabled{background:#EFE8D8;border-color:#E2D9C4;color:#6F695E;filter:none;cursor:not-allowed;opacity:1;}
+/* Text links and quiet actions: deep green, still a full-size tap target. */
+body.rb-app :is(.rv-link,.rv-signout,.rv-devcheck-link,.ca-back,.ca-linkbtn){
+  display:inline-flex; align-items:center; min-height:48px; padding:8px 4px;
+  font-size:16px; font-weight:800; color:#007A3F; text-decoration:underline; text-underline-offset:3px;
+  background:none; border:0; cursor:pointer;
+}
+body.rb-app .ca-back{font-size:18px;text-decoration:none;}
+body.rb-app .rv-devcheck-link{font-size:inherit;}
+
+/* Inputs */
+body.rb-app :is(.rv-input,.rv-search-row input,.qb-field select,.qb-field input[type="number"],.qb-field input[type="text"],
+  .qb-control-qty,.ca-textarea,.tcv-search,.tcv-field input,.tcv-field textarea){
+  min-height:52px; border:2px solid #D9CFB4; border-radius:12px; background:#fff; color:#3A3A3C; font-size:18px;
+}
+body.rb-app .qb-control-qty{min-height:48px;width:72px;font-size:16px;}
+body.rb-app .ca-textarea{font-size:16px;}
+body.rb-app :is(.rv-input,.rv-pin,.rv-search-row input,.qb-field select,.ca-textarea,.tcv-search,.tcv-field input,.tcv-field textarea):focus{
+  outline:2px solid #3A3A3C; outline-offset:2px; box-shadow:0 0 0 6px rgba(249,161,27,.35); border-color:#D9CFB4;
+}
+body.rb-app .rv-pin{border:2px solid #D9CFB4;}
+body.rb-app input[type="checkbox"],body.rb-app input[type="radio"]{width:24px;height:24px;accent-color:#9A5A00;}
+
+/* Messages */
+body.rb-app :is(.rv-error,.qb-error){background:#FBE9E7;border:2px solid #F2B8B5;border-left-width:2px;color:#7A1C16;border-radius:12px;font-size:16px;}
+body.rb-app :is(.rv-note){background:#E3F3EA;border:0;color:#1F4D33;border-radius:12px;font-size:16px;}
+body.rb-app :is(.rv-pending-banner,.rv-gap-log){background:#FDEBC8;border:0;color:#3A3A3C;border-radius:12px;font-size:16px;}
+body.rb-app .rv-empty,body.rb-app .qb-empty{font-size:16px;color:#5F5B53;}
+
+/* ── Sign-in ─────────────────────────────────────────────────────────── */
+body.rb-app .rv-login{gap:16px;padding:16px 0;}
+body.rb-app .rv-login-copy{font-size:18px;color:#5F5B53;}
+body.rb-app .rv-login .qb-btn-primary{width:100%;max-width:340px;}
+body.rb-app .qb-status-icon{color:#007A3F;font-size:44px;}
+body.rb-app .qb-status h2{font-size:24px;font-weight:900;}
+body.rb-app .qb-status p{font-size:18px;color:#5F5B53;}
+
+/* ── Start Appointment ───────────────────────────────────────────────── */
+body.rb-app .rv-signed-in{background:#FFFDF8;border:2px solid #E8DFC4;border-radius:12px;padding:4px 4px 4px 16px;font-size:16px;color:#5F5B53;}
+body.rb-app .rv-signed-in b{color:#3A3A3C;}
+body.rb-app .rv-search-row{flex-wrap:wrap;gap:12px;}
+body.rb-app .rv-search-row input{flex:1 1 100%;min-width:0;}
+body.rb-app .rv-search-row .qb-btn-primary{flex:1 1 100%;}
+@media (min-width:700px){ body.rb-app .rv-search-row input{flex:1 1 auto;} body.rb-app .rv-search-row .qb-btn-primary{flex:0 0 auto;} }
+body.rb-app .rv-job{min-height:72px;padding:16px;border-radius:16px;border:2px solid #E8DFC4;background:#FFFDF8;box-shadow:var(--rb-shadow);}
+body.rb-app .rv-job:hover{transform:none;border-color:#F9A11B;}
+body.rb-app .rv-job-name{font-size:20px;font-weight:900;}
+body.rb-app .rv-job-meta{font-size:16px;color:#5F5B53;}
+body.rb-app .rv-chip{font-size:14px;letter-spacing:.04em;background:#E3F3EA;color:#007A3F;padding:4px 10px;}
+body.rb-app .rv-chip.alt{background:#FDEBC8;color:#3A3A3C;}
+body.rb-app .rv-live{font-size:16px;background:#FFFDF8;border:2px solid #E8DFC4;color:#3A3A3C;}
+body.rb-app .rv-dot{width:10px;height:10px;background:#008A47;}
+/* No pulse on the dot: this screen can be on camera at a customer's table, so it
+   stays deliberately quiet (see the .rv-live note in styles.css). */
+body.rb-app .rv-elapsed{font-size:44px;font-weight:900;}
+body.rb-app .rv-job-card{border:2px solid #E8DFC4;border-radius:16px;background:#FFFDF8;}
+body.rb-app .rv-warn-copy{font-size:16px;color:#5F5B53;}
+body.rb-app .rv-interrupt{border-radius:16px;}
+body.rb-app .rv-interrupt-title{color:#9A5A00;font-weight:900;}
+body.rb-app .rv-progress-bar{background:#F9A11B;}
+body.rb-app .rv-dev-state{font-size:16px;}
+body.rb-app .rv-devlist{background:#FDEBC8;}
+body.rb-app .rv-devcheck-row{font-size:16px;color:#5F5B53;}
+body.rb-app .rv-devcheck{font-size:14px;}   /* a raw diagnostic report: the one place small monospace stays */
+
+/* ── Training Center resource pages + coach views ────────────────────── */
+body.rb-app :is(.doc-row,.ten-step,.tcv-body,.tcv-flag,.tc-qa,.ca-card){border-radius:16px;border-color:#E8DFC4;}
+body.rb-app .doc-row{min-height:64px;}
+body.rb-app .doc-name,body.rb-app .ten-step-title{font-size:18px;font-weight:800;}
+body.rb-app .doc-open{font-size:16px;color:#007A3F;}
+body.rb-app .ten-step-num{background:#007A3F;}
+body.rb-app .ten-step-detail{font-size:16px;color:#5F5B53;}
+body.rb-app :is(.ten-step-stage,.tc-status,.tc-money,.tc-nodeck,.tc-duration,.tcv-sev,.tcv-override,.tcv-hit-tag,.ca-chip,.cp-tag){font-size:14px;}
+body.rb-app .tc-money{color:#3A3A3C;}
+/* Uppercase labels are eyebrows: Space Mono, 14px. */
+body.rb-app :is(.tc-section,.tc-tone-k,.tc-block-label,.tc-sample-k,.tc-slow-k,.tc-engage-k,.tc-callback-k,.tc-tn-k,
+  .tc-reactive-k,.tc-coach-k,.tc-transition-k,.tc-accomplish-k,.tcv-hit-where,.tcv-drawer-head,.qb-field label){
+  font-family:"Space Mono",ui-monospace,Menlo,monospace; font-size:14px; font-weight:700; letter-spacing:.06em;
+}
+body.rb-app .qb-field.qb-check label{font-family:inherit;font-size:16px;letter-spacing:0;color:#3A3A3C;min-height:48px;}
+body.rb-app .tc-num{font-size:14px;background:#007A3F;}
+/* Everything else on these pages is at least 16px. */
+body.rb-app :is(.lib-pills button,.tc-toggle,.tc-conditional,.tc-alt-cond,.tc-move,.tc-slow-why,.tc-qa-trigger,.tc-qa-note,
+  .tc-missing code,.tc-loadfail,.tcv-pos,.tcv-hits.none,.tcv-hit-text,.tcv-unset ul,.tcv-group-note,.tcv-field-label,
+  .tcv-field-label em,.tcv-field-guide,.tcv-count,.tcv-count-note,.tcv-owner,.tcv-flag-issue,.tcv-flag-rec,.tcv-flag-rec code,
+  .tcv-revert,.tcv-group-note code,.tcv-edit-hint,.ps-sub,.ps-text,.rv-dev-state,.cp-sub,.cp-expl,.ca-help,.ca-meta,
+  .ca-choices li,.ca-expl,.ca-edit label,.qb-sync-badge,.qb-control-qty,.qb-rep-toggle,.qb-breakdown-table,
+  .qb-breakdown-totals-mini,.qb-warnings,.qb-unit-card-actions button){font-size:16px;}
+body.rb-app :is(.tcv-field-guide,.ca-meta,.qb-sync-badge){color:#5F5B53;}
+body.rb-app .coach-note{font-size:16px;}
+
+/* ── Quote Builder ───────────────────────────────────────────────────── */
+body.rb-app .qb-form{grid-template-columns:1fr 1fr;gap:16px;}
+@media (min-width:700px){ body.rb-app .qb-form{grid-template-columns:repeat(3,1fr);} }
+body.rb-app .qb-field label{color:#007A3F;margin-bottom:6px;}
+body.rb-app .qb-field.qb-check label{color:#3A3A3C;}
+@media (max-width:599px){
+  body.rb-app .qb-pricing-block .qb-form{grid-template-columns:1fr;}
+  body.rb-app .qb-discount-row select{flex:0 0 120px;}
+  body.rb-app .qb-discount-row input{flex:1 1 auto;min-width:0;}
+}
+body.rb-app .qb-controls-grid{grid-template-columns:1fr;}
+@media (min-width:700px){ body.rb-app .qb-controls-grid{grid-template-columns:1fr 1fr;} }
+body.rb-app .qb-control-row{min-height:48px;font-size:16px;}
+body.rb-app :is(.qb-controls-block,.qb-pricing-block,.qb-breakdown,.qb-unit-card){border-radius:16px;border:2px solid #E8DFC4;background:#FFFDF8;}
+body.rb-app :is(.qb-controls-block,.qb-pricing-block) h3{font-size:20px;font-weight:900;}
+body.rb-app .qb-actions{flex-wrap:wrap;}
+body.rb-app .qb-proposal-card{background:#3A3A3C;border-radius:16px;}
+body.rb-app .qb-proposal-price{font-weight:900;}
+body.rb-app .qb-rep-toggle{display:flex;width:100%;border-style:dashed;border-color:#D9CFB4;}
+body.rb-app .qb-total-retail{color:#007A3F;border-top-color:#007A3F;}
+body.rb-app .qb-warnings{color:#9A5A00;}
+@media (max-width:599px){
+  body.rb-app .qb-actions .qb-btn-primary,body.rb-app .qb-actions .qb-btn-secondary{flex:1 1 100%;}
+  body.rb-app .qb-unit-card{flex-wrap:wrap;gap:8px;}
+}
+
+/* ── Content (owners) ────────────────────────────────────────────────── */
+body.rb-app .content-admin .ca-wrap{padding:0 0 40px;}
+body.rb-app .ca-card{background:#FFFDF8;border:2px solid #E8DFC4;box-shadow:var(--rb-shadow);padding:20px;}
+body.rb-app .ca-card h2{font-size:22px;font-weight:900;}
+body.rb-app :is(.ca-card h3,.ca-module h3){font-size:20px;font-weight:900;}
+body.rb-app :is(.ca-row-btn,.ca-row-static){min-height:64px;border-radius:12px;border:2px solid #E8DFC4;background:#fff;}
+body.rb-app .ca-row-btn:hover{border-color:#F9A11B;}
+body.rb-app .ca-row-title{font-size:18px;}
+body.rb-app .ca-chip.live{background:#E3F3EA;color:#007A3F;}
+body.rb-app .ca-chip.draft{background:#EEE8DA;color:#4A4740;}
+body.rb-app .ca-chip.pending{background:#FDEBC8;color:#3A3A3C;}
+body.rb-app .ca-draft{background:#FFF8EA;border-color:#F9A11B;}
+body.rb-app .ca-choices li.right{color:#007A3F;}
+body.rb-app .ca-md{font-size:18px;}
+body.rb-app .ca-md blockquote{border-left-color:#F9A11B;background:#FFF8EA;}
+body.rb-app .ca-actions{gap:12px;}
+@media (max-width:599px){ body.rb-app .ca-actions > :is(button,label){flex:1 1 auto;} }
+
+/* Phone-width fixes found in the first screenshot pass */
+body.rb-app .soon-chip{position:static;align-self:flex-start;margin-left:auto;flex:none;}
+body.rb-app .tcv-bar{flex-wrap:wrap;gap:8px;}
+body.rb-app .tcv-search{flex:1 1 100%;min-width:0;}
+@media (min-width:700px){ body.rb-app .tcv-search{flex:1 1 auto;} }
+body.rb-app .rv-gap-log:empty{display:none;}
+
+/* Lucide icons outside the branded screens (the training-mode drawer shares
+   js/training-render.js): sized like the old icon set, so nothing balloons. */
+.lc{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none;pointer-events:none;}
+body.rb-app .tcv-field-label em{color:#9A5A00;}

@@ -28,7 +28,7 @@
 // the SW serving you stale files while testing a change locally. The fetch
 // handler below is cache-first with {ignoreSearch:true}, so `?bust=` params do
 // NOT defeat it. See README "The service worker will serve you stale files".
-const TIER1_VERSION = "2026-11-22.6";
+const TIER1_VERSION = "2026-11-22.7";
 const TIER2_VERSION = "2026-07-20.1";
 const TIER1_CACHE = `doghouse-tier1-${TIER1_VERSION}`;
 const TIER2_CACHE = `doghouse-tier2-${TIER2_VERSION}`;
@@ -83,6 +83,7 @@ const TIER1_URLS = [
   "vendor/leaflet.css",
   "vendor/leaflet.js",
   "js/icons.js",
+  "js/app-icons.js",
   "js/ravn-md.js",
   "js/training-content.js",
   "js/training-render.js",
@@ -103,6 +104,7 @@ const TIER1_URLS = [
   "js/lucide.js",
   "js/course-player.js",
   "css/ravn-brand.css",
+  "css/ravn-brand-app.css",
   "js/images-map.js",
   "js/library-data.js",
   // quote-builder.js is loaded by index.html but was missing from this list,

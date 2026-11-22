@@ -50,7 +50,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-22.6";
+const RAVN_APP_BUILD = "2026-11-22.7";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -542,7 +542,7 @@ async function rvUploadChunked(rec, blob){
       throw err;
     }
   }
-  throw rvErr("http", "Upload did not finish — it will try again.", "upload_incomplete");
+  throw rvErr("http", "Upload did not finish. It will try again.", "upload_incomplete");
 }
 
 // The original one-request upload (kept for a Cockpit without step 5).
@@ -664,7 +664,7 @@ async function rvBeginAppointment(job){
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (err) {
     RV.status = "error";
-    RV.errorMessage = "Microphone access was denied — recording cannot start. " + (err.name || "");
+    RV.errorMessage = "Microphone access was denied, so recording can't start. " + (err.name || "");
     renderRaven();
     // appointmentId already exists on Cockpit at this point (rvCreateAppointment
     // above succeeded) but nothing was ever written to IndexedDB for it — don't
@@ -797,7 +797,7 @@ async function rvFinishRecording(){
 
   const ok = await rvTryUpload(rec);
   RV.status = ok ? "uploaded" : "pending-upload";
-  if (!ok) RV.errorMessage = "Upload didn't go through — it's saved on this iPad and will retry automatically.";
+  if (!ok) RV.errorMessage = "Upload didn't go through. It's saved on this device and will try again by itself.";
   await rvRefreshPendingCount();
   renderRaven();
 }
@@ -1019,12 +1019,12 @@ async function rvInspectDevice(){
 }
 
 function rvDeviceReportText(r){
-  const L = [`RAVN device check — ${r.at}`, `App build: ${r.build}`, `Signed in: ${r.signedInAs || "no"} (${r.signIn || "-"})`,
+  const L = [`RAVN device check: ${r.at}`, `App build: ${r.build}`, `Signed in: ${r.signedInAs || "no"} (${r.signIn || "-"})`,
     `Home-screen app: ${r.standalone ? "yes" : "no"} · Online: ${r.online ? "yes" : "no"} · Offline cache: ${r.serviceWorker ? "yes" : "no"}`,
     `Storage used: ${r.storage ? r.storage.usedMB + " MB of " + r.storage.quotaMB + " MB" : "unknown"} · Protected from cleanup: ${r.persisted == null ? "unknown" : (r.persisted ? "yes" : "no")}`,
     `Databases: ${r.databases ? (r.databases.join(", ") || "none") : "not reported by this browser"}`,
     `Recordings saved: ${r.appointments.length}`];
-  r.appointments.forEach((a, i) => L.push(`  ${i + 1}. ${a.label || "Appointment"} — ${a.status}, ${a.MB} MB in ${a.pieces} pieces, started ${a.startedAt || "?"}` +
+  r.appointments.forEach((a, i) => L.push(`  ${i + 1}. ${a.label || "Appointment"}: ${a.status}, ${a.MB} MB in ${a.pieces} pieces, started ${a.startedAt || "?"}` +
     `${a.rep ? ", rep " + a.rep : ""}${a.conflict ? ", conflict " + a.conflict : ""}${a.lastError ? ", last error: " + a.lastError : ""} [${a.appointmentId}]`));
   L.push(`Audio pieces with no record: ${r.pieces.length}`);
   r.pieces.forEach((p) => L.push(`  ${p.appointmentId}: ${p.MB} MB in ${p.pieces} pieces, from ${p.firstAt || "?"}`));
@@ -1037,7 +1037,7 @@ async function rvRenderDeviceCheck(el){
   const r = await rvInspectDevice();
   const text = rvDeviceReportText(r);
   el.innerHTML = `
-    <div class="center-head"><div class="eyebrow">Read-only — changes nothing</div><h1>Device check</h1></div>
+    <div class="center-head"><div class="eyebrow">Read-only · changes nothing</div><h1>Device check</h1></div>
     <pre class="rv-devcheck">${rvEsc(text)}</pre>
     <div class="rv-devcheck-actions">
       <button class="qb-btn-primary" id="rvDevCopy">Copy report</button>
@@ -1047,8 +1047,8 @@ async function rvRenderDeviceCheck(el){
   document.getElementById("rvDevBack").onclick = () => { RV.view = "search"; renderRaven(); };
   document.getElementById("rvDevCopy").onclick = async () => {
     const note = document.getElementById("rvDevCopied");
-    try { await navigator.clipboard.writeText(text); note.textContent = "Copied — paste it into the chat."; }
-    catch (e) { note.textContent = "Couldn't copy automatically — press and hold the text above to select it."; }
+    try { await navigator.clipboard.writeText(text); note.textContent = "Copied. Paste it into the chat."; }
+    catch (e) { note.textContent = "Couldn't copy it. Press and hold the text above to select it."; }
   };
 }
 
@@ -1097,11 +1097,11 @@ function rvDeviceListHTML(){
     } else if (!r.mine) {
       state = `Waiting for ${rvEsc(r.repName || "its rep")} to sign in on this device`;
     } else if (r.conflict === "not_owner") {
-      state = "Cockpit says this recording belongs to another rep — it stays on this device.";
+      state = "Cockpit says this recording belongs to another rep. It stays on this device.";
     } else if (r.conflict === "already_uploaded") {
-      state = "Cockpit already has a different recording for this appointment — this copy stays on the device. Tell Jack.";
+      state = "Cockpit already has a different recording for this appointment. This copy stays on the device. Tell Jack.";
     } else {
-      state = r.lastError ? `Waiting to upload — last try: ${rvEsc(r.lastError)}` : "Waiting to upload";
+      state = r.lastError ? `Waiting to upload. Last try: ${rvEsc(r.lastError)}` : "Waiting to upload";
       btn = `<button class="qb-btn-primary rv-up-btn" data-rv-up="${id}"${navigator.onLine ? "" : " disabled"}>Upload now</button>`;
     }
     return `<div class="rv-dev-row">
@@ -1110,7 +1110,7 @@ function rvDeviceListHTML(){
         <div class="rv-dev-state">${state}</div></div>${btn}</div>`;
   }).join("");
   return `<div id="rvDeviceList" class="rv-pending-banner rv-devlist">
-    <div class="rv-dev-head">${list.length} recording${list.length === 1 ? "" : "s"} saved on this device, not yet uploaded${navigator.onLine ? "" : " — you're offline; they'll send when you're back online"}</div>
+    <div class="rv-dev-head">${list.length} recording${list.length === 1 ? "" : "s"} saved on this device, not yet uploaded${navigator.onLine ? "" : ". You're offline; they'll send when you're back online."}</div>
     ${rows}<div class="rv-devcheck-row">${check}</div></div>`;
 }
 function rvRefreshDeviceList(){
@@ -1201,7 +1201,7 @@ function renderRaven(){
 function rvRenderLogin(el){
   const reason = {
     revoked: "This device was signed out by an owner. Any recordings saved on it are kept and will upload after you sign in.",
-    credentials: "Your password or two-factor changed — please sign in again.",
+    credentials: "Your password or two-factor changed. Please sign in again.",
     expired: "Please sign in again.",
   }[RV.signedOutReason] || "";
   const waiting = (RV.pendingCount
@@ -1238,7 +1238,7 @@ function rvRenderLogin(el){
   }
   el.innerHTML = `
     <div class="center-head">
-      <div class="eyebrow">Rep-only</div>
+      <div class="eyebrow">Reps only</div>
       <h1>Sign in to RAVN</h1>
     </div>
     <div class="rv-login">
@@ -1274,9 +1274,9 @@ function rvRenderLogin(el){
 function rvRenderDisabled(el){
   el.innerHTML = `
     <div class="qb-status">
-      <div class="qb-status-icon">${ICON.lock}</div>
+      <div class="qb-status-icon">${AICON.lock}</div>
       <h2>RAVN recording is currently turned off</h2>
-      <p>Appointment recording has been switched off on Cockpit. This isn't a problem with this iPad or your sign-in — try again later.</p>
+      <p>Appointment recording has been switched off on Cockpit. This isn't a problem with this iPad or your sign-in. Try again later.</p>
       <button class="qb-btn-primary" id="rvDisabledRetry">Try again</button>
     </div>`;
   document.getElementById("rvDisabledRetry").onclick = () => { RV.disabled = false; renderRaven(); };
@@ -1284,8 +1284,8 @@ function rvRenderDisabled(el){
 
 function rvAuthErrorText(err, fallback){
   if (err.kind === "network") {
-    return navigator.onLine ? "Couldn't reach Cockpit — check your connection and try again."
-                            : "You're offline — signing in needs a connection.";
+    return navigator.onLine ? "Couldn't reach Cockpit. Check your connection and try again."
+                            : "You're offline. Signing in needs a connection.";
   }
   if (err.code === "throttled") return "Too many attempts. Wait 15 minutes and try again.";
   return err.message || fallback;
@@ -1406,7 +1406,7 @@ function rvRenderSearch(el){
 
   el.innerHTML = `
     <div class="center-head">
-      <div class="eyebrow">Rep-only</div>
+      <div class="eyebrow">Reps only</div>
       <h1>Start Appointment</h1>
     </div>
     ${rvDeviceListHTML()}
@@ -1457,7 +1457,7 @@ async function rvDoSearch(){
     } else if (err.kind === "network") {
       RV.searchError = navigator.onLine
         ? `Couldn't search JobNimbus: ${err.message}`
-        : "You're offline — job search needs a connection.";
+        : "You're offline. Job search needs a connection.";
     } else {
       RV.searchError = `Couldn't search JobNimbus: ${err.message}`;
     }
@@ -1474,7 +1474,7 @@ function rvRenderRecording(el){
   }
   if (RV.status === "error") {
     el.innerHTML = `<div class="qb-status">
-      <div class="qb-status-icon">${ICON.warn}</div>
+      <div class="qb-status-icon">${AICON.warn}</div>
       <h2>Couldn't start recording</h2>
       <p>${rvEsc(RV.errorMessage || "")}</p>
       <button class="qb-btn-primary" id="rvBackToSearch">Back to search</button>
@@ -1508,7 +1508,7 @@ function rvRenderRecording(el){
         <div class="rv-job-name">${rvEsc(job.name || job.display_name || "")}</div>
         <div class="rv-job-meta">${rvEsc(job.address || "")}</div>
       </div>
-      ${!RV.captureLost ? `<p class="rv-warn-copy">You can switch to another part of the app and come back — this picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
+      ${!RV.captureLost ? `<p class="rv-warn-copy">You can switch to another part of the app and come back. This picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
       ${RV.interruptions.length ? `<div class="rv-gap-log">${RV.interruptions.length} interruption${RV.interruptions.length === 1 ? "" : "s"} logged and sent with the recording.</div>` : ""}
       ${interruptionHTML}
       <button class="rv-stop-btn" id="rvStopBtn">${RV.status === "stopping" ? "Stopping…" : "Stop &amp; Upload"}</button>
@@ -1531,7 +1531,7 @@ function rvRenderReview(el){
     el.innerHTML = `<div class="qb-status"><div class="qb-status-icon">⏳</div>
       <div>Uploading recording to Cockpit… <b data-rv-pct="${id}">0%</b></div>
       <div class="rv-progress"><div class="rv-progress-bar" data-rv-bar="${id}"></div></div>
-      <p class="rv-gap-log">You can leave this screen — it keeps going, and picks up where it stopped if the connection drops.</p></div>`;
+      <p class="rv-gap-log">You can leave this screen. It keeps going, and picks up where it stopped if the connection drops.</p></div>`;
     const p = rvUploadProgress[RV.appointmentId];
     if (p) rvSetProgress(RV.appointmentId, p.sent, p.total);
     return;
@@ -1539,7 +1539,7 @@ function rvRenderReview(el){
   const uploaded = RV.status === "uploaded";
   el.innerHTML = `
     <div class="qb-status">
-      <div class="qb-status-icon">${uploaded ? ICON.checkCircle : ICON.signal}</div>
+      <div class="qb-status-icon">${uploaded ? AICON.checkCircle : AICON.signal}</div>
       <h2>${uploaded ? "Recording uploaded" : "Saved on this iPad"}</h2>
       <p>${uploaded
         ? "The recording is with Cockpit."

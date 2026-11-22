@@ -112,10 +112,10 @@ function caListHTML(){
   const rep = CA.importReport;
   let report = "";
   if (rep && !rep.ok) {
-    report = `<div class="rv-error ca-report"><b>Nothing was imported — fix these and try again:</b><ul>${(rep.errors || []).map((e) =>
+    report = `<div class="rv-error ca-report"><b>Nothing was imported. Fix these and try again:</b><ul>${(rep.errors || []).map((e) =>
       `<li>${e.line ? `Line ${e.line}: ` : e.path ? `${caE(e.path)}: ` : ""}${caE(e.message)}</li>`).join("")}</ul></div>`;
   } else if (rep && rep.ok) {
-    const r = rep.report, list = (arr) => arr.map((x) => `<li>${caE(x.kind)} <code>${caE(x.id)}</code>${x.title ? " — " + caE(x.title) : ""}</li>`).join("");
+    const r = rep.report, list = (arr) => arr.map((x) => `<li>${caE(x.kind)} <code>${caE(x.id)}</code>${x.title ? ": " + caE(x.title) : ""}</li>`).join("");
     report = `<div class="rv-note ca-report"><b>Imported “${caE(rep.course.title)}” as drafts.</b>
       ${r.created.length} new · ${r.updated.length} updated · ${r.unchanged.length} unchanged${r.moved && r.moved.length ? ` · ${r.moved.length} moved` : ""}.
       ${r.created.length ? `<details><summary>New</summary><ul>${list(r.created)}</ul></details>` : ""}
@@ -133,16 +133,16 @@ function caListHTML(){
       <div class="ca-meta">${caE(CA_PRODUCTS[caW(c).product] || caW(c).product || "")} · ${liveN} of ${lessons.length} lessons live${waiting ? ` · <b>${waiting} waiting for approval</b>` : ""}</div></div>
       <span class="ca-go">›</span></button>
       <div class="ca-actions ca-preview-row"><button class="ca-small" data-act="preview" data-id="${caE(c.id)}">Preview as a rep</button></div>`;
-  }).join("") || `<div class="rv-empty">No courses yet — import one above.</div>`;
+  }).join("") || `<div class="rv-empty">No courses yet. Import one above.</div>`;
   const docs = (CA.refdocs || []).map((d) => `<div class="ca-row-static"><div><div class="ca-row-title">${caE({ shared: "Shared (all products)", sunesta: "Sunesta presentation", eclipse: "Eclipse presentation", "gutter-helmet": "Gutter Helmet presentation" }[d.key] || d.key)}</div>
       <div class="ca-meta">Updated ${caWhen(d.updatedAt)}${d.updatedBy && d.updatedBy !== "seed" ? " by " + caE(d.updatedBy) : ""}</div></div>
       <button class="ca-small" data-act="history" data-kind="refdoc" data-id="${caE(d.key)}">History</button></div>`).join("")
-    || `<div class="ca-meta">Not copied into RAVN yet — Cockpit does this a few seconds after it starts.</div>`;
+    || `<div class="ca-meta">Not copied into RAVN yet. Cockpit does this a few seconds after it starts.</div>`;
   return `
     <div class="center-head"><div class="eyebrow">Owners</div><h1>Training content</h1></div>
     <section class="ca-card">
       <h2>Import a course file</h2>
-      <p class="ca-help">Paste a course file from Claude, or upload the .md or .json file. Everything imports as a draft — nothing reaches reps until you approve it. Importing never deletes anything.</p>
+      <p class="ca-help">Paste a course file from Claude, or upload the .md or .json file. Everything imports as a draft. Nothing reaches reps until you approve it. Importing never deletes anything.</p>
       <textarea id="caImportText" class="ca-textarea" placeholder="---&#10;ravn: course/1&#10;course: foundations&#10;…" spellcheck="false">${caE(CA.importText)}</textarea>
       <div class="ca-actions">
         <label class="ca-small ca-file">Upload a file<input id="caFile" type="file" accept=".md,.markdown,.json,.txt,text/markdown,application/json,text/plain"></label>
@@ -184,13 +184,13 @@ function caCourseHTML(){
 function caEditFormHTML(){
   const e = CA.editing, v = e.value || {};
   const errs = e.errors && e.errors.length ? `<div class="rv-error"><ul>${e.errors.map((x) => `<li>${caE(x.message)}</li>`).join("")}</ul></div>` : "";
-  const goesLive = e.wasLive ? "Save — reps see it now" : "Save draft";
+  const goesLive = e.wasLive ? "Save. Reps see it now." : "Save draft";
   if (e.kind === "lesson") {
     return `<section class="ca-card ca-edit"><h2>Edit lesson</h2>
       <label>Title<input class="rv-input" id="caF_title" value="${caE(v.title)}"></label>
       <label>Type<select class="rv-input" id="caF_type">${Object.keys(CA_TYPES).map((t) => `<option value="${t}"${t === v.type ? " selected" : ""}>${CA_TYPES[t]}</option>`).join("")}</select></label>
       <label>Minutes (optional)<input class="rv-input" id="caF_minutes" inputmode="numeric" value="${caE(v.minutes || "")}"></label>
-      <label>Link — video or role-play (https://…)<input class="rv-input" id="caF_url" value="${caE(v.url || "")}"></label>
+      <label>Link: video or role-play (https://…)<input class="rv-input" id="caF_url" value="${caE(v.url || "")}"></label>
       <label>Library document id (document lessons)<input class="rv-input" id="caF_doc" value="${caE(v.doc || "")}"></label>
       <label>Role-play goal<input class="rv-input" id="caF_goal" value="${caE(v.goal || "")}"></label>
       <label>Text (Markdown)<textarea class="ca-textarea" id="caF_body">${caE(v.body || "")}</textarea></label>
@@ -201,7 +201,7 @@ function caEditFormHTML(){
   const choices = (v.choices || []).map((c) => `[${c.correct ? "x" : " "}] ${c.text}`).join("\n");
   return `<section class="ca-card ca-edit"><h2>Edit question</h2>
     <label>Question<textarea class="ca-textarea short" id="caF_prompt">${caE(v.prompt || "")}</textarea></label>
-    <label>Choices — one per line, [x] marks a right answer<textarea class="ca-textarea short" id="caF_choices">${caE(choices)}</textarea></label>
+    <label>Choices: one per line, [x] marks a right answer<textarea class="ca-textarea short" id="caF_choices">${caE(choices)}</textarea></label>
     <label>Explanation (shown when a rep gets it wrong)<textarea class="ca-textarea short" id="caF_expl">${caE(v.explanation || "")}</textarea></label>
     ${errs}
     <div class="ca-actions"><button class="ca-small" data-act="edit-cancel">Cancel</button><button class="qb-btn-primary" data-act="edit-save">${goesLive}</button></div>
@@ -217,10 +217,10 @@ function caLessonHTML(){
   return `${back}
     <div class="center-head"><div class="eyebrow">${caE(CA_TYPES[w.type] || w.type)}</div><h1>${caE(w.title || l.id)}</h1></div>
     <div class="ca-meta">${caChip(l.status)} <code>${caE(l.id)}</code>${l.approvedBy ? ` · approved ${caWhen(l.approvedAt)} by ${caE(l.approvedBy)}` : ""}</div>
-    ${l.draft ? `<section class="ca-card ca-draft"><h2>${l.live ? "Changes waiting for approval" : "Draft — waiting for approval"}</h2>${caLessonPreview(l.draft)}
+    ${l.draft ? `<section class="ca-card ca-draft"><h2>${l.live ? "Changes waiting for approval" : "Draft, waiting for approval"}</h2>${caLessonPreview(l.draft)}
       <div class="ca-actions">${l.live ? `<button class="ca-small" data-act="discard" data-kind="lesson" data-id="${caE(l.id)}">Discard changes</button>` : ""}
-      <button class="qb-btn-primary" data-act="approve" data-kind="lesson" data-id="${caE(l.id)}">Approve — make it live</button></div></section>` : ""}
-    ${l.live ? `<section class="ca-card"><h2>Live — what reps see</h2>${caLessonPreview(l.live)}</section>` : ""}
+      <button class="qb-btn-primary" data-act="approve" data-kind="lesson" data-id="${caE(l.id)}">Approve and make it live</button></div></section>` : ""}
+    ${l.live ? `<section class="ca-card"><h2>Live: what reps see</h2>${caLessonPreview(l.live)}</section>` : ""}
     <div class="ca-actions">
       <button class="ca-small" data-act="history" data-kind="lesson" data-id="${caE(l.id)}">History</button>
       <button class="qb-btn-primary" data-act="edit" data-kind="lesson" data-id="${caE(l.id)}">Edit</button>
@@ -330,7 +330,7 @@ async function caOnClick(ev){
     const what = kind === "quiz" ? "this quiz (every question in it)" : "this lesson";
     if (!confirm(`Make ${what} live for every rep now?`)) return;
     const r = await caPost("/approve", { kind, id });
-    return caRefresh(r.data.ok ? (kind === "quiz" ? "Quiz approved — it's live." : "Approved — reps can see it now.") : (r.data.error || "Couldn't approve."));
+    return caRefresh(r.data.ok ? (kind === "quiz" ? "Quiz approved. It's live." : "Approved. Reps can see it now.") : (r.data.error || "Couldn't approve."));
   }
   if (act === "discard") {
     if (!confirm("Throw away the changes waiting for approval? The live version stays as it is.")) return;
@@ -351,7 +351,7 @@ async function caOnClick(ev){
     if (!r.data.ok) { CA.editing.errors = r.data.errors || [{ message: r.data.error || "Couldn't save." }]; return renderContentAdmin(); }
     const live = r.data.target === "live";
     CA.editing = null;
-    return caRefresh(r.data.unchanged ? "No changes to save." : live ? "Saved — reps see it now." : "Draft saved — approve it to make it live.");
+    return caRefresh(r.data.unchanged ? "No changes to save." : live ? "Saved. Reps see it now." : "Draft saved. Approve it to make it live.");
   }
   if (act === "history") {
     const item = kind === "refdoc" ? null : caFindItem(kind, id);
