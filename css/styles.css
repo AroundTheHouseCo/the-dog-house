@@ -2721,3 +2721,9 @@
 .ca-edit label{display:block;font-size:14px;font-weight:700;color:#5c5c5c;margin:10px 0 0;}
 .ca-edit .rv-input{max-width:none;margin-top:4px;}
 .content-admin .rv-note,.content-admin .rv-error{max-width:none;}
+  /* RAVN step 5b: read-only Device check */
+  .rv-devcheck-row{font-size:14px;color:#666;margin:6px 0 12px;}
+  .rv-devcheck-link{background:none;border:0;padding:0;color:#a06b10;text-decoration:underline;font:inherit;cursor:pointer;}
+  .rv-devcheck{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.45;background:#f7f5ef;
+    border:1px solid #e4e0d6;border-radius:10px;padding:12px;margin:0 0 12px;}
+  .rv-devcheck-actions{display:flex;gap:12px;align-items:center;}
