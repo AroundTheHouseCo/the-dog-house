@@ -283,11 +283,11 @@ function refmapMapHTML(r){
     <div class="refmap-mapwrap">
       <div class="refmap-canvas" id="refmapCanvas"></div>
       <div class="refmap-offline" id="refmapOffline" hidden>
-        ${ICON.signal}
+        ${AICON.signal}
         <h3>Map needs a connection</h3>
         <p>The map imagery loads over the internet, same as any map app. The region list still works offline — reconnect to see pin locations.</p>
       </div>
-      <div class="refmap-approx">Pin locations are approximate — shown to the block, not the address.</div>
+      <div class="refmap-approx">Pin locations are approximate: shown to the block, not the address.</div>
     </div>`;
 }
 

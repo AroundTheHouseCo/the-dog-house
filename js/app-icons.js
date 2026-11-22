@@ -45,5 +45,6 @@ const AICON = (function () {
     refresh: svg('<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" />'),   // refresh-cw
     info: svg('<circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />'),   // info
     circleStop: svg('<circle cx="12" cy="12" r="10" /><rect x="9" y="9" width="6" height="6" rx="1" />'),   // circle-stop
+    compare: svg('<rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" /><path d="M15 3v18" />'),   // columns-3
   };
 })();

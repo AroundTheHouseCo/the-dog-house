@@ -365,7 +365,7 @@ function renderSlide(){
     const panel = document.createElement("div");
     panel.className="videoloop-panel";
     panel.innerHTML = `
-      ${s.youtube ? "" : `<div class="videoloop-label">Video loop — placeholder</div>`}
+      ${s.youtube ? "" : `<div class="videoloop-label">Video loop (placeholder)</div>`}
       <div class="videoloop-play"></div>
       ${s.youtube ? `<div class="videoloop-embed"><div id="ytLoopMount"></div></div>` : ""}
       <img class="videoloop-logo" src="${s.logo || PROD.logo}">
@@ -412,7 +412,7 @@ function renderSlide(){
     if(lightboxIndex!==null){
       const lb = document.createElement("div");
       lb.className="lightbox";
-      lb.innerHTML = `<button class="dismiss-btn on-dark lightbox-close">${ICON.close} Close</button><img src="${photos[lightboxIndex].src}">`;
+      lb.innerHTML = `<button class="dismiss-btn on-dark lightbox-close">${AICON.close} Close</button><img src="${photos[lightboxIndex].src}">`;
       lb.onclick=(e)=>{ e.stopPropagation(); if(e.target===lb){ lightboxIndex=null; renderSlide(); } };
       lb.querySelector(".lightbox-close").onclick=(e)=>{ e.stopPropagation(); lightboxIndex=null; renderSlide(); };
       area.appendChild(lb);
@@ -445,7 +445,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -555,7 +555,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button><h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
       pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
       area.appendChild(pop);
@@ -599,7 +599,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>
         ${r.popPhoto?`<img class="reason-pop-img" src="${r.popPhoto}">`:""}
         ${r.logo?`<img class="popover-logo" src="${r.logo}">`:""}
         <h3>${r.label}</h3><p>${r.detail}</p></div>`;
@@ -662,7 +662,7 @@ function renderSlide(){
         : r.priceRange
           ? `<div class="reason-pop-photo-wrap"><img class="reason-pop-img" src="${r.popPhoto}"><div class="cs-price-badge">${r.priceRange}</div></div>`
           : `<img class="reason-pop-img" src="${r.popPhoto}">`;
-      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
+      pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>
         ${photoHTML}
         <h3>${r.label}</h3><p>${r.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
@@ -728,7 +728,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -775,7 +775,7 @@ function renderSlide(){
            </div>
          </div>`
       : (s.docViewer
-        ? `<div class="split-photo-box doc-open-box"><img src="${s.image}"><div class="doc-open-badge">${ICON.book} ${s.docViewer.tapLabel||'Tap to open'}</div></div>`
+        ? `<div class="split-photo-box doc-open-box"><img src="${s.image}"><div class="doc-open-badge">${AICON.book} ${s.docViewer.tapLabel||'Tap to open'}</div></div>`
         : (s.images
           ? `<div class="split-photo-box dual">${s.images.map(im=>`
              <div class="dual-photo-item">
@@ -802,7 +802,7 @@ function renderSlide(){
       dv.innerHTML = `
         <div class="doc-viewer-head">
           <div class="doc-viewer-title">${docViewer.title}</div>
-          <button class="dismiss-btn on-dark doc-viewer-close" aria-label="Close">${ICON.close} Close</button>
+          <button class="dismiss-btn on-dark doc-viewer-close" aria-label="Close">${AICON.close} Close</button>
         </div>
         <div class="doc-viewer-scroll">
           ${docViewer.pages.map((p,i)=>`<img src="${p}" alt="Page ${i+1}"${i<2?'':' loading="lazy"'}>`).join("")}
@@ -863,7 +863,7 @@ function renderSlide(){
         const pop = document.createElement("div");
         pop.className="popover";
         pop.style.zIndex=20;
-        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
+        pop.innerHTML = `<div class="popover-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>${h.photo?`<img class="reason-pop-img" src="${h.photo}">`:""}<h3>${h.label}</h3><p>${h.content}</p></div>`;
         pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ openHotspot=null; renderSlide(); } };
         pop.querySelector(".popover-close").onclick=(e)=>{ e.stopPropagation(); openHotspot=null; renderSlide(); };
         area.appendChild(pop);
@@ -1013,7 +1013,7 @@ function renderSlide(){
       const pop = document.createElement("div");
       pop.className="popover";
       pop.style.zIndex=20;
-      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${ICON.close} Close</button>
+      pop.innerHTML = `<div class="popover-card tri-detail-card"><button class="dismiss-btn popover-close">${AICON.close} Close</button>
         ${n.photo?`<img src="${n.photo}">`:""}
         <h3>${n.title}</h3><p>${n.detail}</p></div>`;
       pop.onclick=(e)=>{ e.stopPropagation(); if(e.target===pop){ triNodeOpen=null; renderSlide(); } };
@@ -1043,7 +1043,7 @@ function renderSlide(){
           </div>`).join(""); })()}
       </div>
       <div class="mv2-actions">
-        <button id="btnModelCompare">${ICON.compare} Compare all three</button>
+        <button id="btnModelCompare">${AICON.compare} Compare all three</button>
         <button class="secondary" id="btnGallery">Options gallery</button>
         <button class="secondary" id="btnCompare">vs. the competition</button>
       </div>
@@ -1069,7 +1069,7 @@ function renderSlide(){
             <div class="spec-name" style="color:${mo.c1};">${mo.name}</div>
             <div class="spec-tag">${mo.tag}</div>
           </div>
-          <button class="dismiss-btn spec-close" id="specClose">${ICON.close} Close</button>
+          <button class="dismiss-btn spec-close" id="specClose">${AICON.close} Close</button>
         </div>
         <div class="spec-body">
           <div class="warranty-tiles">
@@ -1104,13 +1104,13 @@ function renderSlide(){
             <div class="spec-name">${mc.title || 'Sunesta · Sunstyle · Sunlight'}</div>
             <div class="spec-tag">Tap a category chip to show or hide it</div>
           </div>
-          <button class="dismiss-btn spec-close" id="mcClose">${ICON.close} Close</button>
+          <button class="dismiss-btn spec-close" id="mcClose">${AICON.close} Close</button>
         </div>
         <div class="mc-toggles">
           ${mc.cats.map(c=>`<button class="mc-chip ${cmpCats[c.key]?'on':''}" data-k="${c.key}">${c.label}</button>`).join("")}
         </div>
         <div class="spec-body">
-          ${activeCats.length===0 ? '<div class="mc-empty">All categories hidden — tap a chip above to bring them back.</div>' : `
+          ${activeCats.length===0 ? '<div class="mc-empty">All categories hidden. Tap a chip above to bring them back.</div>' : `
           <table class="compare-table3 mc-table">
             <tr>
               <th class="ct-label"></th>
@@ -1148,7 +1148,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card">
-          <div class="gallery-head">Options <button id="gClose" class="dismiss-btn">${ICON.close} Close</button></div>
+          <div class="gallery-head">Options <button id="gClose" class="dismiss-btn">${AICON.close} Close</button></div>
           <div class="gallery-body">
             <button class="gallery-nav prev">‹</button>
             ${bodyContent}
@@ -1171,7 +1171,7 @@ function renderSlide(){
       modal.style.zIndex=30;
       modal.innerHTML=`
         <div class="gallery-card compare-card">
-          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose" class="dismiss-btn">${ICON.close} Close</button></div>
+          <div class="gallery-head">${cmp.title || 'Not All Awnings Are Created Equal'} <button id="cClose" class="dismiss-btn">${AICON.close} Close</button></div>
           <div class="compare-scroll">
             <table class="compare-table3">
               <tr>
@@ -1217,7 +1217,7 @@ function renderSlide(){
 
   const badge = document.createElement("div");
   badge.className = "slide-num-badge";
-  badge.textContent = `#${globalSlideNumber()} — ${s.title || s.id}`;
+  badge.textContent = `#${globalSlideNumber()} · ${s.title || s.id}`;
   area.appendChild(badge);
 }
 
@@ -1362,7 +1362,7 @@ function renderRehearsal(){
     } else if(covered && typeof tcReady === "function" && tcReady()){
       body = `
         <div class="tc-missing">
-          <div class="tc-missing-k">${ICON.warn} No training content for this slide</div>
+          <div class="tc-missing-k">${AICON.warn} No training content for this slide</div>
           <p>Deck slide <code>${s.id}</code> has no entry in the training content file.
           Nothing stale is shown in its place — add a <code>deck_map</code> entry in
           this product's content JSON (the console lists every gap at load).</p>
@@ -1374,10 +1374,10 @@ function renderRehearsal(){
       // JSON). Showing a rep pre-rewrite script is worse than showing nothing,
       // so this state is now the banner alone.
       body = `
-        <div class="tc-loadfail">${ICON.warn} ${(typeof tcSignedIn === "function" && !tcSignedIn())
+        <div class="tc-loadfail">${AICON.warn} ${(typeof tcSignedIn === "function" && !tcSignedIn())
           ? "Training content needs your RAVN sign-in. Sign in under Start Appointment, then come back."
-          : "Training content couldn't load — check your connection and try again."}</div>
-        <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
+          : "Training content couldn't load. Check your connection and try again."}</div>
+        <div class="eyebrow">Training mode · Slide #${globalSlideNumber()}</div>
         <h2>${s.title}</h2>`;
     } else {
       // Still in flight. Deliberately NOT the unmapped gap state — that reads
@@ -1385,7 +1385,7 @@ function renderRehearsal(){
       // perfectly normal fetch. tcEnsureProductContent() calls
       // onTrainingContentReady() when it settles, which re-renders this panel.
       body = `
-        <div class="eyebrow">Training mode — Slide #${globalSlideNumber()}</div>
+        <div class="eyebrow">Training mode · Slide #${globalSlideNumber()}</div>
         <h2>${s.title}</h2>
         <div class="tc-empty">Loading training content…</div>`;
     }
@@ -1666,7 +1666,7 @@ function renderTopbarNav(){
   let html = "";
   if(appView==="present"){
     // deliberately unlabeled — customers just see a quiet close control
-    html = `<button class="exit-btn" id="exitBtn" aria-label="Exit">${ICON.close}</button>`;
+    html = `<button class="exit-btn" id="exitBtn" aria-label="Exit">${AICON.close}</button>`;
   } else if(appView==="training-deck"){
     html = `<button class="back-btn" id="backCenterBtn">‹ ${productInfo().coach} Coach</button>`;
   } else if(appView==="center"){
@@ -1740,6 +1740,9 @@ function renderApp(){
   // Step 6b: the ATH brand on every rep/owner screen (css/ravn-brand-app.css).
   // Off in the deck views, so the customer presentations are untouched.
   document.body.classList.toggle("rb-app", !showDeck);
+  // Step 6b phase 2 (staging only until Jack approves every deck): the brand
+  // on the presentations themselves (css/ravn-brand-deck.css).
+  document.body.classList.toggle("rb-deck", showDeck);
   const showPanel = appView==="center" || appView==="presentations" || appView==="coaches";
   document.getElementById("homeScreen").style.display     = appView==="home" ? "" : "none";
   document.getElementById("trainingCenter").style.display = showPanel ? "" : "none";

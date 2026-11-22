@@ -1,0 +1,67 @@
+/* ═════════════════════════════════════════════════════════════════════════
+   RAVN Step 6b, Phase 2: the ATH brand on the presentations themselves.
+
+   STAGING ONLY until Jack has reviewed every deck there (they are used on
+   live appointments). Scoped to body.rb-deck, which js/app.js sets only in
+   the deck views (customer presentations + the training deck).
+
+   LOOK ONLY. This file changes colour, type, button and chip styling and the
+   small-text floor. It never touches slide copy, so no product fact, price
+   or warranty wording can change here. Slide layouts (the fixed-height
+   panels) are left as they were; text sizes rise only where the layout has
+   room, checked slide by slide with ravn-deck-diff.js.
+   ═════════════════════════════════════════════════════════════════════════ */
+body.rb-deck{
+  --orange:#F9A11B; --charcoal:#3A3A3C; --green:#007A3F; --green-dark:#007A3F; --green-bright:#007A3F;
+  --bg:#FBF6EA; --cream:#FBF6EA; --cream-border:#E8DFC4;
+  font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:#FBF6EA; color:#3A3A3C;
+}
+body.rb-deck :is(button,input,select,textarea){font-family:inherit;}
+body.rb-deck :is(button,a,[tabindex]):focus-visible{outline:2px solid #3A3A3C;outline-offset:2px;box-shadow:0 0 0 6px rgba(249,161,27,.35);}
+
+/* Headings: Figtree 900, tight tracking. */
+body.rb-deck :is(.stage h1,.stage h2,.stage h3,.slide-caption,.mv2-name,.spec-name,.footer-banner .footer-title,
+  .diff-row.plain .diff-label,.diff-banner .diff-label,.cred-row .cred-label,.pcard-name,.popover-card h3,.refmap-head h2,
+  .region-tile-name,.refmap-mapbar-title){font-weight:900;letter-spacing:-.02em;}
+
+/* The old dark greens baked into a few gradients become the brand greens. */
+body.rb-deck .mv2-arm.hero,body.rb-deck .wt.hero{background:#007A3F;border-color:#007A3F;}
+body.rb-deck .videoloop-panel{background:radial-gradient(circle at 50% 40%,#007A3F 0%,#003D20 100%);}
+body.rb-deck .diff-banner{background:#007A3F;}
+body.rb-deck .cred-row .cred-sublabel .stars{color:#F9A11B;}
+body.rb-deck .ct-warn{background:#F9A11B;color:#3A3A3C;}
+
+/* Action buttons on slides: amber with charcoal text, like every RAVN button. */
+body.rb-deck :is(.mv2-actions button,.doc-open-badge,#btnModelCompare){
+  background:#F9A11B; border:2px solid #F9A11B; color:#3A3A3C; border-radius:12px; font-weight:800;
+}
+body.rb-deck .mv2-actions button:not(#btnModelCompare){background:#fff;border-color:#3A3A3C;color:#3A3A3C;}
+
+/* Deck chrome: tab bar, slide counter, exit. Warm paper, not cold white. */
+body.rb-deck :is(.tabbar,.slidebar){background:#FFFDF8;}
+body.rb-deck .tabbar{border-top-color:#E8DFC4;}
+body.rb-deck .tabbar button{font-size:16px;color:#5F5B53;min-height:48px;}
+body.rb-deck .tabbar button.active{color:#007A3F;border-bottom-color:#F9A11B;}
+body.rb-deck .slidebar .dots span{background:#E8DFC4;}
+body.rb-deck .slidebar .dots span.active{background:#F9A11B;}
+body.rb-deck .slidebar .count{font-size:16px;color:#5F5B53;}
+body.rb-deck .slidebar button.nav{width:48px;height:48px;border:2px solid #E8DFC4;}
+body.rb-deck .exit-btn{width:48px;height:48px;border:2px solid #E8DFC4;}
+body.rb-deck .slide-num-badge{font-size:16px;}
+
+/* Small text: 16px floor. Short uppercase tags read as eyebrows: Space Mono 14px. */
+body.rb-deck :is(.slider-hint,.mv2-sub,.mv2-chips span,.mv2-arm,.mv2-more,.mv2-actions button,.wt-label,.wt-sub,.spec-best,
+  .mc-chip,.mc-cat td,.compare-table,.compare-table th,.ct-colsub,.compare-table3 td,.compare-table3 td.ct-label,.ct-icon,
+  .compare-footer,.cmp-panel .ct-colsub,.cmp-panel .ct-icon,.cmp-panel .compare-footer,.dual-photo-caption,
+  .mini-scrub .ms-hint,.split-photo-box.doc-open-box .doc-open-badge,.diff-row.plain .diff-sublabel,.reason-body p,
+  .coach-note,.training-tabs button,.personal-touch .pt-label,.products-panel.dense .pcard-name,
+  .products-panel.dense .pcard-sub,.products-panel.dense .pcard-more,.products-panel.dense .pcard-num,.cs-label,
+  .refmap-pending code,.refmap-approx){font-size:16px;}
+body.rb-deck :is(.scrub-ends,.mv2-tag,.spec-tag,.ct-badge,.cmp-panel .ct-badge,.videoloop-label,.mini-scrub .ms-ends,
+  .tri-node .uni-label,.faq-tag,.visual-only-tag,.products-eyebrow,.cs-ath-pin,.rehearsal-panel .eyebrow){
+  font-family:"Space Mono",ui-monospace,Menlo,monospace; font-size:14px; font-weight:700; letter-spacing:.06em;
+}
+/* Tab labels never squeeze into each other: each tab is as wide as its
+   label and the bar scrolls sideways when they don't all fit (phones). */
+body.rb-deck .tabbar button{flex:1 0 auto;min-width:max-content;padding:13px 16px;}
