@@ -31,8 +31,43 @@ function tcEditToggleHTML(){
   return `<button class="tcv-edit-toggle${tcEditOn ? " active" : ""}" id="tcEditToggle" title="Tap-to-edit script and coaching text">
     ${ICON.pencil} ${tcEditOn ? "Editing" : "Edit"}</button>`;
 }
+// RAVN step 4: the device-only editor is replaced. Only owners see Edit, and
+// "Save to RAVN" sends the edited document to Cockpit, where every rep's
+// device picks it up and every save lands in version history (restorable
+// from the Content screen). The old "Export" download is gone.
+function tcCanEdit(){
+  const id = (typeof rvIdentity === "function") ? rvIdentity() : null;
+  return !!(id && Array.isArray(id.capabilities) && id.capabilities.indexOf("manageTeam") >= 0);
+}
+function tcUnsavedCount(){ return Object.keys(tcContentEdits()).length; }
 function tcExportButtonHTML(){
-  return `<button class="tcv-export-btn" id="tcExportBtn" title="Download this product's content, edits merged in">${ICON.doc} Export</button>`;
+  const n = tcUnsavedCount();
+  return `<button class="tcv-export-btn" id="tcExportBtn"${n ? "" : " disabled"} title="Save your edits so every rep sees them">${ICON.doc} ${tcSaving ? "Saving…" : "Save to RAVN"}</button>`;
+}
+let tcSaving = false;
+async function tcSaveToRavn(rerender){
+  if (tcSaving) return;
+  const merged = tcExportContent();
+  const key = (typeof activeProduct !== "undefined") ? activeProduct : null;
+  if (!merged || !key || !tcUnsavedCount()) return;
+  tcSaving = true; rerender();
+  let msg = null;
+  try {
+    const r = await rvAuthedFetch(`${self.RAVN_API_BASE || "https://ath-cockpit.onrender.com"}/api/raven/content/refdoc`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key, doc: merged }),
+    });
+    const d = await r.json().catch(() => null);
+    if (r.ok && d && d.ok) {
+      // Saved for everyone: drop this device's local layer and reload.
+      const all = tcAllContentEdits(); delete all[key];
+      localStorage.setItem(TC_EDITS_KEY, JSON.stringify(all));
+      tcResetContent();
+      await tcEnsureProductContent(key);
+      msg = "Saved. Every rep now sees your changes.";
+    } else msg = (d && d.error) || "Couldn't save — your edits are still on this device. Try again.";
+  } catch (e) { msg = "Couldn't reach Cockpit — your edits are still on this device. Try again when you're online."; }
+  tcSaving = false; rerender();
+  alert(msg);
 }
 // Binds the toggle + export controls found under `container` (the shared
 // resource-page header) and, if provided, the editable spans under
@@ -41,7 +76,7 @@ function tcvBindEditControls(container, editRoot, rerender){
   const toggle = container.querySelector("#tcEditToggle");
   if (toggle) toggle.onclick = () => { tcEditOn = !tcEditOn; rerender(); };
   const exportBtn = container.querySelector("#tcExportBtn");
-  if (exportBtn) exportBtn.onclick = () => tcDownloadExport();
+  if (exportBtn) exportBtn.onclick = () => tcSaveToRavn(rerender);
   if (editRoot) tcBindEditables(editRoot, rerender);
 }
 
@@ -89,26 +124,6 @@ function tcActivateEdit(span, rerender){
   };
   span.addEventListener("blur", commit);
   span.addEventListener("keydown", onKey);
-}
-
-// Deep-merges local edits onto the active product's committed content
-// (js/training-content.js tcExportContent) and offers the result as a
-// download — the bridge to making edits durable/shared: review the file
-// and commit it as the new source of truth. No GitHub API write from this
-// static site — see the Phase 2 report for why, and the ATH Cockpit-proxy
-// follow-up that would be needed to remove this manual step.
-function tcDownloadExport(){
-  const merged = tcExportContent();
-  if (!merged) return;
-  const file = (PROD && PROD.trainingContentFile || "content.json").split("/").pop();
-  const stamp = new Date().toISOString().slice(0, 10);
-  const name = file.replace(/\.json$/, `.edited-${stamp}.json`);
-  const blob = new Blob([JSON.stringify(merged, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
 }
 
 // Hub cards for these views — only offered once the active product's

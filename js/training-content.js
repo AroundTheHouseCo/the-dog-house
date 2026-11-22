@@ -40,11 +40,62 @@ let TC_INFLIGHT = {};
 // another — see tcSequence(). undefined = not yet loaded, null = failed.
 let TC_SHARED;
 function loadSharedContent(){
-  return fetch("data/training-content-shared.json", {cache:"no-cache"})
-    .then((r) => (r.ok ? r.json() : null))
+  return tcFetchDoc("shared")
     .then((d) => { TC_SHARED = d || null; })
     .catch(() => { TC_SHARED = null; });
 }
+
+// ── RAVN step 4: training content comes from Cockpit, behind the sign-in ──
+// It used to be public JSON in this repo (data/*.json). Now each document is
+// fetched from Cockpit with the rep's own sign-in (rvAuthedFetch, js/raven.js)
+// and a copy is kept in the Cache API so training still works offline in a
+// customer's driveway. The copy is wiped on sign-out or a revoke, same as
+// pricing and the reference map. Signed out with no copy → nothing to show,
+// and the panel says to sign in.
+const TC_DOC_CACHE = "doghouse-training-v1";
+const TC_KEY_BY_FILE = {
+  "data/doghouse-content-v1.json": "sunesta",
+  "data/training-content-eclipse.json": "eclipse",
+  "data/training-content-shared.json": "shared",
+};
+function tcDocUrl(key){ return `${self.RAVN_API_BASE || "https://ath-cockpit.onrender.com"}/api/raven/content/refdoc?key=${encodeURIComponent(key)}`; }
+function tcSignedIn(){ return typeof rvGetToken === "function" && !!rvGetToken(); }
+async function tcFetchDoc(key){
+  const url = tcDocUrl(key);
+  if (tcSignedIn() && navigator.onLine && typeof rvAuthedFetch === "function") {
+    try {
+      const r = await rvAuthedFetch(url, { cache: "no-store" });
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.doc) {
+          try { const c = await caches.open(TC_DOC_CACHE); await c.put(url, new Response(JSON.stringify(j.doc), { headers: { "Content-Type": "application/json" } })); } catch (e) { /* no Cache API */ }
+          return j.doc;
+        }
+      }
+    } catch (e) { /* offline or Cockpit down — try the saved copy */ }
+  }
+  if (!tcSignedIn()) return null;   // a signed-out device never reads a leftover copy
+  try {
+    const c = await caches.open(TC_DOC_CACHE);
+    const hit = await c.match(url);
+    return hit ? await hit.json() : null;
+  } catch (e) { return null; }
+}
+// Forget everything loaded, so the next view fetches fresh (sign-in change,
+// or an owner just saved an edit).
+function tcResetContent(){
+  TC_CACHE = {}; TC_INFLIGHT = {}; TC_SHARED = undefined;
+}
+window.addEventListener("raven-session-changed", (e) => {
+  const signedIn = !!(e && e.detail && e.detail.signedIn);
+  tcResetContent();
+  if (!signedIn) { try { caches.delete(TC_DOC_CACHE); } catch (err) { /* no Cache API */ } }
+  else {
+    loadSharedContent();
+    if (typeof activeProduct !== "undefined" && activeProduct) tcEnsureProductContent(activeProduct);
+  }
+  if (typeof onTrainingContentReady === "function") onTrainingContentReady();
+});
 
 function indexContent(content){
   const byId = {};
@@ -63,8 +114,8 @@ function tcEnsureProductContent(productKey){
   if (TC_INFLIGHT[productKey]) return TC_INFLIGHT[productKey];
   const file = (PRODUCT_DATA[productKey] || {}).trainingContentFile;
   if (!file) { TC_CACHE[productKey] = null; return Promise.resolve(null); }
-  const p = fetch(file, { cache: "no-cache" })
-    .then((r) => (r.ok ? r.json() : null))
+  const key = TC_KEY_BY_FILE[file] || productKey;
+  const p = tcFetchDoc(key)
     .then((json) => {
       const content = (json && Array.isArray(json.slides) && json.slides.length) ? json : null;
       TC_CACHE[productKey] = content ? indexContent(content) : null;
