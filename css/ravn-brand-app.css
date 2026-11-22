@@ -270,3 +270,4 @@ body.rb-app .rv-gap-log:empty{display:none;}
    js/training-render.js): sized like the old icon set, so nothing balloons. */
 .lc{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none;pointer-events:none;}
 body.rb-app .tcv-field-label em{color:#9A5A00;}
+body.rb-app .tcv-hit-tag{color:#007A3F;}
