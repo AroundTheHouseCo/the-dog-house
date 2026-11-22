@@ -48,6 +48,9 @@ const RAVEN_UPLOAD_TIMEOUT_MS = 120000;
 // desktop browser can still exercise the flow during development.
 const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio/webm;codecs=opus", "audio/webm"];
 
+// Shown on the Device check screen, so a phone can say which app version it
+// is actually running (bump with sw.js TIER1_VERSION).
+const RAVN_APP_BUILD = "2026-11-22.2";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -913,14 +916,140 @@ function rvDismissInterruption(){
 // currently live.
 async function rvFinalizeAbandonedRecordings(){
   let all;
-  try { all = await rvAllAppointments(); } catch (e) { return; }
-  const abandoned = all.filter((a) => a.status === "recording");
+  try { all = await rvAllAppointments(); } catch (e) { RV.storageError = e.message || String(e); return; }
+  // Any saved recording that isn't already queued (only "recording" exists
+  // today, but nothing should ever sit outside the queue) moves into it.
+  // Never the one being recorded right now.
+  const abandoned = all.filter((a) => a.status !== "pending-upload" &&
+    !(a.appointmentId === RV.appointmentId && rvIsRecording()));
   for (const rec of abandoned) {
     rec.endedAt = rec.endedAt || new Date().toISOString();
     rec.status = "pending-upload";
     try { await rvPutAppointment(rec); }
     catch (e) { console.warn("Raven: failed to finalize abandoned recording", rec.appointmentId, e.message); }
   }
+  // RAVN step 5b: audio pieces whose appointment record is missing would
+  // never be found by the queue. Give each group a record so it uploads like
+  // any other recording. Additive only — nothing is deleted or changed.
+  try {
+    const known = new Set(all.map((a) => a.appointmentId));
+    const groups = await rvChunkSummary();
+    for (const g of groups) {
+      if (known.has(g.appointmentId) || !g.appointmentId) continue;
+      if (g.appointmentId === RV.appointmentId && rvIsRecording()) continue;
+      await rvPutAppointment({
+        appointmentId: g.appointmentId,
+        jobLabel: "Recovered recording",
+        repName: "",
+        ownerUserId: null,
+        startedAt: g.firstAt ? new Date(g.firstAt).toISOString() : null,
+        endedAt: g.lastAt ? new Date(g.lastAt).toISOString() : new Date().toISOString(),
+        mimeType: g.type || "audio/mp4",
+        status: "pending-upload",
+        interruptions: [],
+        recovered: true,
+      });
+      console.warn("Raven: recovered audio pieces with no record for", g.appointmentId);
+    }
+  } catch (e) { console.warn("Raven: orphan-piece check failed", e.message); }
+}
+
+// Every saved audio piece, grouped by appointment, WITHOUT reading the audio
+// (Blob.size and type are metadata). Read-only.
+async function rvChunkSummary(){
+  const db = await rvDbOpen();
+  const groups = await new Promise((resolve, reject) => {
+    const out = new Map();
+    const tx = db.transaction("chunks", "readonly");
+    const cur = tx.objectStore("chunks").openCursor();
+    cur.onsuccess = () => {
+      const c = cur.result;
+      if (!c) return;
+      const v = c.value || {};
+      const id = v.appointmentId || "";
+      const g = out.get(id) || { appointmentId: id, pieces: 0, bytes: 0, firstAt: null, lastAt: null, type: "" };
+      g.pieces++; g.bytes += (v.blob && v.blob.size) || 0;
+      if (v.at) { g.firstAt = g.firstAt ? Math.min(g.firstAt, v.at) : v.at; g.lastAt = Math.max(g.lastAt || 0, v.at); }
+      if (!g.type && v.blob && v.blob.type) g.type = v.blob.type;
+      out.set(id, g);
+      c.continue();
+    };
+    tx.oncomplete = () => resolve([...out.values()]);
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+  return groups;
+}
+
+// ── Device check (RAVN step 5b) — READ-ONLY ───────────────────────────
+// What this phone is actually holding: app version, every recording record
+// in any state, audio pieces with no record, storage use and any storage
+// error. It writes nothing, deletes nothing and never signs anyone out.
+async function rvInspectDevice(){
+  const r = { build: RAVN_APP_BUILD, at: new Date().toISOString(), signedInAs: rvRepName() || null,
+    signIn: rvSessionKind(), standalone: !!(window.navigator.standalone || (window.matchMedia && matchMedia("(display-mode: standalone)").matches)),
+    online: navigator.onLine, serviceWorker: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+    storage: null, persisted: null, databases: null, errors: [], appointments: [], pieces: [] };
+  try { if (navigator.storage && navigator.storage.estimate) { const e = await navigator.storage.estimate(); r.storage = { usedMB: +(e.usage / 1048576).toFixed(1), quotaMB: +(e.quota / 1048576).toFixed(0) }; } } catch (e) { r.errors.push("storage estimate: " + e.message); }
+  try { if (navigator.storage && navigator.storage.persisted) r.persisted = await navigator.storage.persisted(); } catch (e) {}
+  let exists = true;
+  try {
+    if (indexedDB.databases) {
+      const dbs = await indexedDB.databases();
+      r.databases = dbs.map((d) => `${d.name} (v${d.version})`);
+      exists = dbs.some((d) => d.name === RAVEN_DB);
+    }
+  } catch (e) { r.errors.push("database list: " + e.message); }
+  if (!exists) { r.errors.push(`no "${RAVEN_DB}" database on this device`); return r; }
+  try {
+    const all = await rvAllAppointments();
+    const pieces = await rvChunkSummary();
+    const byId = new Map(pieces.map((g) => [g.appointmentId, g]));
+    r.appointments = all.map((a) => {
+      const g = byId.get(a.appointmentId);
+      return { appointmentId: a.appointmentId, label: a.jobLabel || "", status: a.status, startedAt: a.startedAt || null,
+        endedAt: a.endedAt || null, rep: a.repName || "", pieces: g ? g.pieces : 0, MB: g ? +(g.bytes / 1048576).toFixed(1) : 0,
+        conflict: a.uploadConflict || null, lastError: a.lastUploadError || null, recovered: !!a.recovered };
+    });
+    const known = new Set(all.map((a) => a.appointmentId));
+    r.pieces = pieces.filter((g) => !known.has(g.appointmentId)).map((g) => ({ appointmentId: g.appointmentId || "(none)",
+      pieces: g.pieces, MB: +(g.bytes / 1048576).toFixed(1), firstAt: g.firstAt ? new Date(g.firstAt).toISOString() : null }));
+  } catch (e) { r.errors.push("reading recordings: " + (e.name ? e.name + ": " : "") + e.message); }
+  return r;
+}
+
+function rvDeviceReportText(r){
+  const L = [`RAVN device check — ${r.at}`, `App build: ${r.build}`, `Signed in: ${r.signedInAs || "no"} (${r.signIn || "-"})`,
+    `Home-screen app: ${r.standalone ? "yes" : "no"} · Online: ${r.online ? "yes" : "no"} · Offline cache: ${r.serviceWorker ? "yes" : "no"}`,
+    `Storage used: ${r.storage ? r.storage.usedMB + " MB of " + r.storage.quotaMB + " MB" : "unknown"} · Protected from cleanup: ${r.persisted == null ? "unknown" : (r.persisted ? "yes" : "no")}`,
+    `Databases: ${r.databases ? (r.databases.join(", ") || "none") : "not reported by this browser"}`,
+    `Recordings saved: ${r.appointments.length}`];
+  r.appointments.forEach((a, i) => L.push(`  ${i + 1}. ${a.label || "Appointment"} — ${a.status}, ${a.MB} MB in ${a.pieces} pieces, started ${a.startedAt || "?"}` +
+    `${a.rep ? ", rep " + a.rep : ""}${a.conflict ? ", conflict " + a.conflict : ""}${a.lastError ? ", last error: " + a.lastError : ""} [${a.appointmentId}]`));
+  L.push(`Audio pieces with no record: ${r.pieces.length}`);
+  r.pieces.forEach((p) => L.push(`  ${p.appointmentId}: ${p.MB} MB in ${p.pieces} pieces, from ${p.firstAt || "?"}`));
+  if (r.errors.length) { L.push("Problems:"); r.errors.forEach((e) => L.push("  " + e)); }
+  return L.join("\n");
+}
+
+async function rvRenderDeviceCheck(el){
+  el.innerHTML = `<div class="center-head"><div class="eyebrow">Read-only</div><h1>Device check</h1></div><div class="rv-empty">Reading this device…</div>`;
+  const r = await rvInspectDevice();
+  const text = rvDeviceReportText(r);
+  el.innerHTML = `
+    <div class="center-head"><div class="eyebrow">Read-only — changes nothing</div><h1>Device check</h1></div>
+    <pre class="rv-devcheck">${rvEsc(text)}</pre>
+    <div class="rv-devcheck-actions">
+      <button class="qb-btn-primary" id="rvDevCopy">Copy report</button>
+      <button class="rv-signout" id="rvDevBack">Back</button>
+    </div>
+    <p class="rv-gap-log" id="rvDevCopied"></p>`;
+  document.getElementById("rvDevBack").onclick = () => { RV.view = "search"; renderRaven(); };
+  document.getElementById("rvDevCopy").onclick = async () => {
+    const note = document.getElementById("rvDevCopied");
+    try { await navigator.clipboard.writeText(text); note.textContent = "Copied — paste it into the chat."; }
+    catch (e) { note.textContent = "Couldn't copy automatically — press and hold the text above to select it."; }
+  };
 }
 
 // ── Pending-upload retry ───────────────────────────────────────────────
@@ -941,7 +1070,8 @@ async function rvRefreshPendingCount(){
     }
     list.sort((x, y) => String(x.startedAt || "").localeCompare(String(y.startedAt || "")));
     RV.deviceRecordings = list;
-  } catch (e) { RV.pendingCount = 0; RV.deviceRecordings = []; }
+    RV.storageError = null;
+  } catch (e) { RV.pendingCount = 0; RV.deviceRecordings = []; RV.storageError = (e && e.message) || String(e); }
   rvRefreshDeviceList();
 }
 
@@ -955,7 +1085,9 @@ function rvFmtBytes(n){
 }
 function rvDeviceListHTML(){
   const list = RV.deviceRecordings || [];
-  if (!list.length) return `<div id="rvDeviceList"></div>`;
+  const check = `<button class="rv-devcheck-link" data-rv-devcheck="1">Device check</button>`;
+  if (RV.storageError) return `<div id="rvDeviceList" class="rv-pending-banner rv-devlist"><div class="rv-dev-head">Couldn't read the recordings saved on this device: ${rvEsc(RV.storageError)}</div>Nothing has been deleted. Close RAVN completely and reopen it. ${check}</div>`;
+  if (!list.length) return `<div id="rvDeviceList"><div class="rv-devcheck-row">No recordings waiting on this device. ${check}</div></div>`;
   const rows = list.map((r) => {
     const id = rvEsc(r.appointmentId);
     const when = r.startedAt ? new Date(r.startedAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
@@ -979,7 +1111,7 @@ function rvDeviceListHTML(){
   }).join("");
   return `<div id="rvDeviceList" class="rv-pending-banner rv-devlist">
     <div class="rv-dev-head">${list.length} recording${list.length === 1 ? "" : "s"} saved on this device, not yet uploaded${navigator.onLine ? "" : " — you're offline; they'll send when you're back online"}</div>
-    ${rows}</div>`;
+    ${rows}<div class="rv-devcheck-row">${check}</div></div>`;
 }
 function rvRefreshDeviceList(){
   const el = document.getElementById("rvDeviceList");
@@ -1043,6 +1175,14 @@ function rvEsc(s){
   ));
 }
 
+// One handler for every "Device check" link, signed in or out.
+document.addEventListener("click", (e) => {
+  const b = e.target && e.target.closest && e.target.closest("[data-rv-devcheck]");
+  if (!b || rvIsRecording()) return;
+  RV.view = "devcheck";
+  renderRaven();
+});
+
 function renderRaven(){
   const el = document.getElementById("ravenPanel");
   if (!el) return;
@@ -1052,6 +1192,7 @@ function renderRaven(){
   // unmount the only Stop control they have.
   if (RV.view === "recording") return rvRenderRecording(el);
   if (RV.view === "review") return rvRenderReview(el);
+  if (RV.view === "devcheck") return rvRenderDeviceCheck(el);
   if (RV.disabled) return rvRenderDisabled(el);
   if (!rvGetToken()) return rvRenderLogin(el);
   return rvRenderSearch(el);
@@ -1063,8 +1204,9 @@ function rvRenderLogin(el){
     credentials: "Your password or two-factor changed — please sign in again.",
     expired: "Please sign in again.",
   }[RV.signedOutReason] || "";
-  const waiting = RV.pendingCount
-    ? `<div class="rv-pending-banner">${RV.pendingCount} recording${RV.pendingCount === 1 ? "" : "s"} saved on this device ${RV.pendingCount === 1 ? "is" : "are"} waiting to upload. ${RV.pendingCount === 1 ? "It" : "They"} will go up after you sign in.</div>` : "";
+  const waiting = (RV.pendingCount
+    ? `<div class="rv-pending-banner">${RV.pendingCount} recording${RV.pendingCount === 1 ? "" : "s"} saved on this device ${RV.pendingCount === 1 ? "is" : "are"} waiting to upload. ${RV.pendingCount === 1 ? "It" : "They"} will go up after you sign in.</div>` : "") +
+    `<div class="rv-devcheck-row"><button class="rv-devcheck-link" data-rv-devcheck="1">Device check</button></div>`;
   const err = RV.authError ? `<div class="rv-error">${rvEsc(RV.authError)}</div>` : "";
   const busy = RV.authBusy;
   let body;
