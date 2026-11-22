@@ -82,6 +82,7 @@ const RV = {
   bytes: 0,
   mimeType: "",
   pendingCount: 0,         // appointments sitting in IndexedDB awaiting upload
+  deviceRecordings: [],    // the same, with size/state, for the on-device list
 };
 
 let rvRecorder = null;
@@ -445,44 +446,114 @@ function rvFileNameForMime(mimeType){
   return "recording.audio";
 }
 
-async function rvUploadAppointment(rec, blob){
-  const interruptions = rec.interruptions || [];
-  const form = new FormData();
-  form.append("file", blob, rvFileNameForMime(rec.mimeType));
-  form.append("interrupted", interruptions.length > 0 ? "true" : "false");
-  // Present even when empty; the server only reads it when interrupted is
-  // true. offsetMs is missing on any interruption logged before this fix
-  // (older shape had no offset) — JSON.stringify emits `null` for those,
-  // and the server's own `typeof n === 'number'` filter drops them, so an
-  // appointment queued from before this change still uploads its audio
-  // cleanly, just without full interruption offsets.
-  form.append("interruptedAt", JSON.stringify(interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null))));
+// ── Upload (RAVN step 5) ──────────────────────────────────────────────
+// Chunked and resumable: the recording goes up in 5 MB pieces. Each piece is
+// retried on its own, and Cockpit remembers which pieces it already has, so
+// a dropped connection, a reload or a dead battery only costs the piece in
+// flight — the next try (same device, any time later) picks up where it
+// stopped. No size limit beyond Cockpit's 2 GB.
+//
+// The recording on this device is NEVER deleted here. rvTryUpload deletes it
+// only after Cockpit says the whole file is stored, at the right size.
+const RAVEN_PART_TIMEOUT_MS = 90000;
+const RAVEN_PART_TRIES = 4;
+const rvUploadProgress = {};   // appointmentId → {sent, total} while uploading
 
-  // Explicit give-up point: Cockpit's route buffers the whole request body
-  // before responding, so a dropped connection mid-upload would otherwise
-  // hang this fetch (and the "Uploading…" screen) indefinitely.
+function rvSetProgress(appointmentId, sent, total){
+  rvUploadProgress[appointmentId] = { sent, total };
+  const pct = total ? Math.min(100, Math.floor((sent / total) * 100)) : 0;
+  document.querySelectorAll(`[data-rv-pct="${appointmentId}"]`).forEach((n) => { n.textContent = pct + "%"; });
+  document.querySelectorAll(`[data-rv-bar="${appointmentId}"]`).forEach((n) => { n.style.width = pct + "%"; });
+}
+
+// One upload call, with the stored credential as-is (Cockpit accepts a
+// lapsed or just-revoked sign-in on the upload routes, so an upload never
+// waits on a refresh). `timeoutMs` gives every call an explicit give-up.
+async function rvUploadCall(rec, path, opts, timeoutMs){
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), RAVEN_UPLOAD_TIMEOUT_MS);
+  const t = setTimeout(() => controller.abort(), timeoutMs || 30000);
   try {
-    // No Content-Type header here on purpose — the browser sets
-    // multipart/form-data with the correct boundary itself; setting it
-    // manually would strip that boundary and break the server's parser.
-    await rvApi(`/api/raven/appointments/${encodeURIComponent(rec.appointmentId)}/audio`, {
-      method: "POST",
-      body: form,
-      signal: controller.signal,
-      _raw: true,
-      _noSignOut: !!(rec && rec._grace),
-    });
+    return await rvApi(path, Object.assign({ signal: controller.signal, _raw: true, _noSignOut: !!(rec && rec._grace) }, opts));
+  } finally { clearTimeout(t); }
+}
+const rvSleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Worth trying the same piece again? Network trouble and server hiccups yes;
+// a definite "no" from Cockpit (wrong owner, already uploaded…) no.
+const rvRetryable = (err) => err.kind === "network" || (err.kind === "http" && err.code === "store_failed");
+
+async function rvUploadAppointment(rec, blob){
+  try {
+    return await rvUploadChunked(rec, blob);
   } catch (err) {
+    // Cockpit without step 5 (or an older one) has no chunked routes: use
+    // the original single upload, which still works for files under 100 MB.
+    if (err.kind === "http" && /Unknown raven endpoint/.test(err.message || "")) return rvUploadSingle(rec, blob);
     // Cockpit already holds audio for this appointment. Only if it is the
     // SAME size as ours (a retry after a lost response) is it safe to let
     // go of the local copy; anything else stays on the device.
     if (err.code === "already_uploaded" && err.body && err.body.bytes === blob.size) return true;
     throw err;
   } finally {
-    clearTimeout(timeoutId);
+    delete rvUploadProgress[rec.appointmentId];
   }
+}
+
+async function rvUploadChunked(rec, blob){
+  const id = encodeURIComponent(rec.appointmentId);
+  const J = { "Content-Type": "application/json" };
+  const interruptions = rec.interruptions || [];
+  for (let round = 0; round < 3; round++) {
+    // start = "begin, or tell me what you already have"
+    const st = await rvUploadCall(rec, `/api/raven/appointments/${id}/upload/start`,
+      { method: "POST", headers: J, body: JSON.stringify({ bytes: blob.size, contentType: rec.mimeType || "audio/mp4" }) }, 30000);
+    const have = new Set(st.received || []);
+    let sent = 0;
+    for (const n of have) sent += n < st.totalParts ? st.partSize : blob.size - st.partSize * (st.totalParts - 1);
+    rvSetProgress(rec.appointmentId, sent, blob.size);
+    for (let n = 1; n <= st.totalParts; n++) {
+      if (have.has(n)) continue;
+      const piece = blob.slice((n - 1) * st.partSize, Math.min(blob.size, n * st.partSize));
+      for (let attempt = 1; ; attempt++) {
+        try {
+          await rvUploadCall(rec, `/api/raven/appointments/${id}/upload/part?n=${n}&uploadId=${encodeURIComponent(st.uploadId)}`,
+            { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: piece }, RAVEN_PART_TIMEOUT_MS);
+          break;
+        } catch (err) {
+          if (err.name === "AbortError") err.kind = "network";
+          if (attempt >= RAVEN_PART_TRIES || !rvRetryable(err)) throw err;
+          await rvSleep(1500 * attempt * attempt);
+        }
+      }
+      sent += piece.size;
+      rvSetProgress(rec.appointmentId, sent, blob.size);
+    }
+    try {
+      await rvUploadCall(rec, `/api/raven/appointments/${id}/upload/complete`, { method: "POST", headers: J,
+        body: JSON.stringify({ interrupted: interruptions.length > 0,
+          interruptedAt: interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null)) }) }, 120000);
+      return true;
+    } catch (err) {
+      // A piece went missing between our send and Cockpit's check (or the
+      // upload was replaced): go round again — start reports what's there.
+      if (err.code === "parts_missing" || err.code === "upload_replaced" || err.code === "no_upload") continue;
+      throw err;
+    }
+  }
+  throw rvErr("http", "Upload did not finish — it will try again.", "upload_incomplete");
+}
+
+// The original one-request upload (kept for a Cockpit without step 5).
+async function rvUploadSingle(rec, blob){
+  const interruptions = rec.interruptions || [];
+  const form = new FormData();
+  form.append("file", blob, rvFileNameForMime(rec.mimeType));
+  form.append("interrupted", interruptions.length > 0 ? "true" : "false");
+  // offsetMs is missing on interruptions logged before offsets existed —
+  // JSON.stringify emits null and Cockpit drops non-numbers.
+  form.append("interruptedAt", JSON.stringify(interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null))));
+  // No Content-Type header: the browser sets the multipart boundary itself.
+  await rvUploadCall(rec, `/api/raven/appointments/${encodeURIComponent(rec.appointmentId)}/audio`,
+    { method: "POST", body: form }, RAVEN_UPLOAD_TIMEOUT_MS);
   return true;
 }
 
@@ -728,7 +799,11 @@ async function rvFinishRecording(){
   renderRaven();
 }
 
+const rvUploadingNow = new Set();   // one upload per recording at a time
 async function rvTryUpload(rec){
+  if (rvUploadingNow.has(rec.appointmentId)) return false;
+  rvUploadingNow.add(rec.appointmentId);
+  rvRefreshDeviceList();
   try {
     const chunks = await rvGetChunks(rec.appointmentId);
     if (!chunks.length) {
@@ -752,7 +827,14 @@ async function rvTryUpload(rec){
         if (cur) { cur.uploadConflict = err.code; cur.uploadConflictBy = rvUserId() || rvRepName(); await rvPutAppointment(cur); }
       } catch (e) { /* best effort */ }
     }
+    try {
+      const cur = await rvGetAppointment(rec.appointmentId);
+      if (cur) { cur.lastUploadError = String(err.message || "upload failed").slice(0, 200); cur.lastUploadTryAt = Date.now(); await rvPutAppointment(cur); }
+    } catch (e) { /* best effort */ }
     return false;
+  } finally {
+    rvUploadingNow.delete(rec.appointmentId);
+    rvRefreshDeviceList();
   }
 }
 
@@ -847,8 +929,73 @@ async function rvFinalizeAbandonedRecordings(){
 async function rvRefreshPendingCount(){
   try {
     const all = await rvAllAppointments();
-    RV.pendingCount = all.filter((a) => a.status === "pending-upload").length;
-  } catch (e) { RV.pendingCount = 0; }
+    const pending = all.filter((a) => a.status === "pending-upload");
+    RV.pendingCount = pending.length;
+    // Sizes come from the saved pieces' metadata (no audio is read).
+    const list = [];
+    for (const a of pending) {
+      let bytes = 0;
+      try { (await rvGetChunks(a.appointmentId)).forEach((c) => { bytes += (c.blob && c.blob.size) || 0; }); } catch (e) { /* size unknown */ }
+      list.push({ appointmentId: a.appointmentId, label: a.jobLabel || "", startedAt: a.startedAt || a.endedAt || null, bytes,
+        mine: rvRecordingIsMine(a), repName: a.repName || "", conflict: a.uploadConflict || null, lastError: a.lastUploadError || null });
+    }
+    list.sort((x, y) => String(x.startedAt || "").localeCompare(String(y.startedAt || "")));
+    RV.deviceRecordings = list;
+  } catch (e) { RV.pendingCount = 0; RV.deviceRecordings = []; }
+  rvRefreshDeviceList();
+}
+
+// ── Recordings on this device (RAVN step 5) ───────────────────────────
+// Every recording still waiting to upload, with its size and state, and an
+// Upload button. Nothing here deletes anything — a recording leaves the
+// device only after Cockpit confirms it (rvTryUpload).
+function rvFmtBytes(n){
+  if (!n) return "size unknown";
+  return n >= 1048576 ? (n / 1048576).toFixed(n >= 104857600 ? 0 : 1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+}
+function rvDeviceListHTML(){
+  const list = RV.deviceRecordings || [];
+  if (!list.length) return `<div id="rvDeviceList"></div>`;
+  const rows = list.map((r) => {
+    const id = rvEsc(r.appointmentId);
+    const when = r.startedAt ? new Date(r.startedAt).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+    let state, btn = "";
+    if (rvUploadingNow.has(r.appointmentId)) {
+      state = `Uploading… <b data-rv-pct="${id}">0%</b><div class="rv-progress"><div class="rv-progress-bar" data-rv-bar="${id}"></div></div>`;
+    } else if (!r.mine) {
+      state = `Waiting for ${rvEsc(r.repName || "its rep")} to sign in on this device`;
+    } else if (r.conflict === "not_owner") {
+      state = "Cockpit says this recording belongs to another rep — it stays on this device.";
+    } else if (r.conflict === "already_uploaded") {
+      state = "Cockpit already has a different recording for this appointment — this copy stays on the device. Tell Jack.";
+    } else {
+      state = r.lastError ? `Waiting to upload — last try: ${rvEsc(r.lastError)}` : "Waiting to upload";
+      btn = `<button class="qb-btn-primary rv-up-btn" data-rv-up="${id}"${navigator.onLine ? "" : " disabled"}>Upload now</button>`;
+    }
+    return `<div class="rv-dev-row">
+      <div class="rv-dev-main"><div class="rv-job-name">${rvEsc(r.label || "Appointment")}</div>
+        <div class="rv-job-meta">${rvEsc(when)} · ${rvFmtBytes(r.bytes)}</div>
+        <div class="rv-dev-state">${state}</div></div>${btn}</div>`;
+  }).join("");
+  return `<div id="rvDeviceList" class="rv-pending-banner rv-devlist">
+    <div class="rv-dev-head">${list.length} recording${list.length === 1 ? "" : "s"} saved on this device, not yet uploaded${navigator.onLine ? "" : " — you're offline; they'll send when you're back online"}</div>
+    ${rows}</div>`;
+}
+function rvRefreshDeviceList(){
+  const el = document.getElementById("rvDeviceList");
+  if (!el) return;
+  el.outerHTML = rvDeviceListHTML();
+  for (const r of rvUploadingNow) { const p = rvUploadProgress[r]; if (p) rvSetProgress(r, p.sent, p.total); }
+  document.querySelectorAll("[data-rv-up]").forEach((b) => {
+    b.onclick = async () => {
+      const rec = await rvGetAppointment(b.getAttribute("data-rv-up"));
+      if (!rec) return rvRefreshPendingCount();
+      const p = rvTryUpload(rec);
+      rvRefreshDeviceList();
+      await p;
+      await rvRefreshPendingCount();
+    };
+  });
 }
 
 async function rvRetryPendingUploads(opts){
@@ -1120,7 +1267,7 @@ function rvRenderSearch(el){
       <div class="eyebrow">Rep-only</div>
       <h1>Start Appointment</h1>
     </div>
-    ${RV.pendingCount ? `<div class="rv-pending-banner">${RV.pendingCount} recording${RV.pendingCount === 1 ? "" : "s"} still waiting to upload. ${navigator.onLine ? "Retrying now…" : "Will send automatically once you're back online."}</div>` : ""}
+    ${rvDeviceListHTML()}
     <div class="rv-signed-in">
       <span>Signed in as <b>${rvEsc(rvRepName() || "this iPad")}</b></span>
       <button class="rv-signout" id="rvSignOut">Sign out</button>
@@ -1141,6 +1288,7 @@ function rvRenderSearch(el){
     rvDoSearch();
   };
   document.getElementById("rvSearchBtn").onclick = go;
+  rvRefreshDeviceList();
   qEl.onkeydown = (e) => { if (e.key === "Enter") go(); };
   el.querySelectorAll(".rv-job").forEach((b) => {
     b.onclick = () => {
@@ -1237,7 +1385,13 @@ function rvRenderRecording(el){
 function rvRenderReview(el){
   const gaps = RV.interruptions.length;
   if (RV.status === "uploading") {
-    el.innerHTML = `<div class="qb-status"><div class="qb-status-icon">⏳</div><div>Uploading recording to Cockpit…</div></div>`;
+    const id = rvEsc(RV.appointmentId || "");
+    el.innerHTML = `<div class="qb-status"><div class="qb-status-icon">⏳</div>
+      <div>Uploading recording to Cockpit… <b data-rv-pct="${id}">0%</b></div>
+      <div class="rv-progress"><div class="rv-progress-bar" data-rv-bar="${id}"></div></div>
+      <p class="rv-gap-log">You can leave this screen — it keeps going, and picks up where it stopped if the connection drops.</p></div>`;
+    const p = rvUploadProgress[RV.appointmentId];
+    if (p) rvSetProgress(RV.appointmentId, p.sent, p.total);
     return;
   }
   const uploaded = RV.status === "uploaded";

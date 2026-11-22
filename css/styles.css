@@ -2628,6 +2628,16 @@
     color:#a32c1e;font-size:16px;}
   .rv-pending-banner{padding:10px 14px;border-radius:10px;background:#fdf3e2;
     border:1px solid #f0dcae;color:#a06b10;font-size:15px;margin-bottom:14px;}
+  /* RAVN step 5: upload progress + recordings saved on this device */
+  .rv-progress{width:100%;max-width:320px;height:8px;border-radius:999px;background:#ece7da;overflow:hidden;margin:8px auto 0;}
+  .rv-progress-bar{height:100%;width:0;background:#a06b10;transition:width .3s ease;}
+  .rv-devlist .rv-progress{margin:6px 0 0;max-width:none;}
+  .rv-dev-head{font-weight:600;margin-bottom:6px;}
+  .rv-dev-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #f0dcae;}
+  .rv-dev-main{flex:1;min-width:0;}
+  .rv-dev-main .rv-job-name{color:#3a2a08;}
+  .rv-dev-state{font-size:14px;margin-top:3px;overflow-wrap:anywhere;}
+  .rv-up-btn{flex:none;padding:8px 14px;font-size:15px;}
 
   .rv-recording-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;
     padding:24px 20px;text-align:center;}
