@@ -637,7 +637,7 @@ function renderSlide(){
       </button>`).join("");
     panel.innerHTML = `
       <div class="products-head">
-        <div class="products-eyebrow">${s.eyebrow||"Around The House · Home Solutions"}</div>
+        ${s.eyebrow?`<div class="products-eyebrow">${s.eyebrow}</div>`:""}
         <h2>${s.title}</h2>
         ${s.paragraph?`<p>${s.paragraph}</p>`:""}
       </div>

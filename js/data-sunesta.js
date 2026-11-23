@@ -351,7 +351,6 @@ const DECK = {
       // tier5 + tier6 are ATH's own photos (Sunesta beauty shot · Latitude pergola from aroundthehouseco.com).
       id:"pricecond", type:"costscale",
       bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-18)
-      eyebrow:"Know the market: position, don't surprise",
       title:"Not All Shade Costs the Same",
       paragraph:"Five tiers of shade, from a sail on poles to a motorized louvered roof. Tap any tier to see what your money actually buys.",
       // 5 rungs — matches the price-conditioning script's 5 price points

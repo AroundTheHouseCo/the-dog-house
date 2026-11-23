@@ -440,7 +440,6 @@ const ECLIPSE_DECK = {
     // Sunesta's tier1 slot took a different photo, so the credit applies here only.
     id:"ez-pricecond", type:"costscale",
     bigThumbs:true,   // doubled tier circles + matching popover scale (2026-08-10)
-    eyebrow:"Know the market: position, don't surprise",
     title:"Not All Shade Costs the Same",
     paragraph:"Four tiers of outdoor shade, from a bamboo roll-up to a full glass room. Tap any tier to see what that money actually buys.",
     rungs:[
