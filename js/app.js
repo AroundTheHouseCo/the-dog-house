@@ -979,7 +979,7 @@ function renderSlide(){
             <polygon points="50,30 29,76 71,76" fill="#2e7d4f"/>
             <polygon points="50,36 34,73 66,73" fill="#245e3f"/>
           </svg>
-          <div class="wr-tri-label">${s.triLabel || 'One warranty, backed three ways — tap a logo'}</div>
+          <div class="wr-tri-label">${s.triLabel || 'One warranty, backed three ways. Tap a logo.'}</div>
         </div>
         <div class="wr-service">
           <img src="${s.serviceBadge || IMAGES.serviceBadge}" alt="">

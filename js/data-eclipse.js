@@ -102,7 +102,7 @@ const ECLIPSE_DECK = {
     bullets:[
       "Twenty-two years and thousands of projects across the Front Range",
       "Certified technicians and install teams who work with us and only us",
-      "Trained to Eclipse specs, and to our own standards on top",
+      "Trained to Eclipse specs, plus our own standards",
       "A full operations team on every project, so nothing rests on one person"
     ],
     image: IMAGES.ezPeopleInstalling
@@ -305,7 +305,7 @@ const ECLIPSE_DECK = {
     title:"The Fabric: SunTex® by Phifer",
     bullets:[
       "All Phifer SunTex®: GREENGUARD Gold certified, built for the outdoors",
-      "All colors cost the same","The only real choice is openness: UV blocked vs. view kept",
+      "All colors cost the same","The only real choice is openness: more UV blocked, or more view",
       "Most popular: SunTex 95 blocks ~95% of UV and keeps your view",
       "Want full blackout? A solid fabric gives total shade and privacy",
       "6 colors on SunTex 80/90, 10 on SunTex 95/97, from near-black to white"
@@ -371,7 +371,7 @@ const ECLIPSE_DECK = {
   },
   {
     id:"ez-warranty", type:"warrantyrecap",
-    title:"The Warranty — Recapped",
+    title:"The Warranty, Recapped",
     subtext:"Platinum Protection Plus — included on every ATH quote. Lifetime coverage on the frame, fabric, motor, and electronics.<br><span style=\"font-size:.82em;opacity:.72\">Most SunTex fabrics; optional clear windows excluded. Backed and serviced locally by ATH.</span>",
     tiles:[
       {num:"Lifetime", label:"Frame", sub:"extruded aluminum & powder coat"},
@@ -386,8 +386,8 @@ const ECLIPSE_DECK = {
       {id:"phifer", kind:"text", title:"Phifer", detail:"The fabric maker. Phifer's SunTex carries its own 10-year exterior fabric warranty and GREENGUARD Gold certification — the foundation under the PPP fabric coverage.", photo:null}
     ],
     serviceBadge: IMAGES.ezServiceBadge,
-    service:{title:"Serviced locally — for the life of the system", items:["You call us — never an 800 number","Same team that installed it","PPP registered at install"], foot:"Included with every ATH installation"},
-    triLabel:"One system, backed three ways — tap a logo"
+    service:{title:"Serviced locally, for the life of the system", items:["You call us, never an 800 number","Same team that installed it","PPP registered at install"], foot:"Included with every ATH installation"},
+    triLabel:"One system, backed three ways. Tap a logo."
   },
   {
     // NEW (spec §3.6). The three-column comparison migrated off ez-systems

@@ -78,7 +78,7 @@ const DECK = {
         {icon:IMAGES.badgeMiamiDade, label:"Miami-Dade County Approved", sublabel:"Tested to 98 mph before arm failure. Hurricane-zone rated.", detail:"Sunesta is the first retractable awning manufacturer to exceed Miami-Dade's strict standards (NOA #24-0401.03). Arms tested to 98 mph before failure."},
         {icon:IMAGES.badgeSkinCancer, label:"Skin Cancer Foundation", sublabel:"UV blockage tested & approved, with their seal of recommendation", detail:"The fabric's UV blockage is tested and approved by The Skin Cancer Foundation. It carries their seal of recommendation for effective sun protection. At Colorado elevation, where UV exposure runs significantly higher than people expect, that matters."},
         {icon:null, label:"Around The House Home Solutions", sublabel:"4.9 ★★★★★ · 200+ local reviews", link:"https://share.google/00IDfj15biWj76ERJ"},
-        {icon:IMAGES.award, label:"Award-Winning Team", sublabel:"National Dealer of the Year 2025 · 4x Customer Satisfaction", detail:"Sunesta's National Dealer of the Year for 2025, recognized as the #1 awning/shade dealer in the western United States. Plus a 4x Customer Satisfaction award winner with Gutter Helmet, two years in a row. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price."},
+        {icon:IMAGES.award, label:"Award-Winning Team", sublabel:"National Dealer of the Year 2025 · 4x Customer Satisfaction", detail:"Sunesta's National Dealer of the Year for 2025, recognized as the #1 awning/shade dealer in the western United States. Plus a four-time Gutter Helmet Customer Satisfaction award winner, including the last two years running. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price."},
         {icon:IMAGES.badgeBBB, label:"Better Business Bureau", sublabel:"Zero unresolved complaints in our company history", detail:"A+ rated and accredited. It doesn't mean we're perfect, but we have zero unresolved complaints in our company history. What that really means is when something comes up, we take care of it."}
       ],
       script:"Our awning systems are Miami-Dade County approved — they've been tested in hurricane conditions, and the arms held up to about 98 mph winds before failure.\n\n👉 Use THEIR home as the example: \"Your home is in Falcon — one of the most wind-prone areas in the Springs\" or \"You mentioned the wind can rip through the back porch.\"\n\nWhile we don't deal with hurricanes in southern Colorado, we certainly get hit with some major winds. The good news is we install a wind sensor on our motorized awnings as a standard feature — your awning closes automatically if the wind picks up. I'll cover that again in a bit.\n\nSKIN CANCER FOUNDATION — technical fact first, then the emotional angle: \"The fabric's UV blockage is actually tested and approved by The Skin Cancer Foundation — it carries their seal of recommendation for effective sun protection. And that matters out here — you either need sunscreen… or shade. Especially in Colorado, where the sun can be absolutely brutal and relentless, and at our altitude the UV exposure is significantly higher. Super important to stay protected.\"\n\nGOOGLE REVIEWS: \"Here locally, we've also got over 200 five-star reviews. Our reputation is important to us, so we've worked hard to communicate well and create happy customers.\"\n\nAWARDS — delivered so they smile: \"We're a 4x Customer Satisfaction award winner — two years in a row — with Gutter Helmet. In an industry like home remodeling that's pretty notorious for complaints, it's pretty cool that we're winning awards. And as I mentioned, in 2025 Sunesta named us their National Dealer of the Year — we're really proud of the relationship we've built with them. Because we're able to achieve higher volume, we get a high-quality product at a more affordable price.\"\n\nBBB — last on purpose: \"It doesn't mean we're perfect, but we have zero unresolved complaints in our company history.\"\n\n👉 If they push on it: \"What that really means is when something comes up, we take care of it.\"",
@@ -117,7 +117,7 @@ const DECK = {
         {title:"American Made", text:"Arms, fabric, and frame built in the USA."},
         {title:"Somfy Motor", text:"The world's most trusted motor, hand-assembled in Spain. Dimmable, multi-channel remote."},
         {title:"Rust-Proof Arms", text:"Four PVC-coated steel cables inside each arm. No rusting bicycle chains."},
-        {title:"SmartCase Protection", text:"Fully encloses the fabric when retracted. Shields it from rain, snow, UV, hail, pine needles."},
+        {title:"SmartCase Protection", text:"Fully encloses the fabric when retracted. Shields it from rain, snow, UV, hail and pine needles."},
         {title:"98 MPH Tested", text:"Miami-Dade approved; arms held to 98 mph. 30 mph continuous wind rating."},
         {title:"Lifetime Warranty", text:"Lifetime arms & hardware, 10-yr fabric & motor — and it's transferable."},
         {title:"Built to the Inch", text:"Custom sizing up to 40' wide and 14'8\" projection, made for your home."},
@@ -189,7 +189,7 @@ const DECK = {
          specs:[
            ["Projection options","Five: 5' · 6'8\" · 8'3\" · 10' · 11'6\""],
            ["Maximum width","40 feet, custom-built to the inch"],
-           ["Wind rating","24–30 mph at 8'3\". Drops to 17–23 mph at 10' and 11'6\""],
+           ["Wind rating","24–30 mph at 8'3\", dropping to 17–23 mph at 10' and 11'6\""],
            ["Arms","Extruded aluminum, four PVC-coated steel cables per arm"],
            ["Motor","Somfy 50 Nm, wired or wireless (manual gear available)"],
            ["Frame colors","White · Beige · Brown · Clay"],
@@ -202,7 +202,7 @@ const DECK = {
          specs:[
            ["Projection options","Four: 5' · 6'8\" · 8'3\" · 10'"],
            ["Maximum width","24 feet, custom-built to the inch"],
-           ["Wind rating","24–30 mph only through 6'8\". 17–23 mph at 8'3\" and 10'"],
+           ["Wind rating","24–30 mph only through 6'8\", then 17–23 mph at 8'3\" and 10'"],
            ["Arms","Lighter-duty arm design than the Sunesta and Sunstyle"],
            ["Motor","Somfy 25 Nm: half the torque of the other two models"],
            ["Frame colors","White · Beige · Clay"],
@@ -249,10 +249,10 @@ const DECK = {
         rows:[
           {label:"Frame Warranty",cells:[{s:"check",t:"Lifetime"},{s:"warn",t:"Lifetime*"},{s:"x",t:"Limited / 1–3 Yr"}]},
           {label:"Arm Warranty",cells:[{s:"check",t:"Lifetime"},{s:"warn",t:"10 Years"},{s:"x",t:"3–5 Years"}]},
-          {label:"Transferable to New Owner?",cells:[{s:"check",t:"Yes — adds resale value"},{s:"x",t:"No"},{s:"x",t:"No"}]},
+          {label:"Transferable to New Owner?",cells:[{s:"check",t:"Yes, adds resale value"},{s:"x",t:"No"},{s:"x",t:"No"}]},
           {label:"Wind Rating",cells:[{s:"check",t:"Defined & tested"},{s:"x",t:"Not defined"},{s:"x",t:"Not defined"}]},
           {label:"Sizing",cells:[{s:"check",t:"Custom, built to your home"},{s:"warn",t:"Limited options"},{s:"x",t:"Pre-built / stock sizes"}]},
-          {label:"Service Calls",cells:[{s:"check",t:"Free: local ATH team"},{s:"x",t:"Paid: drive from Denver"},{s:"x",t:"800 number only"}]},
+          {label:"Service Calls",cells:[{s:"check",t:"Free, from our local team"},{s:"x",t:"Paid, they drive from Denver"},{s:"x",t:"800 number only"}]},
           {label:"1-Year Service Visit",cells:[{s:"check",t:"Included"},{s:"x",t:"Not offered"},{s:"x",t:"Not offered"}]}
         ],
         footer:"Liberty's lifetime frame warranty is non-prorated and non-transferable. Wind ratings not defined. Always request the full written warranty before comparing."
@@ -315,7 +315,7 @@ const DECK = {
     {
       id:"led", type:"herosplit", image: IMAGES.ledAwningArms,
       title:"LED Lighting: Enjoy the Space After Dark",
-      subtext:"Our most popular add-on. Dimmable, on one remote with the awning. Choose under-arm task lighting or top-mounted underglow, the crowd favorite.",
+      subtext:"Our most popular add-on. Dimmable, and runs on the same remote as the awning. Choose under-arm task lighting or top-mounted underglow, the crowd favorite.",
       script:"This is actually our most popular add-on — LED lighting.\n\nIt completely changes the space at night — soft ambiance for dinner on the patio, or full brightness for an evening gathering. It's all dimmable, and it's the same remote that's already in your hand for the awning.\n\nWe can place the lights under the arms for functional task lighting, or on top of the arms for an underglow effect — that's our more popular option. It's integrated into the awning, not a clip-on afterthought. They can be added later too, but it typically costs a little more because it requires a return trip.\n\nThe number of customers who add this and then tell us 'I can't imagine not having it' — it's most of them. Just something to consider.\n\nAnd one more thing — with all of our awnings, we include a free one-year service. Let me show you what that covers.\n\n[Transition] \"Well, thanks for your time on that. Any questions about anything? Our company, products, me — anything at all?\"",
       talkingPoints:["Most popular add-on — lifestyle close","Under-arm = task light · top-of-arm = underglow (most popular)","Dimmable, one remote with the awning","Add-later possible but costs more (return trip) — rep guidance","Segue: free one-year service → next slide","End with the open question — company, products, me, anything"],
       coach:"Paint the evening picture — dinner, a glass of wine, the game. Real photo now — a lit patio at night under the awning arms."
@@ -324,11 +324,11 @@ const DECK = {
   "THE WRAP-UP": [
     {
       id:"warrantyrecap", type:"warrantyrecap",
-      title:"The Warranty — Recapped",
+      title:"The Warranty, Recapped",
       subtext:"One national warranty, backed three ways — and your first year of service on us.",
       tiles:[
-        {num:"Lifetime", label:"Frame", sub:"incl. powder coating — chips, fade, defects"},
-        {num:"Lifetime", label:"Arms — Sunesta", sub:"Sunstyle 15 yr · Sunlight 12 yr", hero:true},
+        {num:"Lifetime", label:"Frame", sub:"incl. powder coating: chips, fade, defects"},
+        {num:"Lifetime", label:"Arms (Sunesta)", sub:"Sunstyle 15 yr · Sunlight 12 yr", hero:true},
         {num:"10 years", label:"Fabric", sub:"20+ yr lifespan with the Smart Case"},
         {num:"10 years", label:"Motor", sub:"hand-assembled Somfy"},
         {num:"5 years", label:"Electronics", sub:"remotes & controls"}
@@ -338,7 +338,7 @@ const DECK = {
         {id:"sunesta", kind:"logo", title:"Sunesta", detail:"The manufacturer itself — designed, engineered, and warrantied by one company. Not an assembly of parts from five different suppliers.", photo:IMAGES.triSunestaAwning},
         {id:"gibraltar", kind:"text", title:"Gibraltar", detail:"Sunesta's parent financial backing — Gibraltar Industries — is what makes the nation's-best warranty coverage possible and dependable over the long run.", photo:null}
       ],
-      service:{title:"First year of service — on us", items:["Cleaning & inspection","Remote battery replacement","Pitch & tension adjustments"], foot:"Additional service packages available beyond year one"},
+      service:{title:"First year of service, on us", items:["Cleaning & inspection","Remote battery replacement","Pitch & tension adjustments"], foot:"Additional service packages available beyond year one"},
       script:"Before we look at options, let me quickly recap what's actually backing all of this.\n\nThe hardware carries a lifetime warranty — that includes the powder coating, so chips, fading, and defects are covered. The fabric is a 10-year warranty — and like I mentioned, with the Smart Case we routinely see 20-plus years out of it. The arms depend on the model — twelve years on the Sunlight, fifteen on the Sunstyle, and lifetime on the Sunesta — that's part of why we lean toward the flagship. The motor carries a 10-year warranty, and the electronics — the remotes and controls — carry five.\n\nDEEP-DIVE — ARMS & MOTOR (competitor contrast): \"Two of those are worth a second longer. The arms — that's where cheap awnings die. Two-cable arms, thin hardware, chain-style systems that corrode… when those fail, you're not fixing a part, you're replacing the unit. Ours are the PVC-coated steel-cable arms we talked about, and they're warrantied accordingly.\n\nAnd the motor — a lot of what's sold out there runs an imported motor with a one-year warranty. When it fails in year three, that company charges you a trip fee just to come look at it, and then parts and labor on top — you get nickel-and-dimed for the life of the awning. Ours is the hand-assembled Somfy, ten years, and we're local.\n\nOne more thing worth knowing: every manufacturer requires correct installation for the warranty to be valid at all. A guy off Craigslist might get it on the wall — but if it's not installed to spec, there may be no warranty behind it at all.\"\n\nTRIANGLE OF STRENGTH: \"Sunesta is a national brand — so yes, we're your local company… but you also have a national warranty backing you.\n\nA lot of other companies piece together parts from a bunch of different manufacturers — we call those Frankenstein awnings (Get a laugh). When that company goes out of business, your warranty typically goes with them, so it's nice knowing a national brand has you covered.\n\nYour new awning comes with a unique QR code which contains all the important data about your awning — product type, measurements, fabric information — which makes the warranty process simple and efficient. And the warranty is fully transferable to the next homeowner, so it adds some good value to the project and the home.\"\n\n1-YEAR FREE SERVICE: \"And with all of our awnings, your first year of service is on us — we come back out, clean the unit, replace the remote battery, and make any adjustments needed. Additional service packages are available beyond that first year too.\"\n\nTransition / engagement question: \"Any questions about the warranties?\"",
       talkingPoints:["Recap the grid, then go deeper on just TWO components: arms + motor","Arms = where cheap awnings die · motor = imported one-year warranties, trip fees, nickel-and-diming","Doubt-plant: warranty requires correct installation — a Craigslist install may carry no warranty at all","Frankenstein awnings — get the laugh, then go serious for QR + transferable","First year of service on us: cleaning · battery · adjustments","End on: 'Any questions about the warranties?'"],
       coach:"⏱ Keep this tight: 1.5–2 minutes, NOT 15 (Matt's explicit note). Tap a triangle logo for detail — the family and awning photos are in the popups. Service inclusions are DRAFT from Matt's outline — confirm before leaning on specifics."
