@@ -61,7 +61,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-24.2";
+const RAVN_APP_BUILD = "2026-11-24.3";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -680,7 +680,7 @@ const RVC = {
   samples: 0,                // every sample captured, written or pending
   lastFrameAt: 0, lastSignalAt: 0, level: 0,
   stalled: false, stallSince: null, stallOffsetMs: null, stallCause: null,
-  lastResumeTry: 0, resuming: false, needsTap: false, watchdog: null, recoveredAt: null,
+  lastResumeTry: 0, resuming: false, resumingSince: 0, needsTap: false, watchdog: null, recoveredAt: null,
 };
 
 // Some iOS audio promises never settle; never let one hang the recorder.
@@ -746,9 +746,10 @@ async function rvPcmAttach(stream){
   if (track) {
     track.onended = () => rvPcmCheck("ended");
     track.onmute = () => rvPcmCheck("muted");
-    track.onunmute = () => rvPcmCheck();
+    // The mic coming back (a call ending) is the moment to retry at once.
+    track.onunmute = () => { RVC.lastResumeTry = 0; rvPcmCheck(); };
   }
-  ctx.onstatechange = () => rvPcmCheck();
+  ctx.onstatechange = () => { if (ctx.state === "running") RVC.lastResumeTry = 0; rvPcmCheck(); };
   if (ctx.state !== "running") { try { await rvWithin(ctx.resume(), 1500); } catch (e) { /* the watchdog sees it */ } }
 }
 function rvPcmOpenMic(){
@@ -812,33 +813,98 @@ function rvSaveInterruptions(){
 }
 // Get the mic back. `fromTap` = called from the Resume button, where iOS
 // allows starting audio again even if it refused on its own.
+// Get the mic back.
+//
+// Step 8c (Jack's iPhone test, 2026-11-24): after a declined phone call the
+// red cue stayed on and "Resume recording" did nothing, while Pause then
+// Resume brought the mic back. The cause: an automatic retry asked iOS for
+// the mic DURING the call; iOS never answered, that request never finished,
+// and the "already trying" flag it held blocked every later attempt, the
+// button included. Now every iOS call here has a time limit, a stuck
+// automatic attempt expires, and a TAP always runs the full restart (the
+// same one Pause then Resume uses) no matter what else is in flight.
+let rvResumeGen = 0;
+const RAVEN_MIC_OPEN_TIMEOUT_MS = 5000;
 async function rvPcmResume(fromTap){
-  if (RVC.resuming) return;
-  RVC.resuming = true; RVC.lastResumeTry = Date.now();
+  const now = Date.now();
+  if (!fromTap && RVC.resuming && now - RVC.resumingSince < 8000) return;
+  const gen = ++rvResumeGen;
+  RVC.resuming = true; RVC.resumingSince = now; RVC.lastResumeTry = now;
   try {
-    if (fromTap) rvPcmMakeContext();
+    if (fromTap) return await rvMicRestart(gen, true);
+    // Automatic: first just ask the audio to carry on.
     const ctx = RVC.ctx;
     if (ctx && ctx.state !== "running") { try { await rvWithin(ctx.resume(), 1500); } catch (e) { /* below */ } }
+    if (gen !== rvResumeGen) return;
     const track = RVC.stream && RVC.stream.getAudioTracks()[0];
+    const stalledFor = RVC.stalled ? Date.now() - RVC.stallSince : 0;
     const dead = !track || track.readyState === "ended" ||
-      (RVC.stalled && Date.now() - RVC.stallSince > 3000 && (track.muted || RVC.stallCause === "silent" || RVC.stallCause === "no-samples"));
-    if (dead || fromTap) {
+      (stalledFor > 3000 && (track.muted || RVC.stallCause === "silent" || RVC.stallCause === "no-samples"));
+    // Still down after 10 s (e.g. right after a call): try the full restart
+    // without a tap. iOS may refuse that; then the rep's one tap does it.
+    if (stalledFor > 10000) return await rvMicRestart(gen, false);
+    if (dead) {
       if (document.hidden) return;   // iOS won't hand the mic to a hidden page
       try {
-        const stream = await rvPcmOpenMic();
+        const stream = await rvWithin(rvPcmOpenMic(), RAVEN_MIC_OPEN_TIMEOUT_MS);
+        if (gen !== rvResumeGen) { stream.getTracks().forEach((t) => t.stop()); return; }
         await rvPcmAttach(stream);
         RV.micError = null;
       } catch (err) {
-        RV.micError = err && err.name || "Error";
         RVC.needsTap = true;
+        if (err && err.name && err.message !== "timeout") RV.micError = err.name;
         renderRaven();
         return;
       }
     }
     if (RVC.ctx && RVC.ctx.state !== "running") { RVC.needsTap = true; renderRaven(); }
   } finally {
-    RVC.resuming = false;
+    if (gen === rvResumeGen) RVC.resuming = false;
   }
+}
+
+// The full restart: what Pause then Resume does, and what "Resume
+// recording" and a tap on the clock screen do. The first part runs before
+// any await, so on a tap iOS counts it as the rep's own action and lets the
+// audio start: a stopped audio context is replaced with a fresh one and the
+// mic request is made right away. Then: a brand-new mic stream, wired into
+// the same recording, so the samples keep landing in the same file.
+async function rvMicRestart(gen, fromTap){
+  if (fromTap || !RVC.ctx || RVC.ctx.state === "closed") {
+    if (RVC.ctx && RVC.ctx.state !== "running") rvPcmNewContext();
+    else rvPcmMakeContext();
+  }
+  if (document.hidden && !fromTap) return;
+  let streamP;
+  try { streamP = rvPcmOpenMic(); } catch (e) { streamP = Promise.reject(e); }
+  try {
+    const stream = await rvWithin(streamP, RAVEN_MIC_OPEN_TIMEOUT_MS);
+    if (gen !== rvResumeGen) { stream.getTracks().forEach((t) => t.stop()); return; }
+    await rvPcmAttach(stream);
+    if (RVC.ctx && RVC.ctx.state !== "running") { try { await rvWithin(RVC.ctx.resume(), 1500); } catch (e) { /* checked below */ } }
+    RV.micError = null;
+    // Same grace Pause then Resume gives: count from now, not from the old
+    // stream's last sound.
+    RVC.lastFrameAt = RVC.lastSignalAt = Date.now();
+    RVC.needsTap = !!(RVC.ctx && RVC.ctx.state !== "running");
+  } catch (err) {
+    RVC.needsTap = true;
+    // A plain time-out means iOS is still holding the mic (the call isn't
+    // over): no scary help box, just the cue and the Resume button.
+    if (err && err.name && err.message !== "timeout") RV.micError = err.name;
+  }
+  renderRaven();
+  setTimeout(rvPcmCheck, 800);
+}
+// A stopped audio context iOS won't restart: replace it. The recording
+// itself (samples, pieces, gaps) lives outside it and is untouched.
+function rvPcmNewContext(){
+  try { if (RVC.src) RVC.src.disconnect(); } catch (e) { /* gone */ }
+  try { if (RVC.node) { RVC.node.port.onmessage = null; RVC.node.disconnect(); } } catch (e) { /* gone */ }
+  try { if (RVC.sink) RVC.sink.disconnect(); } catch (e) { /* gone */ }
+  try { if (RVC.ctx && RVC.ctx.state !== "closed") RVC.ctx.close(); } catch (e) { /* gone */ }
+  RVC.src = RVC.node = RVC.sink = null; RVC.ctx = null; RVC.moduleReady = null;
+  rvPcmMakeContext();
 }
 // Wait until real sound (not zeros) has arrived, or give up.
 function rvPcmWaitForSound(ms){
@@ -1049,9 +1115,9 @@ function rvResumeFromPause(){
   RV.pausedTotalMs = (RV.pausedTotalMs || 0) + ms;
   RV.paused = false; RV.pausedAt = null;
   if (RV.engine === "pcm") {
-    // The mic may have been taken while paused; the watchdog gets it back.
+    // Same full restart as "Resume recording" (rvMicRestart).
     RVC.lastFrameAt = RVC.lastSignalAt = Date.now();
-    rvPcmResume(true).then(() => setTimeout(rvPcmCheck, 600));
+    rvPcmResume(true);
   } else if (rvRecorder && rvRecorder.state === "paused") {
     try { rvRecorder.resume(); } catch (e) { /* ignore */ }
   }
@@ -1099,6 +1165,7 @@ function rvShowDiscreet(){
   renderRaven();
 }
 function rvShowStatus(){
+  if (RV.engine === "pcm" && RVC.stalled && !RV.paused) rvPcmResume(true);   // the tap itself restarts the mic
   RV.discreet = false;
   renderRaven();
   rvArmDiscreetReturn();
@@ -2039,7 +2106,7 @@ function rvRenderRecording(el){
   const stop2 = document.getElementById("rvStopBtn2");
   if (stop2) stop2.onclick = () => { RV.pendingInterruption = null; rvRequestStop(); };
   const resume = document.getElementById("rvResumeBtn");
-  if (resume) resume.onclick = () => { rvPcmResume(true).then(() => setTimeout(rvPcmCheck, 600)); };
+  if (resume) resume.onclick = () => { rvPcmResume(true); };
   const cont = document.getElementById("rvContinueBtn");
   if (cont) cont.onclick = rvDismissInterruption;
   if (RV.status === "recording" && !RV.captureLost) rvStartTimer();
