@@ -271,3 +271,18 @@ body.rb-app .rv-gap-log:empty{display:none;}
 .lc{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none;pointer-events:none;}
 body.rb-app .tcv-field-label em{color:#9A5A00;}
 body.rb-app .tcv-hit-tag{color:#007A3F;}
+
+/* RAVN step 8 recorder: live level, "Not recording" alert, mic help. */
+body.rb-app .rv-level{flex:0 0 72px;height:8px;border-radius:4px;background:#E8DFC4;overflow:hidden;margin-left:auto;}
+body.rb-app .rv-level span{display:block;height:100%;width:0;background:#008A47;transition:width 150ms linear;}
+body.rb-app .rv-live.lost .rv-dot{background:#B3261E;}
+body.rb-app .rv-mic-alert{width:100%;max-width:520px;background:#FDECEA;border:2px solid #B3261E;border-radius:16px;padding:16px;text-align:left;}
+body.rb-app .rv-mic-alert-title{font-size:20px;font-weight:900;color:#8C1D18;margin-bottom:6px;}
+body.rb-app .rv-mic-alert p{font-size:16px;line-height:1.5;color:#3A3A3C;margin:0 0 12px;}
+body.rb-app .rv-mic-alert .rv-mic-help{border:0;padding:0;background:none;margin:0 0 12px;}
+body.rb-app .rv-mic-help{width:100%;max-width:520px;background:#FFFDF8;border:2px solid #F9A11B;border-radius:16px;padding:16px;text-align:left;margin:0 auto 16px;}
+body.rb-app .rv-mic-help-title{font-size:18px;font-weight:900;color:#3A3A3C;margin-bottom:8px;}
+body.rb-app .rv-mic-help ol{margin:0 0 10px;padding-left:22px;font-size:16px;line-height:1.5;color:#3A3A3C;}
+body.rb-app .rv-mic-help li{margin-bottom:6px;}
+body.rb-app .rv-mic-help-note{font-size:14px;color:#5F5B53;margin:0 0 10px;}
+body.rb-app .rv-mic-help .qb-btn-primary{width:100%;}

@@ -15,6 +15,17 @@
 // decide, and (d) ship every interruption to Cockpit as metadata so the
 // transcript's gaps are explainable later rather than mysterious.
 //
+// Step 8 (Nov 2026): on iPhones the recorder now writes plain 16 kHz PCM
+// through an AudioWorklet instead of MediaRecorder, so when iOS takes the mic
+// away mid-appointment (Control Center, a call, Siri, the screen locking)
+// RAVN gets it back by itself and the new audio continues the SAME file
+// (uploaded as one .wav). A watchdog shows a red "Not recording" warning the
+// moment samples stop or turn to digital silence, and each gap is logged
+// with where it happened in the audio. The mic is checked for real sound
+// BEFORE Cockpit is asked to open the appointment, so an appointment never
+// sits at "started" with no audio because the mic never worked. Capture with
+// the screen OFF still needs the native app; a web page can't do it.
+//
 // Local-first: chunks land in IndexedDB (NOT localStorage — that caps
 // around 5-10MB and stores strings only, which cannot hold an hour of
 // audio) so an app crash, a reload, or a dead upload never costs the
@@ -50,7 +61,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-23.2";
+const RAVN_APP_BUILD = "2026-11-24.1";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -443,6 +454,7 @@ async function rvCancelAppointment(appointmentId, reason){
 // inflation on a file that can already run into the tens of MB.
 function rvFileNameForMime(mimeType){
   const m = String(mimeType || "");
+  if (m.indexOf("wav") >= 0) return "recording.wav";
   if (m.indexOf("mp4") >= 0) return "recording.m4a";
   if (m.indexOf("webm") >= 0) return "recording.webm";
   if (m.indexOf("ogg") >= 0) return "recording.ogg";
@@ -508,7 +520,7 @@ async function rvUploadChunked(rec, blob){
   for (let round = 0; round < 3; round++) {
     // start = "begin, or tell me what you already have"
     const st = await rvUploadCall(rec, `/api/raven/appointments/${id}/upload/start`,
-      { method: "POST", headers: J, body: JSON.stringify({ bytes: blob.size, contentType: rec.mimeType || "audio/mp4" }) }, 30000);
+      { method: "POST", headers: J, body: JSON.stringify({ bytes: blob.size, contentType: blob.type || rec.mimeType || "audio/mp4" }) }, 30000);
     const have = new Set(st.received || []);
     let sent = 0;
     for (const n of have) sent += n < st.totalParts ? st.partSize : blob.size - st.partSize * (st.totalParts - 1);
@@ -549,7 +561,7 @@ async function rvUploadChunked(rec, blob){
 async function rvUploadSingle(rec, blob){
   const interruptions = rec.interruptions || [];
   const form = new FormData();
-  form.append("file", blob, rvFileNameForMime(rec.mimeType));
+  form.append("file", blob, rvFileNameForMime(blob.type || rec.mimeType));
   form.append("interrupted", interruptions.length > 0 ? "true" : "false");
   // offsetMs is missing on interruptions logged before offsets existed —
   // JSON.stringify emits null and Cockpit drops non-numbers.
@@ -635,21 +647,307 @@ function rvReleaseWakeLock(){
   rvWakeLock = null;
 }
 
+// ── Recorder engine (RAVN step 8) ─────────────────────────────────────
+// iPhones record through an AudioWorklet that writes plain 16 kHz PCM
+// (js/raven-pcm-worklet.js). Why not MediaRecorder any more: when iOS takes
+// the mic away (Control Center, Siri, a call, the screen locking) a
+// MediaRecorder either stops for good or keeps "recording" nothing, and a
+// second MediaRecorder's .m4a cannot be glued onto the first. PCM can: when
+// the mic comes back RAVN opens it again and the new samples continue the
+// same file. A watchdog checks every second that samples are arriving and
+// are not digital silence (a muted mic sends exact zeros); while they are
+// not, the screen shows a red "Not recording" warning and RAVN keeps trying
+// to get the mic back. Each gap is logged with where it happened in the
+// audio. MediaRecorder stays only as the fallback for a browser without
+// AudioWorklet (desktop development).
+const RAVEN_PCM_RATE = 16000;
+const RAVEN_PCM_TYPE = "audio/l16;rate=16000";
+const RAVEN_PCM_CHUNK_SAMPLES = RAVEN_PCM_RATE * 5;    // one IndexedDB row per ~5 s, like before
+const RAVEN_MIC_CHECK_MS = 5000;                      // how long Start waits for real sound
+const RAVEN_STALL_FRAMES_MS = 2500;                   // no samples for this long = not recording
+const RAVEN_STALL_ZERO_MS = 3000;                     // only exact zeros for this long = mic muted
+
+const RVC = {
+  ctx: null, stream: null, src: null, node: null, sink: null, moduleReady: null,
+  pending: [], pendingN: 0,  // samples not yet written to IndexedDB
+  samples: 0,                // every sample captured, written or pending
+  lastFrameAt: 0, lastSignalAt: 0, level: 0,
+  stalled: false, stallSince: null, stallOffsetMs: null, stallCause: null,
+  lastResumeTry: 0, resuming: false, needsTap: false, watchdog: null, recoveredAt: null,
+};
+
+// Some iOS audio promises never settle; never let one hang the recorder.
+function rvWithin(p, ms){
+  return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
+}
+function rvPcmSupported(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  return !!(AC && window.AudioWorkletNode && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+}
+// Must run inside the Start tap (iOS only lets a tap start audio).
+function rvPcmMakeContext(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!RVC.ctx || RVC.ctx.state === "closed") { RVC.ctx = new AC(); RVC.moduleReady = null; }
+  try { RVC.ctx.resume(); } catch (e) { /* checked again below */ }
+  return RVC.ctx;
+}
+function rvPcmResetCounters(){
+  RVC.pending = []; RVC.pendingN = 0; RVC.samples = 0;
+  RVC.lastFrameAt = 0; RVC.lastSignalAt = 0; RVC.level = 0;
+  RVC.stalled = false; RVC.stallSince = null; RVC.stallOffsetMs = null; RVC.stallCause = null;
+  RVC.needsTap = false; RVC.recoveredAt = null;
+}
+function rvPcmOnFrame(ev){
+  const d = ev.data || {};
+  if (!d.pcm) return;
+  const pcm = new Int16Array(d.pcm);
+  const now = Date.now();
+  RVC.lastFrameAt = now;
+  RVC.level = d.rms || 0;
+  if (d.peak > 0) RVC.lastSignalAt = now;
+  RVC.pending.push(pcm); RVC.pendingN += pcm.length; RVC.samples += pcm.length;
+  if (RVC.pendingN >= RAVEN_PCM_CHUNK_SAMPLES) rvPcmFlush();
+}
+// Write what's pending to IndexedDB (only once Cockpit gave us an id).
+function rvPcmFlush(){
+  const id = RV.appointmentId;
+  if (!id || !RVC.pendingN) return Promise.resolve();
+  const blob = new Blob(RVC.pending, { type: RAVEN_PCM_TYPE });
+  RVC.pending = []; RVC.pendingN = 0;
+  const seq = RV.seq++;
+  RV.bytes += blob.size;
+  return rvPutChunk(id, seq, blob).catch((err) => { console.warn("RAVN: chunk write failed", err); });
+}
+async function rvPcmAttach(stream){
+  const ctx = RVC.ctx;
+  if (!RVC.moduleReady) RVC.moduleReady = ctx.audioWorklet.addModule("js/raven-pcm-worklet.js");
+  await RVC.moduleReady;
+  if (!RVC.node) {
+    RVC.node = new AudioWorkletNode(ctx, "ravn-pcm", { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] });
+    RVC.node.port.onmessage = rvPcmOnFrame;
+    RVC.sink = ctx.createGain(); RVC.sink.gain.value = 0;   // keeps the graph pulling; plays nothing
+    RVC.node.connect(RVC.sink); RVC.sink.connect(ctx.destination);
+  }
+  try { if (RVC.src) RVC.src.disconnect(); } catch (e) { /* already gone */ }
+  RVC.src = ctx.createMediaStreamSource(stream);
+  RVC.src.connect(RVC.node);
+  if (RVC.stream && RVC.stream !== stream) RVC.stream.getTracks().forEach((t) => t.stop());
+  RVC.stream = stream;
+  rvStream = stream;
+  const track = stream.getAudioTracks()[0];
+  if (track) {
+    track.onended = () => rvPcmCheck("ended");
+    track.onmute = () => rvPcmCheck("muted");
+    track.onunmute = () => rvPcmCheck();
+  }
+  ctx.onstatechange = () => rvPcmCheck();
+  if (ctx.state !== "running") { try { await rvWithin(ctx.resume(), 1500); } catch (e) { /* the watchdog sees it */ } }
+}
+function rvPcmOpenMic(){
+  return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+}
+function rvPcmTeardown(){
+  if (RVC.watchdog) { clearInterval(RVC.watchdog); RVC.watchdog = null; }
+  try { if (RVC.src) RVC.src.disconnect(); } catch (e) { /* gone */ }
+  try { if (RVC.node) { RVC.node.port.onmessage = null; RVC.node.disconnect(); } } catch (e) { /* gone */ }
+  try { if (RVC.sink) RVC.sink.disconnect(); } catch (e) { /* gone */ }
+  if (RVC.stream) RVC.stream.getTracks().forEach((t) => t.stop());
+  try { if (RVC.ctx && RVC.ctx.state !== "closed") RVC.ctx.close(); } catch (e) { /* gone */ }
+  RVC.src = RVC.node = RVC.sink = RVC.stream = RVC.ctx = null; RVC.moduleReady = null;
+  rvStream = null;
+}
+// Is audio actually arriving right now? (frames flowing AND not pure zeros)
+function rvPcmHealthy(now){
+  const track = RVC.stream && RVC.stream.getAudioTracks()[0];
+  if (!RVC.ctx || RVC.ctx.state !== "running") return "paused";
+  if (!track || track.readyState === "ended") return "ended";
+  if (now - RVC.lastFrameAt > RAVEN_STALL_FRAMES_MS) return "no-samples";
+  if (now - RVC.lastSignalAt > RAVEN_STALL_ZERO_MS) return track.muted ? "muted" : "silent";
+  return null;
+}
+// The watchdog: runs every second while recording, and on every mic /
+// audio / visibility event.
+function rvPcmCheck(){
+  if (RV.engine !== "pcm" || RV.status !== "recording") return;
+  const now = Date.now();
+  const lvl = document.getElementById("rvLevel");
+  if (lvl) lvl.style.width = Math.min(100, Math.round(Math.sqrt(RVC.level) * 260)) + "%";
+  const problem = rvPcmHealthy(now);
+  if (problem && !RVC.stalled) {
+    RVC.stalled = true;
+    RVC.stallCause = problem;
+    // The gap starts where the last real sound was heard.
+    RVC.stallSince = Math.min(now, Math.max(RVC.lastSignalAt, RVC.lastFrameAt) || now);
+    RVC.stallOffsetMs = Math.round(RVC.samples / RAVEN_PCM_RATE * 1000);
+    rvPcmFlush();
+    renderRaven();
+  }
+  if (problem && now - RVC.lastResumeTry > 2000) rvPcmResume(false);
+  if (!problem && RVC.stalled) {
+    const entry = { at: new Date().toISOString(), ms: now - RVC.stallSince, offsetMs: RVC.stallOffsetMs,
+      killedCapture: false, cause: RVC.stallCause };
+    RV.interruptions.push(entry);
+    RVC.stalled = false; RVC.stallSince = null; RVC.needsTap = false; RVC.recoveredAt = now;
+    rvSaveInterruptions();
+    renderRaven();
+  }
+}
+function rvSaveInterruptions(){
+  if (!RV.appointmentId) return;
+  rvGetAppointment(RV.appointmentId).then((rec) => {
+    if (!rec) return;
+    rec.interruptions = RV.interruptions.slice();
+    return rvPutAppointment(rec);
+  }).catch(() => { /* best effort */ });
+}
+// Get the mic back. `fromTap` = called from the Resume button, where iOS
+// allows starting audio again even if it refused on its own.
+async function rvPcmResume(fromTap){
+  if (RVC.resuming) return;
+  RVC.resuming = true; RVC.lastResumeTry = Date.now();
+  try {
+    if (fromTap) rvPcmMakeContext();
+    const ctx = RVC.ctx;
+    if (ctx && ctx.state !== "running") { try { await rvWithin(ctx.resume(), 1500); } catch (e) { /* below */ } }
+    const track = RVC.stream && RVC.stream.getAudioTracks()[0];
+    const dead = !track || track.readyState === "ended" ||
+      (RVC.stalled && Date.now() - RVC.stallSince > 3000 && (track.muted || RVC.stallCause === "silent" || RVC.stallCause === "no-samples"));
+    if (dead || fromTap) {
+      if (document.hidden) return;   // iOS won't hand the mic to a hidden page
+      try {
+        const stream = await rvPcmOpenMic();
+        await rvPcmAttach(stream);
+        RV.micError = null;
+      } catch (err) {
+        RV.micError = err && err.name || "Error";
+        RVC.needsTap = true;
+        renderRaven();
+        return;
+      }
+    }
+    if (RVC.ctx && RVC.ctx.state !== "running") { RVC.needsTap = true; renderRaven(); }
+  } finally {
+    RVC.resuming = false;
+  }
+}
+// Wait until real sound (not zeros) has arrived, or give up.
+function rvPcmWaitForSound(ms){
+  return new Promise((resolve) => {
+    const t0 = Date.now();
+    const iv = setInterval(() => {
+      if (RVC.lastSignalAt > t0 - 1) { clearInterval(iv); resolve(true); }
+      else if (Date.now() - t0 > ms) { clearInterval(iv); resolve(false); }
+    }, 100);
+  });
+}
+
+// Plain-language fixes for a microphone that won't open, iPhone first.
+function rvMicHelp(errName){
+  const n = String(errName || "");
+  if (n === "NotAllowedError" || n === "SecurityError" || n === "PermissionDenied") {
+    return { title: "The microphone is blocked for RAVN", steps: [
+      "Open the Settings app on this iPhone.",
+      "Tap Apps, then Safari. (On iOS 17 or older, scroll down and tap Safari.)",
+      "Tap Microphone and choose Allow.",
+      "Swipe RAVN closed (swipe up from the bottom and flick it away), open it again and tap Start.",
+    ], note: "If Microphone is greyed out: Settings, Screen Time, Content & Privacy Restrictions, Microphone, Allow Changes." };
+  }
+  if (n === "NotReadableError" || n === "AbortError" || n === "TrackStartError") {
+    return { title: "Another app is using the microphone", steps: [
+      "End any phone or FaceTime call, voice memo, or Siri request.",
+      "Come back to RAVN and tap Try again.",
+    ] };
+  }
+  if (n === "NotFoundError" || n === "OverconstrainedError") {
+    return { title: "No microphone was found", steps: [
+      "Unplug any headphones or adapter and try again.",
+      "If it still fails, restart the iPhone.",
+    ] };
+  }
+  if (n === "Silent") {
+    return { title: "The microphone isn't picking up any sound", steps: [
+      "Check nothing is covering the bottom of the iPhone.",
+      "End any call or app that might be using the microphone.",
+      "Tap Try again.",
+    ] };
+  }
+  return { title: "The microphone didn't start", steps: ["Tap Try again.", "If it keeps failing, swipe RAVN closed, open it again and tap Start."] };
+}
+function rvMicHelpHTML(errName, withRetry){
+  const h = rvMicHelp(errName);
+  return `<div class="rv-mic-help" role="alert">
+    <div class="rv-mic-help-title">${rvEsc(h.title)}</div>
+    <ol>${h.steps.map((s) => `<li>${rvEsc(s)}</li>`).join("")}</ol>
+    ${h.note ? `<p class="rv-mic-help-note">${rvEsc(h.note)}</p>` : ""}
+    ${withRetry ? `<button class="qb-btn-primary" id="rvMicRetry">Try again</button>` : ""}
+  </div>`;
+}
+
 async function rvBeginAppointment(job){
+  // Synchronous part first: iOS only lets a tap start audio.
+  const usePcm = rvPcmSupported();
+  if (usePcm) { try { rvPcmMakeContext(); } catch (e) { /* falls back below */ } }
   RV.job = job;
   RV.status = "starting";
+  RV.startPhase = "mic";
   RV.errorMessage = null;
+  RV.micError = null;
   RV.view = "recording";
   renderRaven();
 
+  // 1. Microphone FIRST. Nothing is created on Cockpit until we have real
+  //    sound, so an appointment can never sit at "started" with no audio.
+  let stream;
+  try {
+    stream = await (usePcm ? rvPcmOpenMic() : navigator.mediaDevices.getUserMedia({ audio: true }));
+  } catch (err) {
+    if (usePcm) rvPcmTeardown();
+    RV.status = "error";
+    RV.micError = (err && err.name) || "Error";
+    RV.errorMessage = null;
+    renderRaven();
+    return;
+  }
+
+  let rec = null;
+  const mime = rvPickMime();
+  if (usePcm) {
+    rvPcmResetCounters();
+    try { await rvPcmAttach(stream); }
+    catch (err) {
+      rvPcmTeardown();
+      RV.status = "error"; RV.micError = null;
+      RV.errorMessage = "This iPhone couldn't start the recorder. Swipe RAVN closed, open it again and try once more.";
+      renderRaven();
+      return;
+    }
+    const heard = await rvPcmWaitForSound(RAVEN_MIC_CHECK_MS);
+    if (!heard) {
+      rvPcmTeardown();
+      RV.status = "error"; RV.micError = "Silent"; RV.errorMessage = null;
+      renderRaven();
+      return;
+    }
+  } else {
+    try { rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream); }
+    catch (err) {
+      stream.getTracks().forEach((t) => t.stop());
+      RV.status = "error"; RV.errorMessage = "This device can't record audio in a supported format.";
+      renderRaven();
+      return;
+    }
+  }
+
+  // 2. Sound is coming in: now open the appointment on Cockpit. Audio keeps
+  //    being captured meanwhile and is written once the id comes back.
+  RV.startPhase = "cockpit";
+  renderRaven();
+  const captureStartedAt = new Date().toISOString();
   let appointmentId;
   try {
     appointmentId = await rvCreateAppointment(job.jnid);
   } catch (err) {
-    // Nothing was captured yet, so bounce to whichever screen actually
-    // addresses the problem instead of a dead-end error inside the
-    // recording view. "auth" already cleared the session, so falling back
-    // to the search view renders the login screen.
+    if (usePcm) rvPcmTeardown(); else stream.getTracks().forEach((t) => t.stop());
     if (err.kind === "disabled") { RV.disabled = true; RV.view = "search"; RV.status = "idle"; renderRaven(); return; }
     if (err.kind === "auth") { RV.view = "search"; RV.status = "idle"; renderRaven(); return; }
     RV.status = "error";
@@ -658,39 +956,10 @@ async function rvBeginAppointment(job){
     return;
   }
 
-  const mime = rvPickMime();
-  let stream;
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch (err) {
-    RV.status = "error";
-    RV.errorMessage = "Microphone access was denied, so recording can't start. " + (err.name || "");
-    renderRaven();
-    // appointmentId already exists on Cockpit at this point (rvCreateAppointment
-    // above succeeded) but nothing was ever written to IndexedDB for it — don't
-    // leave it orphaned at 'started' forever.
-    rvCancelAppointment(appointmentId, "getUserMedia failed: " + (err.name || err.message || "unknown"));
-    return;
-  }
-
-  let rec;
-  try {
-    rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-  } catch (err) {
-    stream.getTracks().forEach((t) => t.stop());
-    RV.status = "error";
-    RV.errorMessage = "This device can't record audio in a supported format.";
-    renderRaven();
-    rvCancelAppointment(appointmentId, "MediaRecorder construction failed: " + (err.name || err.message || "unknown"));
-    return;
-  }
-
-  rvStream = stream;
-  rvRecorder = rec;
   RV.appointmentId = appointmentId;
-  RV.startedAt = new Date().toISOString();
-  RV.mimeType = rec.mimeType || mime || "audio/mp4";
-  RV.status = "recording";
+  RV.startedAt = captureStartedAt;
+  RV.engine = usePcm ? "pcm" : "mr";
+  RV.mimeType = usePcm ? "audio/wav" : (rec.mimeType || mime || "audio/mp4");
   RV.seq = 0;
   RV.bytes = 0;
   RV.interruptions = [];
@@ -705,26 +974,28 @@ async function rvBeginAppointment(job){
     ownerUserId: rvUserId(),   // which sign-in this recording belongs to (null for a PIN)
     startedAt: RV.startedAt,
     mimeType: RV.mimeType,
+    engine: RV.engine,
     status: "recording",
     interruptions: [],
   });
 
-  rec.ondataavailable = (e) => {
-    if (!e.data || !e.data.size) return;
-    const seq = RV.seq++;
-    RV.bytes += e.data.size;
-    // Fire-and-forget: a failed chunk write must not stall capture, but it
-    // does need to be visible rather than silent.
-    rvPutChunk(appointmentId, seq, e.data).catch((err) => {
-      console.warn("Raven: chunk write failed", err);
-    });
-  };
-  rec.onerror = (e) => {
-    console.warn("Raven: recorder error", e.error);
-  };
-  rec.onstop = () => { rvFinishRecording(); };
-
-  rec.start(RAVEN_TIMESLICE_MS);
+  RV.status = "recording";
+  if (usePcm) {
+    await rvPcmFlush();   // the audio captured while Cockpit answered
+    RVC.watchdog = setInterval(rvPcmCheck, 1000);
+  } else {
+    rvStream = stream;
+    rvRecorder = rec;
+    rec.ondataavailable = (e) => {
+      if (!e.data || !e.data.size) return;
+      const seq = RV.seq++;
+      RV.bytes += e.data.size;
+      rvPutChunk(appointmentId, seq, e.data).catch((err) => { console.warn("Raven: chunk write failed", err); });
+    };
+    rec.onerror = (e) => { console.warn("Raven: recorder error", e.error); };
+    rec.onstop = () => { rvFinishRecording(); };
+    rec.start(RAVEN_TIMESLICE_MS);
+  }
   rvAcquireWakeLock();
   rvStartTimer();
   renderRaven();
@@ -757,12 +1028,24 @@ function rvFormatGap(ms){
   return `${m} minute${m === 1 ? "" : "s"}`;
 }
 
-function rvRequestStop(){
+async function rvRequestStop(){
   if (RV.status !== "recording") return;
   RV.status = "stopping";
   rvStopTimer();
   rvReleaseWakeLock();
   renderRaven();
+  if (RV.engine === "pcm") {
+    // A gap still open at Stop is logged too, up to the moment Stop was tapped.
+    if (RVC.stalled) {
+      RV.interruptions.push({ at: new Date().toISOString(), ms: Date.now() - RVC.stallSince, offsetMs: RVC.stallOffsetMs,
+        killedCapture: false, cause: RVC.stallCause });
+      RVC.stalled = false;
+    }
+    await rvPcmFlush();
+    rvPcmTeardown();
+    rvFinishRecording();
+    return;
+  }
   if (rvRecorder && rvRecorder.state !== "inactive") {
     rvRecorder.stop(); // onstop → rvFinishRecording()
   } else {
@@ -811,11 +1094,13 @@ async function rvTryUpload(rec){
     const chunks = await rvGetChunks(rec.appointmentId);
     if (!chunks.length) {
       // Nothing was ever captured — don't leave a phantom pending upload
-      // sitting in the queue forever.
+      // sitting in the queue forever, and close it on Cockpit too so it
+      // doesn't wait there at "started" with no audio.
+      if (!rec.recovered) await rvCancelAppointment(rec.appointmentId, "no audio was captured on the device");
       await rvClearAppointment(rec.appointmentId);
       return true;
     }
-    const blob = new Blob(chunks.map((c) => c.blob), { type: rec.mimeType || "audio/mp4" });
+    const blob = rvAssembleRecording(rec, chunks);
     await rvUploadAppointment(rec, blob);
     // The ONLY place a recording is deleted: after Cockpit confirmed it.
     await rvClearAppointment(rec.appointmentId);
@@ -841,6 +1126,28 @@ async function rvTryUpload(rec){
   }
 }
 
+// Step 8 recordings are raw 16 kHz PCM pieces: one WAV header in front
+// makes them a normal .wav file (Cockpit already reads WAV). Older .m4a
+// recordings are joined exactly as before.
+function rvIsPcmChunk(c){ return !!(c && c.blob && /^audio\/l16/.test(c.blob.type || "")); }
+function rvWavHeader(dataBytes){
+  const h = new DataView(new ArrayBuffer(44));
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) h.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, "RIFF"); h.setUint32(4, 36 + dataBytes, true); w(8, "WAVE");
+  w(12, "fmt "); h.setUint32(16, 16, true); h.setUint16(20, 1, true); h.setUint16(22, 1, true);
+  h.setUint32(24, RAVEN_PCM_RATE, true); h.setUint32(28, RAVEN_PCM_RATE * 2, true);
+  h.setUint16(32, 2, true); h.setUint16(34, 16, true);
+  w(36, "data"); h.setUint32(40, dataBytes, true);
+  return h.buffer;
+}
+function rvAssembleRecording(rec, chunks){
+  if (rvIsPcmChunk(chunks[0])) {
+    const bytes = chunks.reduce((n, c) => n + c.blob.size, 0);
+    return new Blob([rvWavHeader(bytes)].concat(chunks.map((c) => c.blob)), { type: "audio/wav" });
+  }
+  return new Blob(chunks.map((c) => c.blob), { type: rec.mimeType || "audio/mp4" });
+}
+
 // Does this saved recording belong to whoever is signed in now? On a shared
 // iPad, recordings wait for their own rep. Older recordings with no owner
 // recorded are tried for anyone (Cockpit has the final say).
@@ -859,6 +1166,12 @@ function rvRecordingIsMine(rec){
 // session down it reads "inactive" and we must not claim the rep can just
 // carry on.
 document.addEventListener("visibilitychange", () => {
+  // The step 8 recorder handles gaps itself (rvPcmCheck); coming back to the
+  // app is just a cue to grab the mic again straight away.
+  if (RV.engine === "pcm") {
+    if (!document.hidden && RV.status === "recording") { rvAcquireWakeLock(); rvPcmCheck(); }
+    return;
+  }
   if (document.hidden) {
     if (RV.status === "recording") RV.hiddenAt = Date.now();
     return;
@@ -893,6 +1206,8 @@ document.addEventListener("visibilitychange", () => {
   }
   renderRaven();
 });
+
+["pageshow", "focus"].forEach((ev) => window.addEventListener(ev, () => { if (RV.engine === "pcm") rvPcmCheck(); }));
 
 function rvDismissInterruption(){
   RV.pendingInterruption = null;
@@ -944,7 +1259,7 @@ async function rvFinalizeAbandonedRecordings(){
         ownerUserId: null,
         startedAt: g.firstAt ? new Date(g.firstAt).toISOString() : null,
         endedAt: g.lastAt ? new Date(g.lastAt).toISOString() : new Date().toISOString(),
-        mimeType: g.type || "audio/mp4",
+        mimeType: /^audio\/l16/.test(g.type || "") ? "audio/wav" : (g.type || "audio/mp4"),
         status: "pending-upload",
         interruptions: [],
         recovered: true,
@@ -1410,6 +1725,7 @@ function rvRenderSearch(el){
       <h1>Start Appointment</h1>
     </div>
     ${rvDeviceListHTML()}
+    <div id="rvMicPre"></div>
     <div class="rv-signed-in">
       <span>Signed in as <b>${rvEsc(rvRepName() || "this iPad")}</b></span>
       <button class="rv-signout" id="rvSignOut">Sign out</button>
@@ -1431,6 +1747,7 @@ function rvRenderSearch(el){
   };
   document.getElementById("rvSearchBtn").onclick = go;
   rvRefreshDeviceList();
+  rvMicPreflight();
   qEl.onkeydown = (e) => { if (e.key === "Enter") go(); };
   el.querySelectorAll(".rv-job").forEach((b) => {
     b.onclick = () => {
@@ -1438,6 +1755,16 @@ function rvRenderSearch(el){
       if (j) rvBeginAppointment(j);
     };
   });
+}
+
+// Warn before the appointment if this iPhone has already blocked the mic.
+async function rvMicPreflight(){
+  try {
+    if (!navigator.permissions || !navigator.permissions.query) return;
+    const st = await navigator.permissions.query({ name: "microphone" });
+    const box = document.getElementById("rvMicPre");
+    if (box) box.innerHTML = st.state === "denied" ? rvMicHelpHTML("NotAllowedError", false) : "";
+  } catch (e) { /* not supported: Start will say so if it's blocked */ }
 }
 
 async function rvDoSearch(){
@@ -1469,17 +1796,22 @@ async function rvDoSearch(){
 function rvRenderRecording(el){
   const job = RV.job || {};
   if (RV.status === "starting") {
-    el.innerHTML = `<div class="qb-status"><div class="qb-status-icon">⏳</div><div>Starting appointment…</div></div>`;
+    el.innerHTML = `<div class="qb-status"><div class="qb-status-icon">⏳</div><div>${RV.startPhase === "mic"
+      ? "Checking the microphone… say a few words."
+      : "Microphone works. Starting the appointment…"}</div></div>`;
     return;
   }
   if (RV.status === "error") {
     el.innerHTML = `<div class="qb-status">
       <div class="qb-status-icon">${AICON.warn}</div>
       <h2>Couldn't start recording</h2>
-      <p>${rvEsc(RV.errorMessage || "")}</p>
-      <button class="qb-btn-primary" id="rvBackToSearch">Back to search</button>
+      ${RV.micError ? rvMicHelpHTML(RV.micError, !!RV.job) : `<p>${rvEsc(RV.errorMessage || "")}</p>`}
+      <p class="rv-gap-log">Nothing was saved and no appointment was opened in Cockpit.</p>
+      <button class="rv-btn-ghost" id="rvBackToSearch">Back to search</button>
     </div>`;
     document.getElementById("rvBackToSearch").onclick = () => { rvResetToSearch(); renderRaven(); };
+    const retry = document.getElementById("rvMicRetry");
+    if (retry) retry.onclick = () => { const j = RV.job; if (j) rvBeginAppointment(j); };
     return;
   }
 
@@ -1497,19 +1829,33 @@ function rvRenderRecording(el){
       </div>
     </div>` : "";
 
+  const pcm = RV.engine === "pcm";
+  const stalled = pcm && RVC.stalled;
+  const missedMs = RV.interruptions.reduce((n, i) => n + (i.ms || 0), 0);
+  const stallHTML = stalled ? `
+    <div class="rv-mic-alert" role="alert">
+      <div class="rv-mic-alert-title">Not recording right now</div>
+      ${RV.micError ? rvMicHelpHTML(RV.micError, false) : `<p>The iPhone took the microphone away (Control Center, a call, Siri or the screen locking can do this). RAVN starts again by itself as soon as it can. If this stays red, tap Resume recording.</p>`}
+      <button class="qb-btn-primary" id="rvResumeBtn">Resume recording</button>
+    </div>` : "";
   el.innerHTML = `
     <div class="rv-recording-wrap">
-      <div class="rv-live ${RV.captureLost ? "lost" : ""}">
+      <div class="rv-live ${RV.captureLost || stalled ? "lost" : ""}">
         <span class="rv-dot"></span>
-        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : "Appointment in progress"}</span>
+        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : stalled ? "Not recording" : "Recording"}</span>
+        ${pcm && !stalled ? `<span class="rv-level" aria-hidden="true"><span id="rvLevel"></span></span>` : ""}
       </div>
+      ${stallHTML}
       <div class="rv-elapsed" id="rvElapsed">${rvFormatElapsed(RV.startedAt ? Date.now() - new Date(RV.startedAt).getTime() : 0)}</div>
       <div class="rv-job-card">
         <div class="rv-job-name">${rvEsc(job.name || job.display_name || "")}</div>
         <div class="rv-job-meta">${rvEsc(job.address || "")}</div>
       </div>
-      ${!RV.captureLost ? `<p class="rv-warn-copy">You can switch to another part of the app and come back. This picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
-      ${RV.interruptions.length ? `<div class="rv-gap-log">${RV.interruptions.length} interruption${RV.interruptions.length === 1 ? "" : "s"} logged and sent with the recording.</div>` : ""}
+      ${!RV.captureLost && pcm ? `<p class="rv-warn-copy">Keep RAVN open with the screen on. You can use other parts of RAVN. If the screen locks or you switch apps, the iPhone pauses the microphone; RAVN starts again when you come back and notes the gap.</p>` : ""}
+      ${!RV.captureLost && !pcm ? `<p class="rv-warn-copy">You can switch to another part of the app and come back. This picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
+      ${RV.interruptions.length ? `<div class="rv-gap-log">${pcm
+        ? `${RV.interruptions.length} gap${RV.interruptions.length === 1 ? "" : "s"}, about ${rvEsc(rvFormatGap(missedMs))} not recorded. Noted with the recording.`
+        : `${RV.interruptions.length} interruption${RV.interruptions.length === 1 ? "" : "s"} logged and sent with the recording.`}</div>` : ""}
       ${interruptionHTML}
       <button class="rv-stop-btn" id="rvStopBtn">${RV.status === "stopping" ? "Stopping…" : "Stop &amp; Upload"}</button>
     </div>
@@ -1519,6 +1865,8 @@ function rvRenderRecording(el){
   if (stop) stop.onclick = rvRequestStop;
   const stop2 = document.getElementById("rvStopBtn2");
   if (stop2) stop2.onclick = () => { RV.pendingInterruption = null; rvRequestStop(); };
+  const resume = document.getElementById("rvResumeBtn");
+  if (resume) resume.onclick = () => { rvPcmResume(true).then(() => setTimeout(rvPcmCheck, 600)); };
   const cont = document.getElementById("rvContinueBtn");
   if (cont) cont.onclick = rvDismissInterruption;
   if (RV.status === "recording" && !RV.captureLost) rvStartTimer();
@@ -1561,6 +1909,9 @@ function rvResetToSearch(){
   RV.interruptions = [];
   RV.pendingInterruption = null;
   RV.captureLost = false;
+  RV.engine = null;
+  RV.micError = null;
+  RV.startPhase = null;
   RV.results = null;
   RV.searchError = null;
   RV.pin = "";
