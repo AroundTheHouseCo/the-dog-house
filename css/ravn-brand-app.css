@@ -286,3 +286,25 @@ body.rb-app .rv-mic-help ol{margin:0 0 10px;padding-left:22px;font-size:16px;lin
 body.rb-app .rv-mic-help li{margin-bottom:6px;}
 body.rb-app .rv-mic-help-note{font-size:14px;color:#5F5B53;margin:0 0 10px;}
 body.rb-app .rv-mic-help .qb-btn-primary{width:100%;}
+
+/* RAVN step 8b: the discreet screen shown while recording. A dim clock;
+   nothing on it says "recording". Covers the whole app (fixed). */
+.rv-discreet{position:fixed;inset:0;z-index:9000;background:#0E0E0F;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;user-select:none;-webkit-user-select:none;}
+.rv-d-clock{position:relative;font-size:min(26vw,140px);font-weight:300;letter-spacing:-.02em;color:#5A5A5E;line-height:1;font-variant-numeric:tabular-nums;}
+.rv-d-colon{display:inline-block;padding:0 .04em;transition:opacity 300ms;}
+.rv-d-colon.dim{opacity:.25;}
+.rv-d-colon.still{opacity:1;}
+.rv-d-cue{position:absolute;right:-.28em;top:.12em;width:9px;height:9px;border-radius:50%;background:transparent;}
+.rv-d-cue.on{background:#C07A10;}
+.rv-d-date{font-size:18px;color:#3F3F43;font-weight:500;}
+/* Paused: obvious to the rep. */
+body.rb-app .rv-paused{width:100%;max-width:520px;background:#FFF4DD;border:2px solid #F9A11B;border-radius:16px;padding:16px;text-align:center;}
+body.rb-app .rv-paused-title{display:flex;align-items:center;justify-content:center;gap:8px;font-size:26px;font-weight:900;color:#9A5A00;}
+body.rb-app .rv-paused-title .lc{width:26px;height:26px;}
+body.rb-app .rv-paused p{font-size:16px;color:#3A3A3C;margin:6px 0 12px;}
+body.rb-app .rv-live.paused .rv-dot{background:#F9A11B;}
+body.rb-app .rv-big-btn{width:100%;max-width:520px;min-height:56px;font-size:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+body.rb-app .rv-elapsed-wrap{text-align:center;}
+body.rb-app .rv-elapsed-label{font-size:14px;color:#5F5B53;margin-top:-4px;}

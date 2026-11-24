@@ -61,7 +61,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-24.1";
+const RAVN_APP_BUILD = "2026-11-24.2";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -452,6 +452,11 @@ async function rvCancelAppointment(appointmentId, reason){
 // server-side to numbers only). No base64 — the stored Blob goes straight
 // into the FormData part, which is also what avoids base64's ~33% size
 // inflation on a file that can already run into the tens of MB.
+// Each gap or pause with where it is in the audio, how long, and why.
+function rvGapDetail(list){
+  return (list || []).map((i) => ({ offsetMs: typeof i.offsetMs === "number" ? i.offsetMs : null,
+    ms: typeof i.ms === "number" ? i.ms : null, cause: i.cause || "background" }));
+}
 function rvFileNameForMime(mimeType){
   const m = String(mimeType || "");
   if (m.indexOf("wav") >= 0) return "recording.wav";
@@ -545,7 +550,8 @@ async function rvUploadChunked(rec, blob){
     try {
       await rvUploadCall(rec, `/api/raven/appointments/${id}/upload/complete`, { method: "POST", headers: J,
         body: JSON.stringify({ interrupted: interruptions.length > 0,
-          interruptedAt: interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null)) }) }, 120000);
+          interruptedAt: interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null)),
+          gaps: rvGapDetail(interruptions) }) }, 120000);
       return true;
     } catch (err) {
       // A piece went missing between our send and Cockpit's check (or the
@@ -566,6 +572,7 @@ async function rvUploadSingle(rec, blob){
   // offsetMs is missing on interruptions logged before offsets existed —
   // JSON.stringify emits null and Cockpit drops non-numbers.
   form.append("interruptedAt", JSON.stringify(interruptions.map((i) => (typeof i.offsetMs === "number" ? i.offsetMs : null))));
+  form.append("gaps", JSON.stringify(rvGapDetail(interruptions)));
   // No Content-Type header: the browser sets the multipart boundary itself.
   await rvUploadCall(rec, `/api/raven/appointments/${encodeURIComponent(rec.appointmentId)}/audio`,
     { method: "POST", body: form }, RAVEN_UPLOAD_TIMEOUT_MS);
@@ -705,6 +712,7 @@ function rvPcmOnFrame(ev){
   RVC.lastFrameAt = now;
   RVC.level = d.rms || 0;
   if (d.peak > 0) RVC.lastSignalAt = now;
+  if (RV.paused) return;   // the rep paused: the mic stays open, nothing is kept
   RVC.pending.push(pcm); RVC.pendingN += pcm.length; RVC.samples += pcm.length;
   if (RVC.pendingN >= RAVEN_PCM_CHUNK_SAMPLES) rvPcmFlush();
 }
@@ -759,7 +767,7 @@ function rvPcmTeardown(){
 // Is audio actually arriving right now? (frames flowing AND not pure zeros)
 function rvPcmHealthy(now){
   const track = RVC.stream && RVC.stream.getAudioTracks()[0];
-  if (!RVC.ctx || RVC.ctx.state !== "running") return "paused";
+  if (!RVC.ctx || RVC.ctx.state !== "running") return "audio-paused";
   if (!track || track.readyState === "ended") return "ended";
   if (now - RVC.lastFrameAt > RAVEN_STALL_FRAMES_MS) return "no-samples";
   if (now - RVC.lastSignalAt > RAVEN_STALL_ZERO_MS) return track.muted ? "muted" : "silent";
@@ -772,6 +780,7 @@ function rvPcmCheck(){
   const now = Date.now();
   const lvl = document.getElementById("rvLevel");
   if (lvl) lvl.style.width = Math.min(100, Math.round(Math.sqrt(RVC.level) * 260)) + "%";
+  if (RV.paused) return;   // nothing is being kept, so nothing can be "missing"
   const problem = rvPcmHealthy(now);
   if (problem && !RVC.stalled) {
     RVC.stalled = true;
@@ -780,6 +789,7 @@ function rvPcmCheck(){
     RVC.stallSince = Math.min(now, Math.max(RVC.lastSignalAt, RVC.lastFrameAt) || now);
     RVC.stallOffsetMs = Math.round(RVC.samples / RAVEN_PCM_RATE * 1000);
     rvPcmFlush();
+    rvBuzz();
     renderRaven();
   }
   if (problem && now - RVC.lastResumeTry > 2000) rvPcmResume(false);
@@ -980,6 +990,8 @@ async function rvBeginAppointment(job){
   });
 
   RV.status = "recording";
+  RV.paused = false; RV.pausedAt = null; RV.pausedTotalMs = 0;
+  RV.discreet = true;   // straight to the plain screen
   if (usePcm) {
     await rvPcmFlush();   // the audio captured while Cockpit answered
     RVC.watchdog = setInterval(rvPcmCheck, 1000);
@@ -1001,12 +1013,147 @@ async function rvBeginAppointment(job){
   renderRaven();
 }
 
+// ── Pause / Resume and the discreet screen (RAVN step 8b) ──────────────
+// Pause: the rep taps Pause when they step away (on the roof, outside while
+// the couple talks privately). The mic stays open so Resume is instant, but
+// nothing is kept while paused. Each pause is logged in the recording like a
+// gap, with cause "rep-paused", where it is in the audio and how long it was.
+function rvRecordedMs(){
+  if (RV.engine === "pcm") return Math.round(RVC.samples / RAVEN_PCM_RATE * 1000);
+  const wall = RV.startedAt ? Date.now() - new Date(RV.startedAt).getTime() : 0;
+  return Math.max(0, wall - (RV.pausedTotalMs || 0) - (RV.paused ? Date.now() - RV.pausedAt : 0));
+}
+function rvPause(){
+  if (RV.status !== "recording" || RV.paused) return;
+  RV.paused = true;
+  RV.pausedAt = Date.now();
+  RV.pauseOffsetMs = rvRecordedMs();
+  if (RV.engine === "pcm") {
+    // A stretch the mic had already dropped ends here; the pause takes over.
+    if (RVC.stalled) {
+      RV.interruptions.push({ at: new Date().toISOString(), ms: Date.now() - RVC.stallSince, offsetMs: RVC.stallOffsetMs, killedCapture: false, cause: RVC.stallCause });
+      RVC.stalled = false; RVC.stallSince = null;
+    }
+    rvPcmFlush();
+  } else if (rvRecorder && rvRecorder.state === "recording") {
+    try { rvRecorder.pause(); } catch (e) { /* older browsers: keeps recording */ }
+  }
+  RV.discreet = false;   // a paused screen is for the rep: show it plainly
+  rvSaveInterruptions();
+  renderRaven();
+}
+function rvResumeFromPause(){
+  if (!RV.paused) return;
+  const ms = Date.now() - RV.pausedAt;
+  RV.interruptions.push({ at: new Date().toISOString(), ms, offsetMs: RV.pauseOffsetMs, killedCapture: false, cause: "rep-paused" });
+  RV.pausedTotalMs = (RV.pausedTotalMs || 0) + ms;
+  RV.paused = false; RV.pausedAt = null;
+  if (RV.engine === "pcm") {
+    // The mic may have been taken while paused; the watchdog gets it back.
+    RVC.lastFrameAt = RVC.lastSignalAt = Date.now();
+    rvPcmResume(true).then(() => setTimeout(rvPcmCheck, 600));
+  } else if (rvRecorder && rvRecorder.state === "paused") {
+    try { rvRecorder.resume(); } catch (e) { /* ignore */ }
+  }
+  rvSaveInterruptions();
+  rvShowDiscreet();
+}
+function rvPauseSummary(){
+  const p = RV.interruptions.filter((i) => i.cause === "rep-paused");
+  const g = RV.interruptions.filter((i) => i.cause !== "rep-paused");
+  const ms = (a) => a.reduce((n, i) => n + (i.ms || 0), 0);
+  return { pauses: p.length, pausedMs: ms(p), gaps: g.length, gapMs: ms(g) };
+}
+
+// A small buzz the rep feels when the mic stops. iPhones ignore the web
+// vibrate call; on iOS 18 toggling a hidden switch control gives a light
+// tap instead. Best effort either way (the native app will do this
+// properly); the on-screen cue is what is guaranteed.
+function rvBuzz(){
+  RV.buzzes = (RV.buzzes || 0) + 1;
+  try { if (navigator.vibrate && navigator.vibrate([80, 60, 80])) return; } catch (e) { /* none */ }
+  try {
+    let lab = document.getElementById("rvHaptic");
+    if (!lab) {
+      lab = document.createElement("label");
+      lab.id = "rvHaptic";
+      lab.setAttribute("aria-hidden", "true");
+      lab.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none";
+      lab.innerHTML = '<input type="checkbox" switch tabindex="-1">';
+      document.body.appendChild(lab);
+    }
+    lab.click();
+  } catch (e) { /* no haptics here */ }
+}
+
+// The discreet screen: what a customer sees if they glance at the phone
+// while it records. A dim bedside-clock face, nothing that says
+// "recording". Only the rep knows the cues: the clock's colon blinks while
+// recording; it stops and a small amber dot appears next to the minutes
+// when the mic isn't recording. Tap anywhere for the full status.
+const RAVEN_DISCREET_RETURN_MS = 30000;   // full status hides itself after this long untouched
+let rvDiscreetTimer = null;
+function rvShowDiscreet(){
+  if (rvDiscreetTimer) { clearTimeout(rvDiscreetTimer); rvDiscreetTimer = null; }
+  RV.discreet = true;
+  renderRaven();
+}
+function rvShowStatus(){
+  RV.discreet = false;
+  renderRaven();
+  rvArmDiscreetReturn();
+}
+function rvArmDiscreetReturn(){
+  if (rvDiscreetTimer) clearTimeout(rvDiscreetTimer);
+  rvDiscreetTimer = setTimeout(() => {
+    rvDiscreetTimer = null;
+    // Never hide a paused screen or a problem the rep hasn't seen fixed.
+    if (RV.view === "recording" && RV.status === "recording" && !RV.paused && !(RV.engine === "pcm" && RVC.stalled)) rvShowDiscreet();
+    else rvArmDiscreetReturn();
+  }, RAVEN_DISCREET_RETURN_MS);
+}
+function rvDiscreetHealthy(){
+  if (RV.engine === "pcm") return !RVC.stalled;
+  return !!rvRecorder && rvRecorder.state === "recording";
+}
+function rvRenderDiscreet(el){
+  const now = new Date();
+  const h = now.getHours() % 12 || 12, m = String(now.getMinutes()).padStart(2, "0");
+  const day = now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+  const ok = rvDiscreetHealthy();
+  el.innerHTML = `<div class="rv-discreet" id="rvDiscreet" aria-label="Clock. Tap for appointment status.">
+      <div class="rv-d-clock"><span id="rvDH">${h}</span><span class="rv-d-colon${ok ? "" : " still"}" id="rvDColon">:</span><span id="rvDM">${m}</span><span class="rv-d-cue${ok ? "" : " on"}" id="rvDCue"></span></div>
+      <div class="rv-d-date" id="rvDDate">${rvEsc(day)}</div>
+    </div>`;
+  const d = document.getElementById("rvDiscreet");
+  d.onclick = rvShowStatus;
+}
+// One tick a second: the discreet clock, its colon and cue, and the status
+// screen's recorded time.
+let rvTickN = 0;
+function rvTick(){
+  rvTickN++;
+  const now = new Date();
+  const dh = document.getElementById("rvDH");
+  if (dh) {
+    dh.textContent = String(now.getHours() % 12 || 12);
+    document.getElementById("rvDM").textContent = String(now.getMinutes()).padStart(2, "0");
+    const ok = rvDiscreetHealthy();
+    const colon = document.getElementById("rvDColon");
+    colon.classList.toggle("still", !ok);
+    colon.classList.toggle("dim", ok && rvTickN % 2 === 0);
+    document.getElementById("rvDCue").classList.toggle("on", !ok);
+  }
+  const el = document.getElementById("rvElapsed");
+  if (el) el.textContent = rvFormatElapsed(rvRecordedMs());
+  const pf = document.getElementById("rvPausedFor");
+  if (pf && RV.paused) pf.textContent = rvFormatElapsed(Date.now() - RV.pausedAt);
+}
+
 function rvStartTimer(){
   rvStopTimer();
-  rvTimerHandle = setInterval(() => {
-    const el = document.getElementById("rvElapsed");
-    if (el && RV.startedAt) el.textContent = rvFormatElapsed(Date.now() - new Date(RV.startedAt).getTime());
-  }, 1000);
+  rvTickN = 0;
+  rvTimerHandle = setInterval(rvTick, 1000);
 }
 function rvStopTimer(){
   if (rvTimerHandle) clearInterval(rvTimerHandle);
@@ -1034,6 +1181,12 @@ async function rvRequestStop(){
   rvStopTimer();
   rvReleaseWakeLock();
   renderRaven();
+  if (RV.paused) {
+    RV.interruptions.push({ at: new Date().toISOString(), ms: Date.now() - RV.pausedAt, offsetMs: RV.pauseOffsetMs, killedCapture: false, cause: "rep-paused" });
+    RV.paused = false; RV.pausedAt = null;
+    if (rvRecorder && rvRecorder.state === "paused") { try { rvRecorder.resume(); } catch (e) { /* ignore */ } }
+  }
+  if (rvDiscreetTimer) { clearTimeout(rvDiscreetTimer); rvDiscreetTimer = null; }
   if (RV.engine === "pcm") {
     // A gap still open at Stop is logged too, up to the moment Stop was tapped.
     if (RVC.stalled) {
@@ -1188,7 +1341,7 @@ document.addEventListener("visibilitychange", () => {
   // into the recording where it dropped"). `ms` (the gap's own duration) is
   // a different number and would be the wrong thing to send there.
   const offsetMs = RV.startedAt ? Math.max(0, hiddenSince - new Date(RV.startedAt).getTime()) : null;
-  const entry = { at: new Date().toISOString(), ms, offsetMs, killedCapture: !stillLive };
+  const entry = { at: new Date().toISOString(), ms, offsetMs, killedCapture: !stillLive, cause: "background" };
   RV.interruptions.push(entry);
   RV.pendingInterruption = entry;
   if (!stillLive) {
@@ -1505,7 +1658,10 @@ function renderRaven(){
   // mid-appointment, capture keeps running locally and the upload queue
   // retries later. Dropping a rep onto a login screen mid-visit would
   // unmount the only Stop control they have.
-  if (RV.view === "recording") return rvRenderRecording(el);
+  if (RV.view === "recording") {
+    if (RV.status === "recording" && RV.discreet && !RV.paused && !RV.captureLost) return rvRenderDiscreet(el);
+    return rvRenderRecording(el);
+  }
   if (RV.view === "review") return rvRenderReview(el);
   if (RV.view === "devcheck") return rvRenderDeviceCheck(el);
   if (RV.disabled) return rvRenderDisabled(el);
@@ -1830,36 +1986,53 @@ function rvRenderRecording(el){
     </div>` : "";
 
   const pcm = RV.engine === "pcm";
-  const stalled = pcm && RVC.stalled;
-  const missedMs = RV.interruptions.reduce((n, i) => n + (i.ms || 0), 0);
+  const stalled = pcm && RVC.stalled && !RV.paused;
+  const paused = !!RV.paused;
+  const sum = rvPauseSummary();
   const stallHTML = stalled ? `
     <div class="rv-mic-alert" role="alert">
       <div class="rv-mic-alert-title">Not recording right now</div>
-      ${RV.micError ? rvMicHelpHTML(RV.micError, false) : `<p>The iPhone took the microphone away (Control Center, a call, Siri or the screen locking can do this). RAVN starts again by itself as soon as it can. If this stays red, tap Resume recording.</p>`}
+      ${RV.micError ? rvMicHelpHTML(RV.micError, false) : `<p>The iPhone took the microphone away (Control Center, a call, Siri or the screen locking can do this). RAVN starts again by itself as soon as it can. If this stays, tap Resume recording.</p>`}
       <button class="qb-btn-primary" id="rvResumeBtn">Resume recording</button>
     </div>` : "";
+  const pausedHTML = paused ? `
+    <div class="rv-paused" role="status">
+      <div class="rv-paused-title">${AICON.pause || ""} Paused</div>
+      <p>Nothing is being recorded. Paused for <b id="rvPausedFor">${rvFormatElapsed(Date.now() - RV.pausedAt)}</b>.</p>
+      <button class="qb-btn-primary rv-big-btn" id="rvResumePauseBtn">Resume recording</button>
+    </div>` : "";
+  const logBits = [];
+  if (sum.pauses) logBits.push(`${sum.pauses} pause${sum.pauses === 1 ? "" : "s"} (${rvFormatGap(sum.pausedMs)})`);
+  if (sum.gaps) logBits.push(`${sum.gaps} gap${sum.gaps === 1 ? "" : "s"} (about ${rvFormatGap(sum.gapMs)} not recorded)`);
   el.innerHTML = `
     <div class="rv-recording-wrap">
-      <div class="rv-live ${RV.captureLost || stalled ? "lost" : ""}">
+      <div class="rv-live ${RV.captureLost || stalled ? "lost" : ""} ${paused ? "paused" : ""}">
         <span class="rv-dot"></span>
-        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : stalled ? "Not recording" : "Recording"}</span>
-        ${pcm && !stalled ? `<span class="rv-level" aria-hidden="true"><span id="rvLevel"></span></span>` : ""}
+        <span class="rv-live-text">${RV.captureLost ? "Recording ended" : paused ? "Paused" : stalled ? "Not recording" : "Recording"}</span>
+        ${pcm && !stalled && !paused ? `<span class="rv-level" aria-hidden="true"><span id="rvLevel"></span></span>` : ""}
       </div>
+      ${pausedHTML}
       ${stallHTML}
-      <div class="rv-elapsed" id="rvElapsed">${rvFormatElapsed(RV.startedAt ? Date.now() - new Date(RV.startedAt).getTime() : 0)}</div>
+      <div class="rv-elapsed-wrap"><div class="rv-elapsed" id="rvElapsed">${rvFormatElapsed(rvRecordedMs())}</div><div class="rv-elapsed-label">recorded</div></div>
       <div class="rv-job-card">
         <div class="rv-job-name">${rvEsc(job.name || job.display_name || "")}</div>
         <div class="rv-job-meta">${rvEsc(job.address || "")}</div>
       </div>
-      ${!RV.captureLost && pcm ? `<p class="rv-warn-copy">Keep RAVN open with the screen on. You can use other parts of RAVN. If the screen locks or you switch apps, the iPhone pauses the microphone; RAVN starts again when you come back and notes the gap.</p>` : ""}
-      ${!RV.captureLost && !pcm ? `<p class="rv-warn-copy">You can switch to another part of the app and come back. This picks up right where it left off. Just don't switch to a different app or let the screen lock; iOS stops the recording when that happens.</p>` : ""}
-      ${RV.interruptions.length ? `<div class="rv-gap-log">${pcm
-        ? `${RV.interruptions.length} gap${RV.interruptions.length === 1 ? "" : "s"}, about ${rvEsc(rvFormatGap(missedMs))} not recorded. Noted with the recording.`
-        : `${RV.interruptions.length} interruption${RV.interruptions.length === 1 ? "" : "s"} logged and sent with the recording.`}</div>` : ""}
+      ${!RV.captureLost && !paused && RV.status === "recording" ? `<button class="rv-btn-ghost rv-big-btn" id="rvPauseBtn">${AICON.pause || ""} Pause</button>` : ""}
+      ${logBits.length ? `<div class="rv-gap-log">${rvEsc(logBits.join(", "))}. Noted with the recording.</div>` : ""}
       ${interruptionHTML}
+      ${!RV.captureLost && !paused && RV.status === "recording" ? `<button class="rv-btn-ghost" id="rvHideBtn">Back to the plain screen</button>
+      <p class="rv-warn-copy">On the plain screen the clock's colon blinks while RAVN records. A small amber dot next to the minutes means it isn't recording right now: tap the screen to see why. Keep RAVN open with the screen on.</p>` : ""}
       <button class="rv-stop-btn" id="rvStopBtn">${RV.status === "stopping" ? "Stopping…" : "Stop &amp; Upload"}</button>
     </div>
   `;
+  const pb = document.getElementById("rvPauseBtn");
+  if (pb) pb.onclick = rvPause;
+  const rpb = document.getElementById("rvResumePauseBtn");
+  if (rpb) rpb.onclick = rvResumeFromPause;
+  const hb = document.getElementById("rvHideBtn");
+  if (hb) hb.onclick = rvShowDiscreet;
+  if (!paused && RV.status === "recording") rvArmDiscreetReturn();
 
   const stop = document.getElementById("rvStopBtn");
   if (stop) stop.onclick = rvRequestStop;
@@ -1910,6 +2083,7 @@ function rvResetToSearch(){
   RV.pendingInterruption = null;
   RV.captureLost = false;
   RV.engine = null;
+  RV.paused = false; RV.pausedAt = null; RV.pausedTotalMs = 0; RV.discreet = false;
   RV.micError = null;
   RV.startPhase = null;
   RV.results = null;
