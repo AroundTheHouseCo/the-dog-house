@@ -55,7 +55,7 @@ function caChip(status){
   return `<span class="ca-chip draft">Draft · not live</span>`;
 }
 const CA_PRODUCTS = { "foundations": "Foundations", "home-show": "Home Show", "gutter-helmet": "Gutter Helmet", "sunesta": "Sunesta awnings",
-  "eclipse": "Eclipse screens", "pergola": "Louvered pergolas", "price-building": "Price Building" };
+  "ezip": "E-Zip screens", "eclipse": "Eclipse (older tag)", "pergola": "Louvered pergolas", "price-building": "Price Building" };
 const CA_TYPES = { reading: "Reading", video: "Video", script: "Script", checklist: "Demo checklist", roleplay: "Role-play", document: "Library document" };
 const CA_ACTIONS = { "import": "Imported", "approve": "Approved", "approve-with-child": "Published with its lessons", "edit": "Edited (live)",
   "edit-draft": "Edited (draft)", "restore": "Restored", "discard-draft": "Draft discarded", "seed": "Copied from the old website" };

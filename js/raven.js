@@ -61,7 +61,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-24.3";
+const RAVN_APP_BUILD = "2026-11-25.1";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -408,11 +408,13 @@ async function rvSearchJobs(q){
 
 // The rep is attributed server-side from the token — this deliberately sends
 // jnid and nothing else.
-async function rvCreateAppointment(jnid){
+async function rvCreateAppointment(job){
+  // RAVN step 10: a role-play has no JobNimbus job; Cockpit never writes it back.
+  const payload = job && job.roleplay ? { kind: "roleplay", product: job.product } : { jnid: job && job.jnid };
   const d = await rvApi("/api/raven/appointments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jnid }),
+    body: JSON.stringify(payload),
   });
   const id = d && d.appointmentId;
   if (!id) throw rvErr("http", "Cockpit did not return an appointmentId");
@@ -1021,7 +1023,7 @@ async function rvBeginAppointment(job){
   const captureStartedAt = new Date().toISOString();
   let appointmentId;
   try {
-    appointmentId = await rvCreateAppointment(job.jnid);
+    appointmentId = await rvCreateAppointment(job);
   } catch (err) {
     if (usePcm) rvPcmTeardown(); else stream.getTracks().forEach((t) => t.stop());
     if (err.kind === "disabled") { RV.disabled = true; RV.view = "search"; RV.status = "idle"; renderRaven(); return; }
@@ -1921,6 +1923,12 @@ async function rvRefreshIdentity(){
   } catch (e) { /* offline — try next open */ }
 }
 
+// RAVN step 10: role-play recordings, one per tracked product.
+const RV_ROLEPLAY_PRODUCTS = [
+  { key: "sunesta", label: "Sunesta awnings" },
+  { key: "ezip", label: "E-Zip screens" },
+  { key: "gutter-helmet", label: "Gutter Helmet" },
+];
 function rvRenderSearch(el){
   const rows = RV.results;
   let listHTML = "";
@@ -1953,6 +1961,13 @@ function rvRenderSearch(el){
       <span>Signed in as <b>${rvEsc(rvRepName() || "this iPad")}</b></span>
       <button class="rv-signout" id="rvSignOut">Sign out</button>
     </div>
+    <div class="rv-roleplay">
+      <div class="rv-roleplay-title">Practice: record a role-play</div>
+      <p class="rv-roleplay-sub">No customer job. Someone plays the homeowner, and it's graded on the scorecard.</p>
+      <div class="rv-roleplay-btns">
+        ${RV_ROLEPLAY_PRODUCTS.map((p) => `<button class="rv-roleplay-btn" data-rp="${p.key}">${rvEsc(p.label)}</button>`).join("")}
+      </div>
+    </div>
     <div class="rv-search-row">
       <input id="rvQuery" type="search" value="${rvEsc(RV.query)}" placeholder="Customer name or address" autocomplete="off" autocapitalize="words">
       <button class="qb-btn-primary" id="rvSearchBtn">Search</button>
@@ -1972,6 +1987,12 @@ function rvRenderSearch(el){
   rvRefreshDeviceList();
   rvMicPreflight();
   qEl.onkeydown = (e) => { if (e.key === "Enter") go(); };
+  el.querySelectorAll("[data-rp]").forEach((b) => {
+    b.onclick = () => {
+      const p = RV_ROLEPLAY_PRODUCTS.find((x) => x.key === b.dataset.rp);
+      if (p) rvBeginAppointment({ roleplay: true, product: p.key, jnid: null, name: `Role-play: ${p.label}`, address: "Practice, not a customer" });
+    };
+  });
   el.querySelectorAll(".rv-job").forEach((b) => {
     b.onclick = () => {
       const j = RV.results[Number(b.dataset.i)];

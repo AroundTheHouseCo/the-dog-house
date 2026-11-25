@@ -308,3 +308,11 @@ body.rb-app .rv-live.paused .rv-dot{background:#F9A11B;}
 body.rb-app .rv-big-btn{width:100%;max-width:520px;min-height:56px;font-size:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
 body.rb-app .rv-elapsed-wrap{text-align:center;}
 body.rb-app .rv-elapsed-label{font-size:14px;color:#5F5B53;margin-top:-4px;}
+
+/* RAVN step 10: role-play recordings (Start Appointment screen) */
+body.rb-app .rv-roleplay{background:#fff;border:1px solid #E7DFCC;border-radius:16px;padding:16px;margin:0 0 16px;}
+body.rb-app .rv-roleplay-title{font-weight:800;font-size:18px;color:#3A3A3C;}
+body.rb-app .rv-roleplay-sub{margin:4px 0 12px;font-size:16px;color:#5A5A5C;}
+body.rb-app .rv-roleplay-btns{display:flex;flex-wrap:wrap;gap:8px;}
+body.rb-app .rv-roleplay-btn{min-height:48px;padding:0 16px;border-radius:12px;border:2px solid #3A3A3C;background:#fff;color:#3A3A3C;font:700 16px Figtree,system-ui,sans-serif;cursor:pointer;}
+body.rb-app .rv-roleplay-btn:focus-visible{outline:2px solid #3A3A3C;box-shadow:0 0 0 5px rgba(249,161,27,.35);}

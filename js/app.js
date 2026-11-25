@@ -1480,6 +1480,13 @@ function renderPicker(){
             <div class="center-card-name">Courses</div>
             <div class="center-card-sub">Lessons and quizzes. Your progress follows you.</div>
           </div>
+        </div>
+        <div class="center-card cp-entry" id="tcGoCert">
+          <div class="center-card-icon">${(typeof LUCIDE !== "undefined" && LUCIDE.award) || AICON.book}</div>
+          <div>
+            <div class="center-card-name">Certification</div>
+            <div class="center-card-sub">First 90 Days: your progress on each product.</div>
+          </div>
         </div>`}
       ${PRODUCTS.map(p=>`
         <div class="center-card product${p.ready?"":" soon"}" data-key="${p.key}">
@@ -1494,6 +1501,8 @@ function renderPicker(){
   `;
   const gk = document.getElementById("tcGoCourses");
   if(gk) gk.onclick = ()=>{ if(typeof cpOpen==="function") cpOpen(); appView = "courses"; renderApp(); };
+  const gce = document.getElementById("tcGoCert");
+  if(gce) gce.onclick = ()=>{ if(typeof ctOpen==="function") ctOpen(); appView = "cert"; renderApp(); };
   el.querySelectorAll(".center-card.product").forEach(card=>{
     card.onclick = ()=>{
       const p = PRODUCTS.find(x=>x.key===card.dataset.key);
@@ -1685,6 +1694,8 @@ function renderTopbarNav(){
     html = (typeof cpIsPreview==="function" && cpIsPreview())
       ? `<button class="back-btn" id="backPreviewBtn">‹ Content</button>`
       : `<button class="back-btn" id="backCoachesBtn">‹ Training Center</button>`;
+  } else if(appView==="cert"){
+    html = `<button class="back-btn" id="backCoachesBtn">‹ Training Center</button>`;
   } else if(appView==="raven"){
     // Recording keeps running in the background if the rep leaves this
     // screen (see js/raven.js, rvIsRecording comment) — so Home is always
@@ -1738,7 +1749,7 @@ function renderApp(){
   // home/picker/Quote Builder card layouts are left alone.
   document.body.classList.toggle("deck-full", showDeck);
   // Branded RAVN screens sit on the warm cream background (RAVN brand guide).
-  document.body.classList.toggle("ravn-page", appView==="courses");
+  document.body.classList.toggle("ravn-page", appView==="courses" || appView==="cert");
   // Step 6b: the ATH brand on every rep/owner screen (css/ravn-brand-app.css).
   // Off in the deck views, so the customer presentations are untouched.
   document.body.classList.toggle("rb-app", !showDeck);
@@ -1755,6 +1766,7 @@ function renderApp(){
   document.getElementById("ravenPanel").style.display      = appView==="raven" ? "" : "none";
   document.getElementById("contentPanel").style.display    = appView==="content" ? "" : "none";
   document.getElementById("coursePanel").style.display     = appView==="courses" ? "" : "none";
+  document.getElementById("certPanel").style.display       = appView==="cert" ? "" : "none";
   document.getElementById("stage").style.display          = showDeck ? "" : "none";
   document.querySelector(".slidebar").style.display       = showDeck ? "" : "none";
   document.getElementById("tabbar").style.display         = showDeck ? "" : "none";
@@ -1776,6 +1788,7 @@ function renderApp(){
   if(appView==="raven") renderRaven();
   if(appView==="content" && typeof renderContentAdmin==="function") renderContentAdmin();
   if(appView==="courses" && typeof renderCourses==="function") renderCourses();
+  if(appView==="cert" && typeof renderCert==="function") renderCert();
   if(showDeck){
     mode = appView==="training-deck" ? "rehearse" : "present";
     renderAll();
