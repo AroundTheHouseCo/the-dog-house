@@ -83,6 +83,9 @@ function ctCardHTML(card, who){
     if (owner && card.status === "ready") a.push(`<button class="rb-btn go-green" data-ct="certify" data-l="${ctE(who.learner)}" data-p="${card.product}">${ctI("award")}Certify</button>`);
     if (owner && card.status !== "certified") a.push(`<button class="rb-btn secondary" data-ct="grandfather" data-l="${ctE(who.learner)}" data-p="${card.product}">Mark certified (no counts)</button>`);
     if (owner && card.status === "certified") a.push(`<button class="rb-btn secondary" data-ct="revoke" data-l="${ctE(who.learner)}" data-p="${card.product}">Undo certification</button>`);
+    if (owner && card.status !== "certified") a.push(card.watch.waived
+      ? `<button class="rb-btn secondary" data-ct="watch-on" data-l="${ctE(who.learner)}" data-p="${card.product}">Require watch ride-alongs</button>`
+      : `<button class="rb-btn secondary" data-ct="watch-off" data-l="${ctE(who.learner)}" data-p="${card.product}">Watch ride-alongs not required</button>`);
     if (canMark && card.status !== "certified") a.push(`<button class="rb-btn secondary" data-ct="mark" data-l="${ctE(who.learner)}" data-p="${card.product}">Mark a role-play passed</button>`);
     if (a.length) actions = `<div class="rb-actions ct-actions">${a.join("")}</div>`;
   }
@@ -93,7 +96,9 @@ function ctCardHTML(card, who){
     <div class="ct-card-head"><h2>${ctE(card.label)}</h2>${CT_STATUS[card.status](card)}</div>
     ${certLine}
     ${courseLine}
-    ${ctLine("Watch ride-alongs", card.watch.count, card.watch.required)}
+    ${card.watch.waived
+      ? `<div class="ct-line"><div class="ct-line-head"><span>Watch ride-alongs</span><b>Not required</b></div><div class="rb-hint">Set by ${ctE(card.watch.waivedBy.by)}, ${ctE(ctDate(card.watch.waivedBy.at))}.</div></div>`
+      : ctLine("Watch ride-alongs", card.watch.count, card.watch.required)}
     ${ctLine("Lead ride-alongs", card.lead.count, card.lead.required)}
     ${ctLine("Role-plays passed", card.roleplay.count, card.roleplay.required)}
     ${todo}
@@ -145,7 +150,7 @@ function ctTeamHTML(){
   const list = CT.team.trainees;
   if (!list.length) return `${back}${ctHead("First 90 Days", "Team progress")}<div class="rb-card"><h2>No sales reps yet</h2></div>`;
   const rows = list.map((t) => {
-    const chips = t.products.map((c) => `<span class="ct-chip ct-${c.status}">${ctE(c.label)}: ${c.status === "certified" ? "Certified" : c.status === "ready" ? "Ready" : `${c.watch.count}/${c.watch.required} watch · ${c.lead.count}/${c.lead.required} lead · ${c.roleplay.count}/${c.roleplay.required} role-play`}</span>`).join("");
+    const chips = t.products.map((c) => `<span class="ct-chip ct-${c.status}">${ctE(c.label)}: ${c.status === "certified" ? "Certified" : c.status === "ready" ? "Ready" : `${c.watch.waived ? "" : `${c.watch.count}/${c.watch.required} watch · `}${c.lead.count}/${c.lead.required} lead · ${c.roleplay.count}/${c.roleplay.required} role-play`}</span>`).join("");
     const open = CT.openRep === t.learner;
     return `<div class="rb-card ct-rep">
       <button class="ct-rep-head" data-ct="rep" data-l="${ctE(t.learner)}" aria-expanded="${open}"><span class="rb-row-title">${ctE(t.name)}</span>${ctI(open ? "chevronLeft" : "chevronRight")}</button>
@@ -186,6 +191,8 @@ function ctOnClick(e){
     const note = prompt(`Mark one live ${label()} role-play passed for ${repName()}. A short note (who played the homeowner, when):`, "");
     if (note !== null) ctAct("/roleplay-mark", { learner: l, product: p, note }, "Role-play marked passed.");
   }
+  else if (act === "watch-off") { if (confirm(`Watch ride-alongs not required for ${repName()} on ${label()}? Ready will need only the course, 6 lead calls (last 3 passing) and 5 role-plays.`)) ctAct("/watch", { learner: l, product: p, required: false }, `Watch ride-alongs not required for ${repName()} on ${label()}.`); }
+  else if (act === "watch-on") { if (confirm(`Require watch ride-alongs again for ${repName()} on ${label()}?`)) ctAct("/watch", { learner: l, product: p, required: true }, `Watch ride-alongs required again for ${repName()} on ${label()}.`); }
   else if (act === "unmark") { if (confirm("Undo this role-play pass?")) ctAct("/roleplay-unmark", { id: b.dataset.id }, "Role-play pass undone."); }
 }
 
