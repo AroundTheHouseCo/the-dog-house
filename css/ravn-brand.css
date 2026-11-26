@@ -184,3 +184,8 @@ body.ravn-page{background:#FBF6EA;}
 .ravn-ui .ct-chip.ct-ready{background:var(--rb-amber-soft);color:var(--rb-amber-dark);font-weight:700;}
 .ravn-ui .ct-rep .ct-card{margin-top:16px;box-shadow:none;}
 .ravn-ui .ct-msg{margin-bottom:16px;}
+
+/* "Go to last lesson" (course player) */
+.ravn-ui .cp-resume{flex-direction:column;align-items:center;gap:2px;margin:0 0 16px;}
+.ravn-ui .cp-resume .lc{width:20px;height:20px;}
+.ravn-ui .cp-resume-sub{display:block;font-weight:600;font-size:16px;opacity:.85;}

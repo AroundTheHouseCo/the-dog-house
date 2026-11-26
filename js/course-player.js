@@ -94,6 +94,14 @@ function renderCourses(){
   el.onchange = cpOnChange;
 }
 
+// "Go to last lesson" (Jack, 2026-11-26): Cockpit works out where this rep
+// left off (CP.data.resume, ravn-progress.js resumePoint); this only shows it.
+function cpResumeHTML(onlyCourseId){
+  const r = CP.data && CP.data.resume;
+  if (!r || CP.preview || (onlyCourseId && r.courseId !== onlyCourseId)) return "";
+  const act = r.kind === "quiz" ? `data-cp="open-quiz" data-id="${cpE(r.moduleId)}"` : `data-cp="open-lesson" data-id="${cpE(r.lessonId)}"`;
+  return `<button class="rb-btn block cp-resume" ${act}>${cpI("playCircle")}Go to last lesson<span class="cp-resume-sub">${cpE(r.title)}${onlyCourseId ? "" : " · " + cpE(r.courseTitle)}</span></button>`;
+}
 function cpListHTML(){
   const d = CP.data, courses = d.courses || [];
   if (!courses.length) return `${cpHead("Training", "Courses")}
@@ -113,6 +121,7 @@ function cpListHTML(){
     <div class="rb-card cp-overall"><div class="cp-overall-head"><h2>Your training</h2><span class="rb-score-num cp-pct">${d.overall.percent}%</span></div>
       ${cpBar(d.overall.percent, "Your overall training progress")}
       <div class="rb-meta">${d.overall.unitsDone} of ${d.overall.units} steps done across every course</div></div>
+    ${cpResumeHTML()}
     ${cards}`;
 }
 
@@ -141,6 +150,7 @@ function cpCourseHTML(){
   return `${CP.preview ? cpBack("exit-preview", "", "Back to Content") : cpBack("to-list", "", "All courses")}
     ${cpHead(c.locked ? "Locked" : c.complete ? "Complete" : c.percent + "% done", c.title)}
     ${c.locked ? `<div class="rb-note">${cpI("lock")} This course opens when you finish <b>${cpE(c.requiresTitle)}</b>.</div>` : ""}
+    ${cpResumeHTML(c.id)}
     ${mods}`;
 }
 
@@ -255,10 +265,16 @@ async function cpOnClick(e){
   if (!b || b.disabled || b.getAttribute("aria-disabled") === "true") return;
   const act = b.dataset.cp, id = b.dataset.id;
   if (act === "reload") { CP.data = null; CP.error = null; return cpLoad(); }
-  if (act === "to-list") { CP.view = "list"; return renderCourses(); }
+  if (act === "to-list") { CP.view = "list"; renderCourses(); return cpRefreshResume(); }
   if (act === "exit-preview") return cpExitPreview();
   if (act === "open-course") { CP.courseId = id; CP.view = "course"; CP.quiz = null; CP.result = null; renderCourses(); return window.scrollTo(0, 0); }
-  if (act === "open-lesson") { const f = cpFindLesson(id); if (!f || f.lesson.locked) return; CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; renderCourses(); return window.scrollTo(0, 0); }
+  if (act === "open-lesson") {
+    const f = cpFindLesson(id); if (!f || f.lesson.locked) return;
+    CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; renderCourses();
+    // Remember it on Cockpit for "Go to last lesson" (not in a preview).
+    if (!CP.preview) cpPost("/lesson-open", { lessonId: id }).catch(() => {});
+    return window.scrollTo(0, 0);
+  }
   if (act === "open-quiz") { await cpOpenQuiz(id); return window.scrollTo(0, 0); }
   if (act === "lesson-done") {
     if (CP.preview) {
@@ -294,6 +310,12 @@ async function cpOnClick(e){
   }
 }
 
+// Quietly re-ask Cockpit where to resume (after lessons were opened or done).
+async function cpRefreshResume(){
+  if (CP.preview || !CP.data) return;
+  const r = await cpApi("/learn");
+  if (r.data && r.data.ok && CP.data) { CP.data.resume = r.data.resume || null; cpTake(r.data); if (CP.view === "list") renderCourses(); }
+}
 // Fresh data each time the Courses screen is opened from the Training Center.
 function cpOpen(){ CP.preview = null; CP.view = "list"; CP.data = null; CP.error = null; CP.quiz = null; CP.result = null; }
 // Owners: open one course from Content with its drafts (see CP.preview).
