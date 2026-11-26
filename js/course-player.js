@@ -67,6 +67,11 @@ const cpI = (name) => (typeof LUCIDE !== "undefined" && LUCIDE[name]) || "";
 const cpTagDone = (word) => `<span class="rb-tag done cp-tag">${cpI("circleCheck")}${word}</span>`;
 const cpTagLock = (word) => `<span class="rb-tag locked cp-tag">${cpI("lock")}${word}</span>`;
 const cpTagGo = (word) => `<span class="rb-tag go cp-tag">${cpI("arrowRight")}${word}</span>`;
+// Content added after this rep started (Cockpit marks it: lesson.isNew,
+// quiz.updated). The tag stays until they finish it.
+const cpTagNew = (word) => `<span class="rb-tag new cp-tag">${word || "New"}</span>`;
+const cpIsOwner = () => { const id = (typeof rvIdentity === "function") ? rvIdentity() : null; return !!(id && Array.isArray(id.capabilities) && id.capabilities.indexOf("manageTeam") >= 0); };
+const cpHasNew = (c) => c.modules.some((m) => m.lessons.some((l) => l.isNew) || (m.quiz && m.quiz.updated));
 const cpHead = (eyebrow, title) => `<div class="rb-head"><div class="rb-eyebrow">${cpE(eyebrow)}</div><h1>${cpE(title)}</h1></div>`;
 const cpBack = (act, id, label) => `<button class="rb-back" data-cp="${act}"${id ? ` data-id="${cpE(id)}"` : ""}>${cpI("chevronLeft")}${cpE(label)}</button>`;
 
@@ -97,8 +102,15 @@ function renderCourses(){
 // "Go to last lesson" (Jack, 2026-11-26): Cockpit works out where this rep
 // left off (CP.data.resume, ravn-progress.js resumePoint); this only shows it.
 function cpResumeHTML(onlyCourseId){
-  const r = CP.data && CP.data.resume;
-  if (!r || CP.preview || (onlyCourseId && r.courseId !== onlyCourseId)) return "";
+  let r = CP.data && CP.data.resume;
+  if (CP.preview) return "";
+  // Inside a finished course whose resume spot is elsewhere: still offer the
+  // last lesson viewed in THIS course (Jack, 2026-11-26).
+  if (onlyCourseId && (!r || r.courseId !== onlyCourseId)) {
+    const lv = CP.data && CP.data.lastViewed, c = cpCourse();
+    r = (lv && lv.courseId === onlyCourseId && c && c.complete) ? Object.assign({ kind: "lesson" }, lv) : null;
+  }
+  if (!r) return "";
   const act = r.kind === "quiz" ? `data-cp="open-quiz" data-id="${cpE(r.moduleId)}"` : `data-cp="open-lesson" data-id="${cpE(r.lessonId)}"`;
   return `<button class="rb-btn block cp-resume" ${act}>${cpI("playCircle")}Go to last lesson<span class="cp-resume-sub">${cpE(r.title)}${onlyCourseId ? "" : " · " + cpE(r.courseTitle)}</span></button>`;
 }
@@ -114,7 +126,8 @@ function cpListHTML(){
       <span class="rb-row-main"><span class="rb-row-title">${cpE(c.title)}</span>
         ${c.summary ? `<span class="rb-meta">${cpE(c.summary)}</span>` : ""}
         ${cpBar(c.percent, c.title + " progress")}
-        <span class="rb-meta">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span></span>
+        <span class="rb-meta">${c.unitsDone} of ${c.units} steps · ${c.modules.length} module${c.modules.length === 1 ? "" : "s"}</span>
+        ${!c.locked && cpHasNew(c) ? `<span class="rb-meta cp-newnote">${cpTagNew("New lessons added")}</span>` : ""}</span>
       ${state}</button>`;
   }).join("");
   return `${cpHead("Training", "Courses")}
@@ -132,13 +145,16 @@ function cpCourseHTML(){
     const rows = m.lessons.map((l) => `
       <button class="rb-row cp-lesson${l.locked ? " is-locked" : ""}" data-cp="open-lesson" data-id="${cpE(l.id)}" ${l.locked ? "aria-disabled=\"true\"" : ""}>
         <span class="rb-row-main"><span class="rb-row-title">${cpE(l.title)}</span><span class="rb-hint">${cpE(CP_TYPES[l.type] || l.type)}${l.minutes ? " · " + l.minutes + " min" : ""}</span></span>
-        ${l.done ? cpTagDone("Done") : l.locked ? cpTagLock("Locked") : cpTagGo("Start")}
+        ${l.done ? cpTagDone("Done") : l.locked ? cpTagLock("Locked") : l.isNew ? cpTagNew() : cpTagGo("Start")}
       </button>`).join("");
-    const q = m.quiz ? `
-      <button class="rb-row cp-lesson cp-quizrow${m.quiz.locked ? " is-locked" : ""}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${m.quiz.locked ? "aria-disabled=\"true\"" : ""}>
-        <span class="rb-row-main"><span class="rb-row-title">Quiz · ${m.quiz.count} question${m.quiz.count === 1 ? "" : "s"}</span>
-          <span class="rb-hint">Pass mark ${m.pass}%${m.quiz.best ? ` · your best ${m.quiz.best.score}%` : ""}</span></span>
-        ${m.quiz.best && m.quiz.best.passed ? cpTagDone("Passed") : m.quiz.locked ? cpTagLock("Locked") : cpTagGo(m.quiz.best ? "Retake" : "Take quiz")}
+    const qz = m.quiz;
+    const q = qz ? `
+      <button class="rb-row cp-lesson cp-quizrow${qz.locked ? " is-locked" : ""}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${qz.locked ? "aria-disabled=\"true\"" : ""}>
+        <span class="rb-row-main"><span class="rb-row-title">Quiz · ${qz.count} question${qz.count === 1 ? "" : "s"}</span>
+          <span class="rb-hint">${qz.updated ? `${qz.newQuestions} new question${qz.newQuestions === 1 ? "" : "s"} since you passed. Retake it to finish this module.`
+            : `Pass mark ${m.pass}%${qz.best ? ` · your best ${qz.best.score}%` : ""}`}</span></span>
+        ${qz.updated ? (qz.locked ? cpTagLock("Updated") : cpTagNew("Updated: retake"))
+          : qz.best && qz.best.passed ? cpTagDone("Passed") : qz.locked ? cpTagLock("Locked") : cpTagGo(qz.best ? "Retake" : "Take quiz")}
       </button>` : "";
     const pct = m.units ? Math.round((m.unitsDone / m.units) * 100) : 0;
     return `<div class="rb-card cp-module${m.locked ? " is-locked" : ""}">
@@ -151,7 +167,10 @@ function cpCourseHTML(){
     ${cpHead(c.locked ? "Locked" : c.complete ? "Complete" : c.percent + "% done", c.title)}
     ${c.locked ? `<div class="rb-note">${cpI("lock")} This course opens when you finish <b>${cpE(c.requiresTitle)}</b>.</div>` : ""}
     ${cpResumeHTML(c.id)}
-    ${mods}`;
+    ${mods}
+    ${!CP.preview && cpIsOwner() && !c.locked ? `<div class="rb-card cp-reset"><h3>Test it as a new rep</h3>
+      <p class="rb-hint">Owners only. Clears your own progress in this course: lessons done, quiz scores and your last lesson. Nobody else's progress changes.</p>
+      <button class="rb-btn secondary" data-cp="reset-progress" data-id="${cpE(c.id)}" ${CP.busy ? "disabled" : ""}>${cpI("rotateCcw")}Reset my progress</button></div>` : ""}`;
 }
 
 function cpYouTubeId(u){
@@ -267,7 +286,7 @@ async function cpOnClick(e){
   if (act === "reload") { CP.data = null; CP.error = null; return cpLoad(); }
   if (act === "to-list") { CP.view = "list"; renderCourses(); return cpRefreshResume(); }
   if (act === "exit-preview") return cpExitPreview();
-  if (act === "open-course") { CP.courseId = id; CP.view = "course"; CP.quiz = null; CP.result = null; renderCourses(); return window.scrollTo(0, 0); }
+  if (act === "open-course") { CP.courseId = id; CP.view = "course"; CP.quiz = null; CP.result = null; renderCourses(); window.scrollTo(0, 0); return cpRefreshResume(); }
   if (act === "open-lesson") {
     const f = cpFindLesson(id); if (!f || f.lesson.locked) return;
     CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; renderCourses();
@@ -276,6 +295,16 @@ async function cpOnClick(e){
     return window.scrollTo(0, 0);
   }
   if (act === "open-quiz") { await cpOpenQuiz(id); return window.scrollTo(0, 0); }
+  if (act === "reset-progress") {
+    if (CP.preview || !cpIsOwner()) return;
+    if (!confirm("Reset your own progress in this course? Your lessons done, quiz scores and last lesson here are cleared. Nobody else's progress changes.")) return;
+    CP.busy = true; renderCourses();
+    const r = await cpPost("/reset-progress", { courseId: id });
+    CP.busy = false;
+    if (!r.data.ok) { alert(r.data.error || "Couldn't reset. Check your connection and try again."); return renderCourses(); }
+    cpTake(r.data); renderCourses();
+    return cpRefreshResume();
+  }
   if (act === "lesson-done") {
     if (CP.preview) {
       if (!CP.preview.progress.lessonsDone.includes(id)) CP.preview.progress.lessonsDone.push(id);
@@ -314,7 +343,7 @@ async function cpOnClick(e){
 async function cpRefreshResume(){
   if (CP.preview || !CP.data) return;
   const r = await cpApi("/learn");
-  if (r.data && r.data.ok && CP.data) { CP.data.resume = r.data.resume || null; cpTake(r.data); if (CP.view === "list") renderCourses(); }
+  if (r.data && r.data.ok && CP.data) { CP.data.resume = r.data.resume || null; CP.data.lastViewed = r.data.lastViewed || null; cpTake(r.data); if (CP.view === "list" || CP.view === "course") renderCourses(); }
 }
 // Fresh data each time the Courses screen is opened from the Training Center.
 function cpOpen(){ CP.preview = null; CP.view = "list"; CP.data = null; CP.error = null; CP.quiz = null; CP.result = null; }

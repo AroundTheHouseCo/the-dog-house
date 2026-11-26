@@ -115,7 +115,13 @@ function caListHTML(){
     report = `<div class="rv-error ca-report"><b>Nothing was imported. Fix these and try again:</b><ul>${(rep.errors || []).map((e) =>
       `<li>${e.line ? `Line ${e.line}: ` : e.path ? `${caE(e.path)}: ` : ""}${caE(e.message)}</li>`).join("")}</ul></div>`;
   } else if (rep && rep.ok) {
-    const r = rep.report, list = (arr) => arr.map((x) => `<li>${caE(x.kind)} <code>${caE(x.id)}</code>${x.title ? ": " + caE(x.title) : ""}</li>`).join("");
+    // Every row names the item: kind, id and title (Jack saw bare bullets on
+    // staging, 2026-11-26). A row with nothing to show is left out, never blank.
+    const CA_KIND = { course: "Course", module: "Module", lesson: "Lesson", question: "Question" };
+    const item = (x) => (x && typeof x === "object") ? x : { id: String(x == null ? "" : x) };
+    const list = (arr) => (arr || []).map(item).filter((x) => x.id || x.title).map((x) =>
+      `<li><b>${caE(CA_KIND[x.kind] || x.kind || "Item")}</b> <code>${caE(x.id || "")}</code>${x.title ? ": " + caE(x.title) : ""}</li>`).join("");
+    const r = rep.report;
     report = `<div class="rv-note ca-report"><b>Imported “${caE(rep.course.title)}” as drafts.</b>
       ${r.created.length} new · ${r.updated.length} updated · ${r.unchanged.length} unchanged${r.moved && r.moved.length ? ` · ${r.moved.length} moved` : ""}.
       ${r.created.length ? `<details><summary>New</summary><ul>${list(r.created)}</ul></details>` : ""}
