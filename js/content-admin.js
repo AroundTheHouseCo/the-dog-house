@@ -58,7 +58,7 @@ const CA_PRODUCTS = { "foundations": "Foundations", "home-show": "Home Show", "g
   "ezip": "E-Zip screens", "eclipse": "Eclipse (older tag)", "pergola": "Louvered pergolas", "price-building": "Price Building" };
 const CA_TYPES = { reading: "Reading", video: "Video", script: "Script", checklist: "Demo checklist", roleplay: "Role-play", document: "Library document" };
 const CA_ACTIONS = { "import": "Imported", "approve": "Approved", "approve-with-child": "Published with its lessons", "edit": "Edited (live)",
-  "edit-draft": "Edited (draft)", "restore": "Restored", "discard-draft": "Draft discarded", "seed": "Copied from the old website" };
+  "edit-draft": "Edited (draft)", "restore": "Restored", "discard-draft": "Draft discarded", "retire": "Retired","seed": "Copied from the old website" };
 function caWhen(t){ const d = new Date(t); return isNaN(d) ? "" : d.toLocaleString([], { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }); }
 function caCourse(){ return (CA.tree || []).find((c) => c.id === CA.courseId) || null; }
 function caModule(){ const c = caCourse(); return c ? c.modules.find((m) => m.id === CA.moduleId) || null : null; }
@@ -120,7 +120,9 @@ function caListHTML(){
       ${r.created.length} new · ${r.updated.length} updated · ${r.unchanged.length} unchanged${r.moved && r.moved.length ? ` · ${r.moved.length} moved` : ""}.
       ${r.created.length ? `<details><summary>New</summary><ul>${list(r.created)}</ul></details>` : ""}
       ${r.updated.length ? `<details open><summary>Updated (waiting for your approval)</summary><ul>${list(r.updated)}</ul></details>` : ""}
-      ${r.notInFile.length ? `<details open><summary>In RAVN but not in this file (kept, not deleted)</summary><ul>${list(r.notInFile)}</ul></details>` : ""}
+      ${r.notInFile.length ? `<details open><summary>In RAVN but not in this file (kept, not deleted)</summary><ul>${r.notInFile.map((x) =>
+        `<li>${caE(x.kind)} <code>${caE(x.id)}</code>${x.title ? ": " + caE(x.title) : ""}${x.retired ? " · retired"
+          : (x.kind === "lesson" || x.kind === "question") ? ` <button class="ca-small" data-act="retire" data-kind="${caE(x.kind)}" data-id="${caE(x.id)}">Retire</button>` : ""}</li>`).join("")}</ul></details>` : ""}
       ${(r.warnings || []).length ? `<div>Warnings: ${r.warnings.map((w) => caE(w.message)).join("; ")}</div>` : ""}
       <button class="qb-btn-primary" data-act="open-course" data-id="${caE(rep.course.id)}">Review and approve</button></div>`;
   }
@@ -221,6 +223,7 @@ function caLessonHTML(){
       <div class="ca-actions">${l.live ? `<button class="ca-small" data-act="discard" data-kind="lesson" data-id="${caE(l.id)}">Discard changes</button>` : ""}
       <button class="qb-btn-primary" data-act="approve" data-kind="lesson" data-id="${caE(l.id)}">Approve and make it live</button></div></section>` : ""}
     ${l.live ? `<section class="ca-card"><h2>Live: what reps see</h2>${caLessonPreview(l.live)}</section>` : ""}
+    <div class="ca-actions"><button class="ca-small" data-act="retire" data-kind="lesson" data-id="${caE(l.id)}">Retire this lesson</button></div>
     <div class="ca-actions">
       <button class="ca-small" data-act="history" data-kind="lesson" data-id="${caE(l.id)}">History</button>
       <button class="qb-btn-primary" data-act="edit" data-kind="lesson" data-id="${caE(l.id)}">Edit</button>
@@ -331,6 +334,15 @@ async function caOnClick(ev){
     if (!confirm(`Make ${what} live for every rep now?`)) return;
     const r = await caPost("/approve", { kind, id });
     return caRefresh(r.data.ok ? (kind === "quiz" ? "Quiz approved. It's live." : "Approved. Reps can see it now.") : (r.data.error || "Couldn't approve."));
+  }
+  if (act === "retire") {
+    if (!confirm(`Retire this ${kind}? Reps stop seeing it right away. It stays in its history and comes back if a later import includes it.`)) return;
+    const r = await caPost("/retire", { kind, id });
+    if (r.data.ok && CA.importReport && CA.importReport.report) {
+      for (const x of CA.importReport.report.notInFile) if (x.kind === kind && x.id === id) x.retired = true;
+    }
+    if (r.data.ok && CA.view === "lesson") { CA.view = "course"; CA.editing = null; }
+    return caRefresh(r.data.ok ? "Retired. Reps no longer see it." : (r.data.error || "Couldn't retire."));
   }
   if (act === "discard") {
     if (!confirm("Throw away the changes waiting for approval? The live version stays as it is.")) return;
