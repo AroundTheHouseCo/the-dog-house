@@ -24,6 +24,8 @@ const CP = {
   // played with the rep rules. Progress lives only here and is sent with
   // every call; Cockpit stores nothing. null = a normal rep session.
   preview: null,     // {courseId, progress:{lessonsDone:[], quizBest:{}}}
+  card: 0,           // which card of a long lesson is showing
+  checks: {},        // checklist ticks on screen: {lessonId: {index: true}}
 };
 
 function cpBase(){ return self.RAVN_API_BASE || "https://ath-cockpit.onrender.com"; }
@@ -95,6 +97,7 @@ function renderCourses(){
   else if (CP.view === "result") body = cpResultHTML();
   else body = cpListHTML();
   el.innerHTML = banner + body;
+  if (CP.view === "lesson") cpWireSwipe(el);
   el.onclick = cpOnClick;
   el.onchange = cpOnChange;
 }
@@ -177,11 +180,27 @@ function cpYouTubeId(u){
   const m = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/.exec(String(u || ""));
   return m ? m[1] : null;
 }
+// Lesson view (Jack, 2026-11-27): cleaner and easier to scan. Long lessons
+// with section labels show one section per card (swipe, Next/Back, dots).
+const CP_CARD_MIN_CHARS = 900;
+function cpLessonParts(l){
+  const body = l.body || "";
+  const parts = (typeof ravnMd === "function" && ravnMd.sections) ? ravnMd.sections(body) : [];
+  return parts.length >= 2 && body.length >= CP_CARD_MIN_CHARS ? parts : null;
+}
+function cpMdHTML(l, text){
+  let html = typeof ravnMd === "function" ? ravnMd(text || "") : `<p>${cpE(text)}</p>`;
+  if (l.type === "checklist") {
+    // Tappable ticks, kept on this screen only (not saved).
+    let n = 0; const ticked = (CP.checks[l.id] || {});
+    html = html.replace(/<li>/g, () => { const k = n++; return `<li data-ck="${k}" class="${ticked[k] ? "is-checked" : ""}" role="checkbox" aria-checked="${ticked[k] ? "true" : "false"}" tabindex="0">`; });
+  }
+  return `<div class="rb-md cp-md${l.type === "checklist" ? " is-checklist" : ""}${l.type === "script" ? " is-script" : ""}">${html}</div>`;
+}
 function cpLessonHTML(){
   const f = cpFindLesson(CP.lessonId);
   if (!f) { CP.view = "course"; return cpCourseHTML(); }
   const { module: m, lesson: l, index } = f;
-  const md = (s) => (typeof ravnMd === "function" ? ravnMd(s || "") : `<p>${cpE(s)}</p>`);
   let media = "";
   if (l.type === "video" && l.url) {
     const yt = cpYouTubeId(l.url);
@@ -194,17 +213,50 @@ function cpLessonHTML(){
   } else if (l.type === "document") {
     media = `<div class="rb-note">${cpI("fileText")} This lesson uses a document from the Resource Library, which comes in the next RAVN update. Until then, ask your manager for it.</div>`;
   }
+  const parts = cpLessonParts(l);
+  const total = parts ? parts.length : 1;
+  const at = Math.min(Math.max(0, CP.card || 0), total - 1);
+  const onLast = at === total - 1;
+  let body;
+  if (parts) {
+    const dots = parts.map((p, k) => `<button class="cp-dot${k === at ? " is-on" : ""}" data-cp="card" data-id="${k}" aria-label="Part ${k + 1}${p.title ? ": " + cpE(p.title) : ""}"${k === at ? ' aria-current="step"' : ""}></button>`).join("");
+    body = `<div class="cp-cards" data-total="${total}">
+      <div class="cp-card-top"><span class="cp-card-count">${at + 1} of ${total}</span><span class="cp-dots">${dots}</span></div>
+      <div class="rb-card cp-lesson-body cp-card">${at === 0 ? media : ""}${cpMdHTML(l, parts[at].md)}</div>
+      <div class="cp-card-nav">
+        <button class="rb-btn secondary" data-cp="card" data-id="${at - 1}" ${at === 0 ? "disabled" : ""}>${cpI("chevronLeft")}Back</button>
+        ${onLast ? "" : `<button class="rb-btn" data-cp="card" data-id="${at + 1}">Next${cpI("chevronRight")}</button>`}
+      </div></div>`;
+  } else {
+    body = `<div class="rb-card cp-lesson-body">${media}${l.body ? cpMdHTML(l, l.body) : ""}</div>`;
+  }
   const next = m.lessons[index + 1];
   const nextBtn = next ? `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-lesson" data-id="${cpE(next.id)}" ${!l.done ? "disabled" : ""}>Next lesson${cpI("arrowRight")}</button>`
     : m.quiz ? `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-quiz" data-id="${cpE(m.id)}" ${!l.done ? "disabled" : ""}>Take the quiz${cpI("arrowRight")}</button>`
     : `<button class="rb-btn${l.done ? "" : " secondary"}" data-cp="open-course" data-id="${cpE(CP.courseId)}" ${!l.done ? "disabled" : ""}>Back to the course</button>`;
-  return `${cpBack("open-course", CP.courseId, m.title)}
-    ${cpHead((CP_TYPES[l.type] || l.type) + (l.minutes ? " · " + l.minutes + " min" : ""), l.title)}
-    <div class="rb-card cp-lesson-body">${media}${l.body ? `<div class="rb-md cp-md">${md(l.body)}</div>` : ""}</div>
-    <div class="rb-actions cp-actions">
+  // On a carded lesson, "Mark as done" comes with the last card.
+  const actions = (onLast || l.done) ? `<div class="rb-actions cp-actions">
       ${l.done ? cpTagDone("Done") : `<button class="rb-btn" data-cp="lesson-done" data-id="${cpE(l.id)}" ${CP.busy ? "disabled" : ""}>${cpI("circleCheck")}Mark as done</button>`}
       ${nextBtn}
-    </div>`;
+    </div>` : "";
+  return `${cpBack("open-course", CP.courseId, m.title)}
+    ${cpHead((CP_TYPES[l.type] || l.type) + (l.minutes ? " · " + l.minutes + " min" : ""), l.title)}
+    ${body}${actions}`;
+}
+// Swipe between lesson cards (left = next, right = back).
+function cpWireSwipe(el){
+  const box = el.querySelector(".cp-cards");
+  if (!box) return;
+  let x0 = null, y0 = null;
+  box.addEventListener("touchstart", (e) => { const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; }, { passive: true });
+  box.addEventListener("touchend", (e) => {
+    if (x0 === null) return;
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const total = +box.dataset.total || 1, nextAt = (CP.card || 0) + (dx < 0 ? 1 : -1);
+    if (nextAt < 0 || nextAt >= total) return;
+    CP.card = nextAt; renderCourses(); window.scrollTo(0, 0);
+  }, { passive: true });
 }
 
 function cpShuffle(a){ const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
@@ -280,6 +332,14 @@ function cpOnChange(e){
 }
 
 async function cpOnClick(e){
+  // Checklist ticks (this screen only, not saved).
+  const ck = e.target && e.target.closest && e.target.closest(".is-checklist li[data-ck]");
+  if (ck && CP.lessonId) {
+    const m = CP.checks[CP.lessonId] = CP.checks[CP.lessonId] || {};
+    m[ck.dataset.ck] = !m[ck.dataset.ck];
+    ck.classList.toggle("is-checked", !!m[ck.dataset.ck]); ck.setAttribute("aria-checked", m[ck.dataset.ck] ? "true" : "false");
+    return;
+  }
   const b = e.target && e.target.closest && e.target.closest("[data-cp]");
   if (!b || b.disabled || b.getAttribute("aria-disabled") === "true") return;
   const act = b.dataset.cp, id = b.dataset.id;
@@ -289,12 +349,13 @@ async function cpOnClick(e){
   if (act === "open-course") { CP.courseId = id; CP.view = "course"; CP.quiz = null; CP.result = null; renderCourses(); window.scrollTo(0, 0); return cpRefreshResume(); }
   if (act === "open-lesson") {
     const f = cpFindLesson(id); if (!f || f.lesson.locked) return;
-    CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; renderCourses();
+    CP.courseId = f.course.id; CP.lessonId = id; CP.view = "lesson"; CP.card = 0; renderCourses();
     // Remember it on Cockpit for "Go to last lesson" (not in a preview).
     if (!CP.preview) cpPost("/lesson-open", { lessonId: id }).catch(() => {});
     return window.scrollTo(0, 0);
   }
   if (act === "open-quiz") { await cpOpenQuiz(id); return window.scrollTo(0, 0); }
+  if (act === "card") { CP.card = Math.max(0, +id || 0); renderCourses(); return window.scrollTo(0, 0); }
   if (act === "reset-progress") {
     if (CP.preview || !cpIsOwner()) return;
     if (!confirm("Reset your own progress in this course? Your lessons done, quiz scores and last lesson here are cleared. Nobody else's progress changes.")) return;
