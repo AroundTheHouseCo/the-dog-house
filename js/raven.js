@@ -61,7 +61,7 @@ const RAVEN_MIME_CANDIDATES = ["audio/mp4", "audio/mp4;codecs=mp4a.40.2", "audio
 
 // Shown on the Device check screen, so a phone can say which app version it
 // is actually running (bump with sw.js TIER1_VERSION).
-const RAVN_APP_BUILD = "2026-11-27.2";
+const RAVN_APP_BUILD = "2026-11-27.3";
 const RAVEN_DB = "doghouse-raven";
 const RAVEN_DB_VERSION = 1;
 // Tokens do not expire server-side; revocation is manual. So the session
@@ -1791,7 +1791,14 @@ function rvRenderLogin(el){
   const go = () => {
     if (RV.authBusy) return;
     if (RV.loginMode === "pin") { const pin = $("rvPin").value.trim(); if (pin) rvDoLogin(pin); return; }
-    if (RV.mfa) { const code = $("rvCode").value.trim(); if (code) rvDoCode(code); return; }
+    // Authenticator codes: digits only, so a pasted "123 456" works (sign-in
+    // safety, 2026-11-27). Backup codes keep their letters and dash.
+    if (RV.mfa) {
+      const raw = $("rvCode").value.trim();
+      const code = RV.mfa.backup ? raw : raw.replace(/\D/g, "");
+      if (code) rvDoCode(code);
+      return;
+    }
     const email = $("rvEmail").value.trim(), pw = $("rvPassword").value;
     RV.email = email;
     if (email && pw) rvDoAccountLogin(email, pw);
