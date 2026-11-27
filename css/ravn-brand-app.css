@@ -316,3 +316,56 @@ body.rb-app .rv-roleplay-sub{margin:4px 0 12px;font-size:16px;color:#5A5A5C;}
 body.rb-app .rv-roleplay-btns{display:flex;flex-wrap:wrap;gap:8px;}
 body.rb-app .rv-roleplay-btn{min-height:48px;padding:0 16px;border-radius:12px;border:2px solid #3A3A3C;background:#fff;color:#3A3A3C;font:700 16px Figtree,system-ui,sans-serif;cursor:pointer;}
 body.rb-app .rv-roleplay-btn:focus-visible{outline:2px solid #3A3A3C;box-shadow:0 0 0 5px rgba(249,161,27,.35);}
+
+/* ── Content: multi-file import, summary, review one by one (Jack, 2026-11-27) ── */
+body.rb-app .ca-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:132px;padding:20px;margin:8px 0 12px;
+  border:2px dashed #D9C99E;border-radius:16px;background:#FFFBF1;cursor:pointer;text-align:center;transition:border-color 160ms ease,background 160ms ease;}
+body.rb-app .ca-drop:hover,body.rb-app .ca-drop.is-over{border-color:#F9A11B;background:#FDEBC8;}
+body.rb-app .ca-drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+body.rb-app .ca-drop-main{font-weight:900;font-size:20px;color:#3A3A3C;}
+body.rb-app .ca-drop-sub{font-size:16px;color:#5F5B53;}
+body.rb-app .ca-files{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px;}
+body.rb-app .ca-files li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#fff;border:2px solid #E8DFC4;border-radius:12px;font-weight:700;overflow-wrap:anywhere;}
+body.rb-app .ca-paste summary{cursor:pointer;font-weight:700;color:#9A5A00;padding:8px 0;}
+body.rb-app .ca-isummary{margin-top:20px;}
+body.rb-app .ca-isum-title{font-size:22px;font-weight:900;margin:0 0 12px;}
+body.rb-app .ca-icourse{background:#fff;border:2px solid #E8DFC4;border-radius:16px;padding:16px;margin:0 0 16px;}
+body.rb-app .ca-icourse-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+body.rb-app .ca-icourse-head h3{margin:2px 0 0;font-size:22px;font-weight:900;}
+body.rb-app .ca-eyebrow{font-family:"Space Mono",ui-monospace,monospace;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:#9A5A00;font-weight:700;overflow-wrap:anywhere;}
+body.rb-app .ca-tally{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px;}
+body.rb-app .ca-tally span{background:#FBF6EA;border:1px solid #E8DFC4;border-radius:999px;padding:4px 12px;font-size:16px;}
+body.rb-app .ca-tally.big span{font-size:20px;padding:8px 16px;}
+body.rb-app .ca-isec{margin-top:10px;border-top:1px solid #EFE6CF;padding-top:8px;}
+body.rb-app .ca-isec > summary{cursor:pointer;font-size:18px;padding:6px 0;list-style-position:inside;}
+body.rb-app .ca-count{display:inline-block;min-width:28px;text-align:center;background:#FDEBC8;color:#3A3A3C;border-radius:999px;font-size:14px;font-weight:800;padding:2px 8px;margin-left:4px;}
+body.rb-app .ca-ilist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:8px;}
+body.rb-app .ca-irow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:10px 12px;border:1px solid #E8DFC4;border-radius:12px;background:#FFFDF8;}
+body.rb-app .ca-irow-main{flex:1 1 260px;min-width:0;overflow-wrap:anywhere;}
+body.rb-app .ca-irow-title{font-weight:700;}
+body.rb-app .ca-irow code{font-size:14px;color:#5F5B53;}
+body.rb-app .ca-kind{display:inline-block;font-size:14px;font-weight:800;color:#5F5B53;background:#EEE8DA;border-radius:6px;padding:1px 8px;margin-right:6px;}
+body.rb-app .ca-irow-side{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+body.rb-app .ca-row-acts{display:flex;gap:8px;}
+body.rb-app .ca-approve{background:#F9A11B !important;border-color:#F9A11B !important;color:#3A3A3C !important;}
+body.rb-app .ca-check{display:inline-flex;align-items:center;gap:6px;font-weight:700;margin-right:10px;min-height:44px;cursor:pointer;}
+body.rb-app .ca-check input{width:22px;height:22px;accent-color:#B3261E;}
+body.rb-app .ca-changes{flex-basis:100%;}
+body.rb-app .ca-changes > summary{cursor:pointer;color:#9A5A00;font-weight:700;padding:4px 0;}
+body.rb-app .ca-diff{white-space:pre-wrap;font-size:17px;line-height:1.6;background:#fff;border:1px solid #E8DFC4;border-radius:12px;padding:12px 14px;margin-top:6px;overflow-wrap:anywhere;}
+body.rb-app .ca-del{background:#FBE9E7;color:#B3261E;text-decoration:line-through;text-decoration-thickness:2px;border-radius:4px;padding:0 2px;}
+body.rb-app .ca-ins{background:#E3F3EA;color:#007A3F;text-decoration:none;font-weight:700;border-radius:4px;padding:0 2px;}
+body.rb-app .ca-ifoot{position:sticky;bottom:0;background:#FBF6EA;border-top:2px solid #E8DFC4;padding:12px 0 8px;margin-top:8px;z-index:2;}
+body.rb-app .ca-ifoot .ca-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;}
+body.rb-app .ca-ifoot .qb-btn-primary{flex:1 1 260px;}
+/* Review one by one */
+body.rb-app .ca-rbar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#3A3A3C;color:#fff;border-radius:16px;padding:8px;margin:0 0 8px;}
+body.rb-app .ca-rnav{min-height:48px;min-width:96px;border-radius:12px;border:0;background:#4A4A4D;color:#fff;font-weight:800;font-size:17px;cursor:pointer;}
+body.rb-app .ca-rnav[disabled]{opacity:.35;cursor:default;}
+body.rb-app .ca-rpos{display:flex;flex-direction:column;align-items:center;text-align:center;font-size:14px;line-height:1.3;}
+body.rb-app .ca-rpos b{font-size:18px;}
+body.rb-app .ca-rlinks{display:flex;justify-content:space-between;gap:12px;margin:0 2px 12px;}
+body.rb-app .ca-link{background:none;border:0;color:#9A5A00;font-weight:800;font-size:17px;min-height:44px;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px;}
+body.rb-app .ca-approved{background:#E3F3EA;border:2px solid #BFE3CD;border-radius:16px;padding:16px;margin:0 0 14px;display:grid;gap:12px;}
+body.rb-app .ca-approved-title{color:#007A3F;font-weight:900;font-size:20px;}
+body.rb-app .ca-done h2{font-size:28px;font-weight:900;margin:4px 0 8px;}

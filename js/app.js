@@ -1448,11 +1448,11 @@ function renderHome(){
         <div class="home-card-name">Start Appointment</div>
         <div class="home-card-sub">Find the job & record the visit</div>
       </div>
-      ${(typeof caIsOwner === "function" && caIsOwner()) ? `
+      ${(typeof caCanManage === "function" && caCanManage()) ? `
       <div class="home-card secondary" id="homeGoContent">
         <div class="home-card-icon">${AICON.pencil}</div>
         <div class="home-card-name">Content</div>
-        <div class="home-card-sub">Owners only. Import, approve and edit training.</div>
+        <div class="home-card-sub">Import, approve and edit training.</div>
       </div>` : ""}
     </div>
   `;
