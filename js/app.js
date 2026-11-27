@@ -1427,6 +1427,14 @@ function renderHome(){
       <h1>RAVN</h1>
       <div class="home-sub">Around The House Home Solutions · Sales & Training</div>
     </div>
+    ${(typeof rvGetToken === "function" && !rvGetToken()) ? `
+    <div class="home-signin" id="homeSignin">
+      <div class="home-signin-text">
+        <div class="home-signin-title">You're not signed in</div>
+        <div class="home-signin-sub">Sign in to record appointments, see your courses and get live pricing.</div>
+      </div>
+      <button class="qb-btn-primary home-signin-btn" id="homeGoSignin" type="button">${(typeof LUCIDE !== "undefined" && LUCIDE.logIn) || ""}<span>Sign in</span></button>
+    </div>` : ""}
     <div class="home-cards">
       <div class="home-card" id="homeGoPresent">
         <div class="home-card-icon">${AICON.play}</div>
@@ -1461,7 +1469,21 @@ function renderHome(){
   document.getElementById("homeGoQuote").onclick = ()=>{ appView = "quote"; renderApp(); };
   document.getElementById("homeGoRaven").onclick = ()=>{ appView = "raven"; renderApp(); };
   const gc = document.getElementById("homeGoContent"); if(gc) gc.onclick = ()=>{ appView = "content"; renderApp(); };
+  // Sign in from Home (Jack, 2026-11-27): opens the RAVN sign-in screen and,
+  // once signed in, comes back Home instead of leaving you on job search.
+  const gs = document.getElementById("homeGoSignin");
+  if(gs) gs.onclick = ()=>{ homeSigninReturn = true; appView = "raven"; renderApp(); };
 }
+
+// Set by the Home "Sign in" button. When the sign-in finishes, go back Home
+// (the button disappears there because a session now exists).
+let homeSigninReturn = false;
+window.addEventListener("raven-session-changed", (e) => {
+  const signedIn = !!(e && e.detail && e.detail.signedIn);
+  if (signedIn && homeSigninReturn && appView === "raven") { homeSigninReturn = false; appView = "home"; renderApp(); return; }
+  if (!signedIn) homeSigninReturn = false;
+  if (appView === "home") renderApp();   // show / hide the Sign in strip
+});
 
 // Product picker — shared by Presentations and Training Center entry points.
 function renderPicker(){

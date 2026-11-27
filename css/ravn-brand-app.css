@@ -369,3 +369,13 @@ body.rb-app .ca-link{background:none;border:0;color:#9A5A00;font-weight:800;font
 body.rb-app .ca-approved{background:#E3F3EA;border:2px solid #BFE3CD;border-radius:16px;padding:16px;margin:0 0 14px;display:grid;gap:12px;}
 body.rb-app .ca-approved-title{color:#007A3F;font-weight:900;font-size:20px;}
 body.rb-app .ca-done h2{font-size:28px;font-weight:900;margin:4px 0 8px;}
+
+/* Home "Sign in" strip (Jack, 2026-11-27) — shown only when nobody is signed in. */
+body.rb-app .home-signin{display:flex;flex-direction:column;gap:12px;align-items:stretch;width:100%;max-width:760px;margin:0 auto 16px;
+  padding:16px;box-sizing:border-box;background:#fff;border:2px solid #F9A11B;border-radius:16px;}
+body.rb-app .home-signin-title{font-size:20px;font-weight:900;color:#3A3A3C;}
+body.rb-app .home-signin-sub{font-size:16px;color:#3A3A3C;margin-top:2px;}
+body.rb-app .home-signin-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;width:100%;}
+body.rb-app .home-signin-btn .lc{width:20px;height:20px;}
+@media (min-width:700px){ body.rb-app .home-signin{flex-direction:row;align-items:center;justify-content:space-between;}
+  body.rb-app .home-signin-btn{width:auto;padding:0 24px;} }
